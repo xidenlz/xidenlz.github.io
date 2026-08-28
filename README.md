@@ -1,54 +1,48 @@
-# xidenlz.github.io
+<h1 align="center">Musaed <code>&lt;/&gt;</code></h1>
 
-Source for [xidenlz.github.io/xidenlz](https://xidenlz.github.io/xidenlz/) —
-my personal site and research archive. Reverse engineering, Windows
-internals, and anti-cheat notes.
+<p align="center">
+  Reverse engineering, Windows internals, and anti-cheat research.<br>
+  CS student at King Faisal University, graduating February 2027.
+</p>
 
-## Layout
+<p align="center">
+  <a href="https://xidenlz.github.io/xidenlz/"><b>Site &amp; write-ups</b></a>
+  &nbsp;·&nbsp;
+  <a href="https://xidenlz.github.io/xidenlz/research.html">Research</a>
+  &nbsp;·&nbsp;
+  <a href="https://xidenlz.github.io/xidenlz/blog.html">Blog</a>
+  &nbsp;·&nbsp;
+  <a href="https://xidenlz.github.io/xidenlz/contact.html">Contact</a>
+</p>
 
-```
-index.html      about.html      research.html      projects.html
-blog.html       contact.html    404.html
+---
 
-research/       long-form write-ups
-blog/           shorter notes
+### What I work on
 
-css/style.css   design system
-js/main.js      nav, TOC, code copy, reading progress
-assets/         favicon, diagrams, OG cards
-tools/          the static-site generator
-```
+Windows internals, kernel drivers, and the reverse engineering that sits
+next to them. Most of what I do lands in one of three buckets:
 
-## Build
+- **Anti-cheat research.** Kernel-mode drivers, callback surfaces, integrity
+  checks. Latest write-up looks at [BattlEye's stack-walking routine](https://xidenlz.github.io/xidenlz/research/battleye-internals.html).
+- **Binary analysis.** PE internals, disassembly, malware triage. Long-time
+  volunteer contributor on VirusTotal.
+- **Low-level tooling.** Injection frameworks, hooking utilities, and
+  triage scripts. See [projects](https://xidenlz.github.io/xidenlz/projects.html).
 
-Static site. HTML is generated from Python content modules under `tools/`.
+### Selected work
 
-```
-py tools/build.py       # rewrite all HTML + sitemap + feed
-py tools/og.py          # regenerate OG social cards
-```
+- [BattlEye: kernel-side stack walking](https://xidenlz.github.io/xidenlz/research/battleye-internals.html) &nbsp;·&nbsp; kernel APCs, `RtlWalkFrameChain`, `BEDaisy::Report`
+- [NtInjector (NtLoader)](https://www.unknowncheats.me/forum/general-programming-and-reversing/735809-ntldr-windowsnt-injector.html) &nbsp;·&nbsp; NT-native injection framework
+- [Screenshot-Detection-Bypass](https://github.com/xidenlz/Screenshot-Detection-Bypass) &nbsp;·&nbsp; `gdi32!BitBlt` hook
 
-`build.py` is idempotent — run it after editing anything in `tools/` and
-commit the resulting HTML.
+### Stack
 
-Requires Pillow for the OG card step:
+`C / C++` &nbsp;·&nbsp; `x86 / x64 ASM` &nbsp;·&nbsp; `Python` &nbsp;·&nbsp; `Windows kernel` &nbsp;·&nbsp; `IDA Pro` &nbsp;·&nbsp; `WinDbg` &nbsp;·&nbsp; `Ghidra` &nbsp;·&nbsp; `x64dbg`
 
-```
-pip install pillow
-```
+### Reach me
 
-Serve locally:
+Email `uint64_t@hotmail.com` &nbsp;·&nbsp; Discord `xdenlz`
 
-```
-py -m http.server 8000
-```
+<sub>Open to security or reverse-engineering internships for 2026. If that's in your wheelhouse, please get in touch.</sub>
 
-## Adding a post
-
-1. Add the body to `tools/articles.py` (`ARTICLE_BODIES`).
-2. Add the metadata entry to `tools/pages.py` (`ARTICLES`).
-3. `py tools/build.py && py tools/og.py`.
-
-## Contact
-
-Email: uint64_t@hotmail.com &nbsp;·&nbsp; Discord: `xdenlz`
+<!-- source for xidenlz.github.io lives in this repo; build notes in tools/README.md -->

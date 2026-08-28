@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quasar RAT dressed as a game cheat · Musaed</title>
-  <meta name="description" content="Triage of a Quasar RAT submitted as a game cheat — decoy VB DLL, Go dropper, Portmap C2, and how it was caught.">
+  <meta name="description" content="Triage of a Quasar RAT submitted as a game cheat, decoy VB DLL, Go dropper, Portmap C2, and how it was caught.">
   <meta name="author" content="Musaed">
   <meta name="theme-color" content="#0a0b0d">
   <link rel="canonical" href="https://xidenlz.github.io/xidenlz/blog/triage-quasar-rat-case-study.html">
@@ -12,31 +12,31 @@
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://xidenlz.github.io/xidenlz/blog/triage-quasar-rat-case-study.html">
   <meta property="og:title" content="Quasar RAT dressed as a game cheat">
-  <meta property="og:description" content="Triage of a Quasar RAT submitted as a game cheat — decoy VB DLL, Go dropper, Portmap C2, and how it was caught.">
+  <meta property="og:description" content="Triage of a Quasar RAT submitted as a game cheat, decoy VB DLL, Go dropper, Portmap C2, and how it was caught.">
   <meta property="og:image" content="https://xidenlz.github.io/xidenlz/assets/og/blog-triage-quasar-rat-case-study.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Quasar RAT dressed as a game cheat">
-  <meta name="twitter:description" content="Triage of a Quasar RAT submitted as a game cheat — decoy VB DLL, Go dropper, Portmap C2, and how it was caught.">
+  <meta name="twitter:description" content="Triage of a Quasar RAT submitted as a game cheat, decoy VB DLL, Go dropper, Portmap C2, and how it was caught.">
   <meta name="twitter:image" content="https://xidenlz.github.io/xidenlz/assets/og/blog-triage-quasar-rat-case-study.png">
   <meta property="article:published_time" content="2025-05-22">
   <meta property="article:author" content="Musaed">
   <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
-  <link rel="alternate" type="application/rss+xml" title="Musaed — Research feed" href="https://xidenlz.github.io/xidenlz/feed.xml">
+  <link rel="alternate" type="application/rss+xml" title="Musaed research feed" href="https://xidenlz.github.io/xidenlz/feed.xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="../css/style.css">
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Quasar RAT dressed as a game cheat", "author": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}, "datePublished": "2025-05-22", "url": "https://xidenlz.github.io/xidenlz/blog/triage-quasar-rat-case-study.html", "description": "Triage of a Quasar RAT submitted as a game cheat \u2014 decoy VB DLL, Go dropper, Portmap C2, and how it was caught.", "image": "https://xidenlz.github.io/xidenlz/assets/og/blog-triage-quasar-rat-case-study.png", "publisher": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Quasar RAT dressed as a game cheat", "author": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}, "datePublished": "2025-05-22", "url": "https://xidenlz.github.io/xidenlz/blog/triage-quasar-rat-case-study.html", "description": "Triage of a Quasar RAT submitted as a game cheat, decoy VB DLL, Go dropper, Portmap C2, and how it was caught.", "image": "https://xidenlz.github.io/xidenlz/assets/og/blog-triage-quasar-rat-case-study.png", "publisher": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}}</script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <header class="masthead">
     <div class="wrap masthead-inner">
-      <a class="wordmark" href="../index.html" aria-label="Musaed — home">
+      <a class="wordmark" href="../index.html" aria-label="Musaed home">
         Musaed <span>&lt;/&gt;</span>
       </a>
       <button class="nav-toggle" type="button"
@@ -74,7 +74,7 @@
         <p>
   This one came out of routine community triage. An archive was submitted
   to a game-security board as “a working cheat”, and it got flagged for a
-  closer look because it looked odd — three binaries, one of them written
+  closer look because it looked odd, three binaries, one of them written
   in Go, and an uploader account that was less than a week old.
 </p>
 <p>
@@ -97,7 +97,7 @@
 <h3>1. The decoy DLL (Visual Basic)</h3>
 <p>
   First binary was a VB-compiled DLL. Decompiling it showed nothing but
-  dummy UI components — checkboxes, combo boxes, a couple of frames — with
+  dummy UI components, checkboxes, combo boxes, a couple of frames, with
   no hooks, no memory-reading code, and no game interaction of any kind.
   Its whole job was to look like a plausible cheat DLL on cursory inspection.
 </p>
@@ -106,7 +106,7 @@
 <p>
   Second was a 136 KB C++ executable. String analysis of the entry point
   turned up unreferenced hash-looking strings and a bunch of dead metadata.
-  Padding, essentially — enough to distract a fast heuristic scanner and
+  Padding, essentially. Enough to distract a fast heuristic scanner and
   push the overall file size up.
 </p>
 
@@ -115,9 +115,9 @@
   The interesting one. Three things stood out:
 </p>
 <ul>
-  <li><strong>Language.</strong> Go — common in commodity droppers because the runtime bulks the binary out and blurs the surface, but very unusual for anything claiming to be a low-level game modification.</li>
+  <li><strong>Language.</strong> Go, common in commodity droppers because the runtime bulks the binary out and blurs the surface, but very unusual for anything claiming to be a low-level game modification.</li>
   <li><strong>Size and entropy.</strong> Packed footprint with high-entropy sections.</li>
-  <li><strong>VT ratio.</strong> Initial pass came back <strong>17/71</strong> — a solid chunk of engines already flagging generic trojan-dropper behavior.</li>
+  <li><strong>VT ratio.</strong> Initial pass came back <strong>17/71</strong>. A solid chunk of engines already flagging generic trojan-dropper behavior.</li>
 </ul>
 
 <h2>Where it was calling home</h2>
@@ -147,7 +147,7 @@
   the process tree, the injections, and the sockets.
 </p>
 <ul>
-  <li><strong>Payload.</strong> Memory dumped from the spawned child matched Quasar RAT’s configuration structure and its published YARA signatures. Quasar is a .NET-based open-source RAT — common in this ecosystem.</li>
+  <li><strong>Payload.</strong> Memory dumped from the spawned child matched Quasar RAT’s configuration structure and its published YARA signatures. Quasar is a .NET-based open-source RAT, common in this ecosystem.</li>
   <li><strong>Capabilities observed.</strong> Keystroke logging, remote desktop streaming, browser credential theft, reverse shell.</li>
 </ul>
 
@@ -161,7 +161,7 @@
     <tbody>
       <tr><td><code>Run.exe</code></td><td>file</td><td>Go-compiled Quasar RAT dropper (17/71 on VT).</td></tr>
       <tr><td><code>ramsadaye-38594.portmap.io</code></td><td>domain</td><td>TCP tunnel used for C2.</td></tr>
-      <tr><td>Decoy DLL</td><td>file (VB)</td><td>Hollow UI — no functional logic.</td></tr>
+      <tr><td>Decoy DLL</td><td>file (VB)</td><td>Hollow UI, no functional logic.</td></tr>
     </tbody>
   </table>
 </div>

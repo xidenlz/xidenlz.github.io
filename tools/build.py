@@ -67,7 +67,7 @@ def head(page):
     prefix = page.get("asset_prefix", "")
     tags += [
         f'<link rel="icon" type="image/svg+xml" href="{prefix}assets/favicon.svg">',
-        f'<link rel="alternate" type="application/rss+xml" title="Musaed — Research feed" href="{SITE_URL}feed.xml">',
+        f'<link rel="alternate" type="application/rss+xml" title="Musaed research feed" href="{SITE_URL}feed.xml">',
         '<link rel="preconnect" href="https://fonts.googleapis.com">',
         '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>',
         '<link rel="preload" as="style" '
@@ -102,7 +102,7 @@ def masthead(page):
 
   <header class="masthead">
     <div class="wrap masthead-inner">
-      <a class="wordmark" href="{prefix}index.html" aria-label="Musaed — home">
+      <a class="wordmark" href="{prefix}index.html" aria-label="Musaed home">
         Musaed <span>&lt;/&gt;</span>
       </a>
       <button class="nav-toggle" type="button"
@@ -297,7 +297,7 @@ def render_home():
         <h1>Musaed</h1>
         <p class="hero-lede">
           Computer Science student at King Faisal University, graduating February 2027.
-          I read binaries for a living — kernel drivers, PE internals, and the seams
+          I read binaries for a living. Kernel drivers, PE internals, and the seams
           where user mode meets the loader.
         </p>
         <div class="hero-actions">{hero_actions}</div>
@@ -471,11 +471,7 @@ def render_contact():
       <div class="prose">
         <p>{CONTACT["intro"]}</p>
       </div>
-      <ul class="channels">{channels_html}</ul>
-      <div class="note">
-        <span class="note-label">{html.escape(CONTACT["footer_label"])}</span>
-        <p>{CONTACT["footer_body"]}</p>
-      </div>'''
+      <ul class="channels">{channels_html}</ul>'''
     return page_template(CONTACT, body)
 
 # ---------------------------------------------------------------------------
@@ -639,7 +635,7 @@ def write_feed():
     feed = f'''<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Musaed — research and notes</title>
+    <title>Musaed: research and notes</title>
     <link>{SITE_URL}</link>
     <atom:link href="{SITE_URL}feed.xml" rel="self" type="application/rss+xml" />
     <description>Reverse engineering, Windows internals, and anti-cheat research.</description>

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BattlEye: kernel-side stack walking · Musaed</title>
-  <meta name="description" content="BattlEye kernel-side stack walking — thread lookup, APC-driven capture with RtlWalkFrameChain, image-boundary checks, and report dispatch.">
+  <meta name="description" content="BattlEye kernel-side stack walking, thread lookup, APC-driven capture with RtlWalkFrameChain, image-boundary checks, and report dispatch.">
   <meta name="author" content="Musaed">
   <meta name="theme-color" content="#0a0b0d">
   <link rel="canonical" href="https://xidenlz.github.io/xidenlz/research/battleye-internals.html">
@@ -12,31 +12,31 @@
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://xidenlz.github.io/xidenlz/research/battleye-internals.html">
   <meta property="og:title" content="BattlEye: kernel-side stack walking">
-  <meta property="og:description" content="BattlEye kernel-side stack walking — thread lookup, APC-driven capture with RtlWalkFrameChain, image-boundary checks, and report dispatch.">
+  <meta property="og:description" content="BattlEye kernel-side stack walking, thread lookup, APC-driven capture with RtlWalkFrameChain, image-boundary checks, and report dispatch.">
   <meta property="og:image" content="https://xidenlz.github.io/xidenlz/assets/og/research-battleye-internals.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="BattlEye: kernel-side stack walking">
-  <meta name="twitter:description" content="BattlEye kernel-side stack walking — thread lookup, APC-driven capture with RtlWalkFrameChain, image-boundary checks, and report dispatch.">
+  <meta name="twitter:description" content="BattlEye kernel-side stack walking, thread lookup, APC-driven capture with RtlWalkFrameChain, image-boundary checks, and report dispatch.">
   <meta name="twitter:image" content="https://xidenlz.github.io/xidenlz/assets/og/research-battleye-internals.png">
   <meta property="article:published_time" content="2026-06-12">
   <meta property="article:author" content="Musaed">
   <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
-  <link rel="alternate" type="application/rss+xml" title="Musaed — Research feed" href="https://xidenlz.github.io/xidenlz/feed.xml">
+  <link rel="alternate" type="application/rss+xml" title="Musaed research feed" href="https://xidenlz.github.io/xidenlz/feed.xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="../css/style.css">
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "BattlEye: kernel-side stack walking", "author": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}, "datePublished": "2026-06-12", "url": "https://xidenlz.github.io/xidenlz/research/battleye-internals.html", "description": "BattlEye kernel-side stack walking \u2014 thread lookup, APC-driven capture with RtlWalkFrameChain, image-boundary checks, and report dispatch.", "image": "https://xidenlz.github.io/xidenlz/assets/og/research-battleye-internals.png", "publisher": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "BattlEye: kernel-side stack walking", "author": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}, "datePublished": "2026-06-12", "url": "https://xidenlz.github.io/xidenlz/research/battleye-internals.html", "description": "BattlEye kernel-side stack walking, thread lookup, APC-driven capture with RtlWalkFrameChain, image-boundary checks, and report dispatch.", "image": "https://xidenlz.github.io/xidenlz/assets/og/research-battleye-internals.png", "publisher": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}}</script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <header class="masthead">
     <div class="wrap masthead-inner">
-      <a class="wordmark" href="../index.html" aria-label="Musaed — home">
+      <a class="wordmark" href="../index.html" aria-label="Musaed home">
         Musaed <span>&lt;/&gt;</span>
       </a>
       <button class="nav-toggle" type="button"
@@ -84,7 +84,7 @@
   loader lists. Enumerating modules will miss it. But the manually mapped
   code still leaves return addresses on some thread’s stack. Walking that
   stack, then asking whether each frame lands inside a legitimately loaded
-  image, is a different signal than enumerating modules — and a much harder
+  image, is a different signal than enumerating modules, and a much harder
   one to hide from.
 </p>
 
@@ -93,7 +93,7 @@
   <p>
     Stack walking asks where instructions are executing right now, not where
     the module list <em>says</em> they should be. An address that lands
-    outside every known image range doesn’t prove a manual map — it’s a
+    outside every known image range doesn’t prove a manual map. It’s a
     starting point for further checks.
   </p>
 </div>
@@ -150,8 +150,8 @@
 
 <p>
   The APC is the interesting choice. Instead of trying to walk another
-  thread’s stack from outside its context — which would race with anything
-  that thread was doing — the collection runs inside the target thread when
+  thread’s stack from outside its context, which would race with anything
+  that thread was doing, the collection runs inside the target thread when
   the APC fires. The caller then just waits on a signaled event.
 </p>
 
@@ -233,7 +233,7 @@
   <span class="note-label">Read it carefully</span>
   <p>
     A frame outside every known image range is <em>not</em> a “gotcha”.
-    It’s an execution address that doesn’t sit in any expected module —
+    It’s an execution address that doesn’t sit in any expected module,
     which is enough to feed the report pipeline. What happens next is the
     interesting part.
   </p>
@@ -241,7 +241,7 @@
 
 <h2>4. Reporting</h2>
 <p>
-  The results — frames, thread context, per-module offsets — get bundled up
+  The results, frames, thread context, per-module offsets, get bundled up
   and passed to one of two report paths depending on how the routine got
   invoked:
 </p>

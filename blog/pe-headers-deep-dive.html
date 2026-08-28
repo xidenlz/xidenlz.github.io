@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PE optional headers and data directories · Musaed</title>
-  <meta name="description" content="The PE Optional Header explained — IMAGE_OPTIONAL_HEADER64, section alignment, RVA to file-offset conversion, data directories.">
+  <meta name="description" content="The PE Optional Header explained, IMAGE_OPTIONAL_HEADER64, section alignment, RVA to file-offset conversion, data directories.">
   <meta name="author" content="Musaed">
   <meta name="theme-color" content="#0a0b0d">
   <link rel="canonical" href="https://xidenlz.github.io/xidenlz/blog/pe-headers-deep-dive.html">
@@ -12,31 +12,31 @@
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://xidenlz.github.io/xidenlz/blog/pe-headers-deep-dive.html">
   <meta property="og:title" content="PE optional headers and data directories">
-  <meta property="og:description" content="The PE Optional Header explained — IMAGE_OPTIONAL_HEADER64, section alignment, RVA to file-offset conversion, data directories.">
+  <meta property="og:description" content="The PE Optional Header explained, IMAGE_OPTIONAL_HEADER64, section alignment, RVA to file-offset conversion, data directories.">
   <meta property="og:image" content="https://xidenlz.github.io/xidenlz/assets/og/blog-pe-headers-deep-dive.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="PE optional headers and data directories">
-  <meta name="twitter:description" content="The PE Optional Header explained — IMAGE_OPTIONAL_HEADER64, section alignment, RVA to file-offset conversion, data directories.">
+  <meta name="twitter:description" content="The PE Optional Header explained, IMAGE_OPTIONAL_HEADER64, section alignment, RVA to file-offset conversion, data directories.">
   <meta name="twitter:image" content="https://xidenlz.github.io/xidenlz/assets/og/blog-pe-headers-deep-dive.png">
   <meta property="article:published_time" content="2026-03-01">
   <meta property="article:author" content="Musaed">
   <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
-  <link rel="alternate" type="application/rss+xml" title="Musaed — Research feed" href="https://xidenlz.github.io/xidenlz/feed.xml">
+  <link rel="alternate" type="application/rss+xml" title="Musaed research feed" href="https://xidenlz.github.io/xidenlz/feed.xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="../css/style.css">
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "PE optional headers and data directories", "author": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}, "datePublished": "2026-03-01", "url": "https://xidenlz.github.io/xidenlz/blog/pe-headers-deep-dive.html", "description": "The PE Optional Header explained \u2014 IMAGE_OPTIONAL_HEADER64, section alignment, RVA to file-offset conversion, data directories.", "image": "https://xidenlz.github.io/xidenlz/assets/og/blog-pe-headers-deep-dive.png", "publisher": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "PE optional headers and data directories", "author": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}, "datePublished": "2026-03-01", "url": "https://xidenlz.github.io/xidenlz/blog/pe-headers-deep-dive.html", "description": "The PE Optional Header explained, IMAGE_OPTIONAL_HEADER64, section alignment, RVA to file-offset conversion, data directories.", "image": "https://xidenlz.github.io/xidenlz/assets/og/blog-pe-headers-deep-dive.png", "publisher": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}}</script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <header class="masthead">
     <div class="wrap masthead-inner">
-      <a class="wordmark" href="../index.html" aria-label="Musaed — home">
+      <a class="wordmark" href="../index.html" aria-label="Musaed home">
         Musaed <span>&lt;/&gt;</span>
       </a>
       <button class="nav-toggle" type="button"
@@ -67,7 +67,7 @@
           <span aria-current="page">pe-headers-deep-dive</span>
         </div>
         <h1>PE optional headers and data directories</h1>
-        <div class="byline"><span>Musaed</span><span><b>Published</b> March 1, 2026</span><span><b>Category</b> PE format</span><span><b>Read</b> ~3 min</span></div>
+        <div class="byline"><span>Musaed</span><span><b>Published</b> March 1, 2026</span><span><b>Category</b> PE format</span><span><b>Read</b> ~2 min</span></div>
       </div>
       <div class="article">
         <article class="prose">
@@ -75,7 +75,7 @@
   Every 32- and 64-bit Windows executable and DLL is a PE file. The DOS
   header and COFF file header handle the basic “yes this is a real image”
   check, but the parameters the Windows loader really cares about live in
-  <code>IMAGE_OPTIONAL_HEADER</code> — which, despite the name, is required.
+  <code>IMAGE_OPTIONAL_HEADER</code>. Which, despite the name, is required.
 </p>
 <p>
   I want to walk through the parts of the optional header that come up
@@ -121,7 +121,7 @@
 </p>
 <ul>
   <li><strong><code>FileAlignment</code></strong> is how sections are packed on disk. Commonly <code>0x200</code>.</li>
-  <li><strong><code>SectionAlignment</code></strong> is how they end up in virtual memory. Commonly <code>0x1000</code> — one page.</li>
+  <li><strong><code>SectionAlignment</code></strong> is how they end up in virtual memory. Commonly <code>0x1000</code>, one page.</li>
 </ul>
 <p>
   Because those numbers are different, an RVA doesn’t line up 1:1 with a
@@ -165,10 +165,10 @@
       </tr>
     </thead>
     <tbody>
-      <tr><td><code>0</code></td><td><code>EXPORT</code></td><td>Exports — functions this DLL makes available.</td></tr>
-      <tr><td><code>1</code></td><td><code>IMPORT</code></td><td>Imports — external APIs this image needs.</td></tr>
-      <tr><td><code>2</code></td><td><code>RESOURCE</code></td><td>Resources — icons, version info, dialogs.</td></tr>
-      <tr><td><code>3</code></td><td><code>EXCEPTION</code></td><td><code>.pdata</code> — x64 SEH unwind data.</td></tr>
+      <tr><td><code>0</code></td><td><code>EXPORT</code></td><td>Exports, functions this DLL makes available.</td></tr>
+      <tr><td><code>1</code></td><td><code>IMPORT</code></td><td>Imports, external APIs this image needs.</td></tr>
+      <tr><td><code>2</code></td><td><code>RESOURCE</code></td><td>Resources, icons, version info, dialogs.</td></tr>
+      <tr><td><code>3</code></td><td><code>EXCEPTION</code></td><td><code>.pdata</code>, x64 SEH unwind data.</td></tr>
       <tr><td><code>4</code></td><td><code>SECURITY</code></td><td>Authenticode signatures (PKCS #7).</td></tr>
       <tr><td><code>5</code></td><td><code>BASERELOC</code></td><td>Relocation fixups if ASLR moves the image.</td></tr>
     </tbody>

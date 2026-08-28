@@ -25,7 +25,7 @@ NAV = [
 HOME = {
     "root": True,
     "slug": "index",
-    "title": "Musaed — reverse engineering and Windows internals",
+    "title": "Musaed, reverse engineering and Windows internals",
     "description": "CS student at KFU. Reverse engineering, kernel internals, and anti-cheat research.",
     "og": "home",
 }
@@ -33,20 +33,20 @@ HOME = {
 ABOUT = {
     "slug": "about",
     "title": "About",
-    "description": "About Musaed — CS student at KFU, low-level and security research.",
+    "description": "About Musaed, CS student at KFU, low-level and security research.",
     "subtitle": "CS student at KFU. I read binaries and write about what I find.",
     "crumbs": [("home", "index.html"), ("about", "about.html")],
     "og": "about",
     "background": (
         "I'm a Computer Science and Data Analysis student at "
         "<strong>King Faisal University</strong>, graduating February 2027. "
-        "I spend most of my time reading disassembly — mostly Windows binaries, "
+        "I spend most of my time reading disassembly, mostly Windows binaries, "
         "mostly the parts that touch the kernel. The write-ups here are the "
         "record of that work: what I looked at, what I found, and what I got wrong."
     ),
     "focus": (
         "Right now I'm working on Windows internals and anti-cheat research. "
-        "I'm looking for a security or reverse-engineering internship for 2026 — "
+        "I'm looking for a security or reverse-engineering internship for 2026, "
         "if that overlaps with what your team does, "
         "<a href=\"contact.html\">reach out</a>."
     ),
@@ -66,7 +66,7 @@ ABOUT = {
             "items": [
                 "IDA Pro, Ghidra",
                 "x64dbg, x32dbg",
-                "WinDbg — kernel and user",
+                "WinDbg, kernel and user",
                 "Zydis",
                 "Sysinternals, Any.Run",
             ],
@@ -98,7 +98,7 @@ ABOUT = {
             "role": "VirusTotal community contributor",
             "where": "Independent volunteer",
             "note": (
-                "Triaging suspicious files submitted to the community — static "
+                "Triaging suspicious files submitted to the community, static "
                 "and dynamic passes, verdicts, and short notes for other analysts."
             ),
         },
@@ -125,7 +125,7 @@ RESEARCH_INDEX = {
         {
             "category": "In progress",
             "when": "Working on it",
-            "title": "Anti-Cheat Expert (ACE) — kernel side",
+            "title": "Anti-Cheat Expert (ACE), kernel side",
             "dek": (
                 "Ongoing look at Tencent's Anti-Cheat Expert: driver callbacks, "
                 "memory-protection primitives, integrity heartbeats, and how "
@@ -204,11 +204,6 @@ CONTACT = {
             ),
         },
     ],
-    "footer_label": "PGP",
-    "footer_body": (
-        "Public key available on request for coordinated disclosure or "
-        "anything sensitive. Email first."
-    ),
 }
 
 NOT_FOUND = {
@@ -220,7 +215,7 @@ NOT_FOUND = {
 }
 
 # ---------------------------------------------------------------------------
-# projects — long form (used by projects.html and homepage cards)
+# projects, long form (used by projects.html and homepage cards)
 # ---------------------------------------------------------------------------
 
 PROJECTS = {
@@ -231,13 +226,13 @@ PROJECTS = {
         "stack": "C++17 · NT native API · driver",
         "title": "NtInjector (NtLoader)",
         "dek": (
-            "Windows injection framework built on NT native APIs — no static "
+            "Windows injection framework built on NT native APIs, no static "
             "IAT footprint, imports resolved by PEB walking. User-mode and "
             "driver dispatch modes."
         ),
         "long_dek": (
             "A Windows injection framework that avoids the Win32 wrapper "
-            "layer entirely — no static IAT entries, every function pointer "
+            "layer entirely, no static IAT entries, every function pointer "
             "resolved at runtime by walking the PEB and parsing exports. "
             "Configuration is JSON-driven (<code>ntcfg.json</code>) and the "
             "same binary drives both user-mode and driver-backed injection paths."
@@ -245,7 +240,7 @@ PROJECTS = {
         "primitives": [
             ("Manual map",
              "In-memory PE mapping with relocations, imports, TLS callbacks, "
-             "and SEH — without registering the module in the PEB loader lists. "
+             "and SEH, without registering the module in the PEB loader lists. "
              "Optional header and section wipe (<code>.pdata</code>, <code>.rsrc</code>, <code>.reloc</code>)."),
             ("LdrLoadDll stub",
              "Writes a small stub plus <code>LDR_DATA</code> into the target "
@@ -276,7 +271,7 @@ PROJECTS = {
         "long_dek": (
             "A hook on <code>gdi32!BitBlt</code> that returns a clean copy of "
             "the framebuffer to screenshot-based scanners while overlays keep "
-            "rendering in test builds. Small research toy, not a product — "
+            "rendering in test builds. Small research toy, not a product, "
             "the interesting part is how many anti-cheat capture paths still "
             "rely on GDI."
         ),
@@ -297,12 +292,12 @@ PROJECTS = {
         "stack": "Python · C++ · Zydis",
         "title": "PE Analyzer Suite",
         "dek": (
-            "Sample-triage tooling — Python for PE/ELF inspection and payload "
+            "Sample-triage tooling, Python for PE/ELF inspection and payload "
             "extraction, C++/Zydis for instruction-level tracing."
         ),
         "long_dek": (
             "Tooling I use for sample triage. Python scripts do the boring "
-            "part — parsing PE/ELF headers, dumping embedded binaries by "
+            "part, parsing PE/ELF headers, dumping embedded binaries by "
             "computing exact offset and size, running heuristic scans over "
             "strings and section entropy. A separate C++ tool uses Zydis to "
             "trace dynamic import resolution when I need to look at how a "
@@ -311,7 +306,7 @@ PROJECTS = {
         "primitives": [
             ("Embedded binary extraction",
              "Finds nested executables inside a host binary and dumps them "
-             "by the exact raw offset and size — no scanning heuristics after "
+             "by the exact raw offset and size, no scanning heuristics after "
              "the header is located."),
             ("Heuristics",
              "Section entropy anomalies, string scans for C2 patterns, "
@@ -326,7 +321,7 @@ PROJECTS = {
 }
 
 # ---------------------------------------------------------------------------
-# articles — index metadata; bodies live in articles.py
+# articles, index metadata; bodies live in articles.py
 # ---------------------------------------------------------------------------
 
 def _art(slug, kind, category, title, dek, short_dek, meta_desc, tags,
@@ -348,7 +343,7 @@ def _art(slug, kind, category, title, dek, short_dek, meta_desc, tags,
         "body": body,
     }
 
-# Windows doesn't support %-d in strftime — swap for manual formatting.
+# Windows doesn't support %-d in strftime, swap for manual formatting.
 def _fmt(d):
     return d.strftime("%B ") + str(d.day) + d.strftime(", %Y")
 
@@ -373,7 +368,7 @@ ARTICLES = {
             "<code>RtlWalkFrameChain</code>, and the report path."
         ),
         "meta_description": (
-            "BattlEye kernel-side stack walking — thread lookup, APC-driven "
+            "BattlEye kernel-side stack walking, thread lookup, APC-driven "
             "capture with RtlWalkFrameChain, image-boundary checks, and "
             "report dispatch."
         ),
@@ -401,7 +396,7 @@ ARTICLES = {
             "<code>ObRegisterCallbacks</code>."
         ),
         "meta_description": (
-            "Windows kernel process and thread notification callbacks — "
+            "Windows kernel process and thread notification callbacks, "
             "PsSetCreateProcessNotifyRoutineEx and ObRegisterCallbacks in "
             "practice."
         ),
@@ -427,7 +422,7 @@ ARTICLES = {
             "RVA-to-file-offset math, and the 16 data directories."
         ),
         "meta_description": (
-            "The PE Optional Header explained — IMAGE_OPTIONAL_HEADER64, "
+            "The PE Optional Header explained, IMAGE_OPTIONAL_HEADER64, "
             "section alignment, RVA to file-offset conversion, data directories."
         ),
         "tags": ["PE32+", "Windows loader", "Virtual memory", "C/C++"],
@@ -453,7 +448,7 @@ ARTICLES = {
         ),
         "meta_description": (
             "Overlays, EDR agents, and process-injection malware share the "
-            "same Windows primitives — DLL injection, thread hijacking, "
+            "same Windows primitives, DLL injection, thread hijacking, "
             "LdrLoadDll, swap-chain hooks."
         ),
         "tags": ["Process injection", "Thread hijacking", "DirectX",
@@ -478,7 +473,7 @@ ARTICLES = {
             "key, and a small Python helper for doing it in bulk."
         ),
         "meta_description": (
-            "Undoing inline XOR string obfuscation — reading vectorized "
+            "Undoing inline XOR string obfuscation, reading vectorized "
             "_mm_xor_ps in IDA, computing the XOR key, and automating with Python."
         ),
         "tags": ["Reverse engineering", "XOR", "IDA Pro", "Python"],
@@ -499,10 +494,10 @@ ARTICLES = {
         ),
         "short_dek": (
             "A hollow VB DLL, a Go dropper, and a Quasar RAT reaching a "
-            "Portmap tunnel — a submission I flagged during triage."
+            "Portmap tunnel, a submission I flagged during triage."
         ),
         "meta_description": (
-            "Triage of a Quasar RAT submitted as a game cheat — decoy VB DLL, "
+            "Triage of a Quasar RAT submitted as a game cheat, decoy VB DLL, "
             "Go dropper, Portmap C2, and how it was caught."
         ),
         "tags": ["Malware triage", "Quasar RAT", "Any.Run", "Threat intel"],

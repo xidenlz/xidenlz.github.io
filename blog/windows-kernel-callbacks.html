@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Windows kernel process and thread callbacks · Musaed</title>
-  <meta name="description" content="Windows kernel process and thread notification callbacks — PsSetCreateProcessNotifyRoutineEx and ObRegisterCallbacks in practice.">
+  <meta name="description" content="Windows kernel process and thread notification callbacks, PsSetCreateProcessNotifyRoutineEx and ObRegisterCallbacks in practice.">
   <meta name="author" content="Musaed">
   <meta name="theme-color" content="#0a0b0d">
   <link rel="canonical" href="https://xidenlz.github.io/xidenlz/blog/windows-kernel-callbacks.html">
@@ -12,31 +12,31 @@
   <meta property="og:type" content="article">
   <meta property="og:url" content="https://xidenlz.github.io/xidenlz/blog/windows-kernel-callbacks.html">
   <meta property="og:title" content="Windows kernel process and thread callbacks">
-  <meta property="og:description" content="Windows kernel process and thread notification callbacks — PsSetCreateProcessNotifyRoutineEx and ObRegisterCallbacks in practice.">
+  <meta property="og:description" content="Windows kernel process and thread notification callbacks, PsSetCreateProcessNotifyRoutineEx and ObRegisterCallbacks in practice.">
   <meta property="og:image" content="https://xidenlz.github.io/xidenlz/assets/og/blog-windows-kernel-callbacks.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Windows kernel process and thread callbacks">
-  <meta name="twitter:description" content="Windows kernel process and thread notification callbacks — PsSetCreateProcessNotifyRoutineEx and ObRegisterCallbacks in practice.">
+  <meta name="twitter:description" content="Windows kernel process and thread notification callbacks, PsSetCreateProcessNotifyRoutineEx and ObRegisterCallbacks in practice.">
   <meta name="twitter:image" content="https://xidenlz.github.io/xidenlz/assets/og/blog-windows-kernel-callbacks.png">
   <meta property="article:published_time" content="2026-02-18">
   <meta property="article:author" content="Musaed">
   <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
-  <link rel="alternate" type="application/rss+xml" title="Musaed — Research feed" href="https://xidenlz.github.io/xidenlz/feed.xml">
+  <link rel="alternate" type="application/rss+xml" title="Musaed research feed" href="https://xidenlz.github.io/xidenlz/feed.xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="../css/style.css">
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Windows kernel process and thread callbacks", "author": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}, "datePublished": "2026-02-18", "url": "https://xidenlz.github.io/xidenlz/blog/windows-kernel-callbacks.html", "description": "Windows kernel process and thread notification callbacks \u2014 PsSetCreateProcessNotifyRoutineEx and ObRegisterCallbacks in practice.", "image": "https://xidenlz.github.io/xidenlz/assets/og/blog-windows-kernel-callbacks.png", "publisher": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Windows kernel process and thread callbacks", "author": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}, "datePublished": "2026-02-18", "url": "https://xidenlz.github.io/xidenlz/blog/windows-kernel-callbacks.html", "description": "Windows kernel process and thread notification callbacks, PsSetCreateProcessNotifyRoutineEx and ObRegisterCallbacks in practice.", "image": "https://xidenlz.github.io/xidenlz/assets/og/blog-windows-kernel-callbacks.png", "publisher": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}}</script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
   <header class="masthead">
     <div class="wrap masthead-inner">
-      <a class="wordmark" href="../index.html" aria-label="Musaed — home">
+      <a class="wordmark" href="../index.html" aria-label="Musaed home">
         Musaed <span>&lt;/&gt;</span>
       </a>
       <button class="nav-toggle" type="button"
@@ -73,7 +73,7 @@
         <article class="prose">
         <p>
   On 64-bit Windows, PatchGuard rules out most of the tricks security
-  drivers used to reach for — SSDT hooks, inline patches on kernel code.
+  drivers used to reach for, SSDT hooks, inline patches on kernel code.
   What Microsoft gave everyone else in exchange is a small set of
   documented callback interfaces. Drivers register a function, the kernel
   calls it when the right thing happens, and that’s the whole surface.
@@ -128,7 +128,7 @@
   <span class="note-label">Watch the IRQL</span>
   <p>
     The callback runs at <code>PASSIVE_LEVEL</code>, so paged memory is fair
-    game — but the callback array is limited to 64 entries system-wide.
+    game, but the callback array is limited to 64 entries system-wide.
     Registering and unregistering blindly during driver load and unload is
     a fast way to leak slots on a busy system.
   </p>
@@ -178,7 +178,7 @@
   Once a driver is stripping rights on <code>PsProcessType</code>, user-mode
   code trying to <code>OpenProcess</code> a protected target for
   <code>VM_READ</code>/<code>VM_WRITE</code>/<code>CREATE_THREAD</code>
-  gets a handle back — but not with those rights. Standard injection
+  gets a handle back. But not with those rights. Standard injection
   primitives, ordinary API hooks, most out-of-process debuggers: all
   neutered without any inline patching.
 </p>

@@ -2,7 +2,7 @@
 Article body HTML for the site.
 
 Each entry is the inner HTML that goes inside `<article class="prose">…</article>`.
-Do not add opening/closing prose tags here — build.py wraps them.
+Do not add opening/closing prose tags here, build.py wraps them.
 Every technical claim (function name, hex value, struct field, path)
 mirrors the original write-ups.
 """
@@ -21,7 +21,7 @@ BATTLEYE = r"""
   loader lists. Enumerating modules will miss it. But the manually mapped
   code still leaves return addresses on some thread’s stack. Walking that
   stack, then asking whether each frame lands inside a legitimately loaded
-  image, is a different signal than enumerating modules — and a much harder
+  image, is a different signal than enumerating modules, and a much harder
   one to hide from.
 </p>
 
@@ -30,7 +30,7 @@ BATTLEYE = r"""
   <p>
     Stack walking asks where instructions are executing right now, not where
     the module list <em>says</em> they should be. An address that lands
-    outside every known image range doesn’t prove a manual map — it’s a
+    outside every known image range doesn’t prove a manual map. It’s a
     starting point for further checks.
   </p>
 </div>
@@ -87,8 +87,8 @@ BATTLEYE = r"""
 
 <p>
   The APC is the interesting choice. Instead of trying to walk another
-  thread’s stack from outside its context — which would race with anything
-  that thread was doing — the collection runs inside the target thread when
+  thread’s stack from outside its context, which would race with anything
+  that thread was doing, the collection runs inside the target thread when
   the APC fires. The caller then just waits on a signaled event.
 </p>
 
@@ -170,7 +170,7 @@ BATTLEYE = r"""
   <span class="note-label">Read it carefully</span>
   <p>
     A frame outside every known image range is <em>not</em> a “gotcha”.
-    It’s an execution address that doesn’t sit in any expected module —
+    It’s an execution address that doesn’t sit in any expected module,
     which is enough to feed the report pipeline. What happens next is the
     interesting part.
   </p>
@@ -178,7 +178,7 @@ BATTLEYE = r"""
 
 <h2>4. Reporting</h2>
 <p>
-  The results — frames, thread context, per-module offsets — get bundled up
+  The results, frames, thread context, per-module offsets, get bundled up
   and passed to one of two report paths depending on how the routine got
   invoked:
 </p>
@@ -234,7 +234,7 @@ BATTLEYE = r"""
 KERNEL_CALLBACKS = r"""
 <p>
   On 64-bit Windows, PatchGuard rules out most of the tricks security
-  drivers used to reach for — SSDT hooks, inline patches on kernel code.
+  drivers used to reach for, SSDT hooks, inline patches on kernel code.
   What Microsoft gave everyone else in exchange is a small set of
   documented callback interfaces. Drivers register a function, the kernel
   calls it when the right thing happens, and that’s the whole surface.
@@ -289,7 +289,7 @@ KERNEL_CALLBACKS = r"""
   <span class="note-label">Watch the IRQL</span>
   <p>
     The callback runs at <code>PASSIVE_LEVEL</code>, so paged memory is fair
-    game — but the callback array is limited to 64 entries system-wide.
+    game, but the callback array is limited to 64 entries system-wide.
     Registering and unregistering blindly during driver load and unload is
     a fast way to leak slots on a busy system.
   </p>
@@ -339,7 +339,7 @@ KERNEL_CALLBACKS = r"""
   Once a driver is stripping rights on <code>PsProcessType</code>, user-mode
   code trying to <code>OpenProcess</code> a protected target for
   <code>VM_READ</code>/<code>VM_WRITE</code>/<code>CREATE_THREAD</code>
-  gets a handle back — but not with those rights. Standard injection
+  gets a handle back. But not with those rights. Standard injection
   primitives, ordinary API hooks, most out-of-process debuggers: all
   neutered without any inline patching.
 </p>
@@ -357,7 +357,7 @@ PE_HEADERS = r"""
   Every 32- and 64-bit Windows executable and DLL is a PE file. The DOS
   header and COFF file header handle the basic “yes this is a real image”
   check, but the parameters the Windows loader really cares about live in
-  <code>IMAGE_OPTIONAL_HEADER</code> — which, despite the name, is required.
+  <code>IMAGE_OPTIONAL_HEADER</code>. Which, despite the name, is required.
 </p>
 <p>
   I want to walk through the parts of the optional header that come up
@@ -403,7 +403,7 @@ PE_HEADERS = r"""
 </p>
 <ul>
   <li><strong><code>FileAlignment</code></strong> is how sections are packed on disk. Commonly <code>0x200</code>.</li>
-  <li><strong><code>SectionAlignment</code></strong> is how they end up in virtual memory. Commonly <code>0x1000</code> — one page.</li>
+  <li><strong><code>SectionAlignment</code></strong> is how they end up in virtual memory. Commonly <code>0x1000</code>, one page.</li>
 </ul>
 <p>
   Because those numbers are different, an RVA doesn’t line up 1:1 with a
@@ -447,10 +447,10 @@ PE_HEADERS = r"""
       </tr>
     </thead>
     <tbody>
-      <tr><td><code>0</code></td><td><code>EXPORT</code></td><td>Exports — functions this DLL makes available.</td></tr>
-      <tr><td><code>1</code></td><td><code>IMPORT</code></td><td>Imports — external APIs this image needs.</td></tr>
-      <tr><td><code>2</code></td><td><code>RESOURCE</code></td><td>Resources — icons, version info, dialogs.</td></tr>
-      <tr><td><code>3</code></td><td><code>EXCEPTION</code></td><td><code>.pdata</code> — x64 SEH unwind data.</td></tr>
+      <tr><td><code>0</code></td><td><code>EXPORT</code></td><td>Exports, functions this DLL makes available.</td></tr>
+      <tr><td><code>1</code></td><td><code>IMPORT</code></td><td>Imports, external APIs this image needs.</td></tr>
+      <tr><td><code>2</code></td><td><code>RESOURCE</code></td><td>Resources, icons, version info, dialogs.</td></tr>
+      <tr><td><code>3</code></td><td><code>EXCEPTION</code></td><td><code>.pdata</code>, x64 SEH unwind data.</td></tr>
       <tr><td><code>4</code></td><td><code>SECURITY</code></td><td>Authenticode signatures (PKCS #7).</td></tr>
       <tr><td><code>5</code></td><td><code>BASERELOC</code></td><td>Relocation fixups if ASLR moves the image.</td></tr>
     </tbody>
@@ -479,13 +479,13 @@ OVERLAYS = r"""
 </p>
 <p>
   That’s the interesting bit. The primitives don’t care what you’re
-  building — the intent lives at a higher layer.
+  building. The intent lives at a higher layer.
 </p>
 
 <h2>Overlays inject DLLs the same way malware does</h2>
 <p>
-  When a game starts, <code>steam.exe</code> spawns a helper —
-  <code>gameoverlayui64.exe</code> — that injects
+  When a game starts, <code>steam.exe</code> spawns a helper called
+  <code>gameoverlayui64.exe</code> that injects
   <code>gameoverlayui.dll</code> into the game’s address space. The DLL
   then hooks into the graphics pipeline (typically
   <code>IDXGISwapChain::Present</code>) so it can draw friend lists,
@@ -542,7 +542,7 @@ OVERLAYS = r"""
   <li>
     <strong>Native loader calls.</strong> Calling
     <code>LdrLoadDll</code> inside <code>ntdll.dll</code> directly instead
-    of going through <code>LoadLibrary</code> — same effect, fewer hooks
+    of going through <code>LoadLibrary</code>, same effect, fewer hooks
     to trip.
   </li>
   <li>
@@ -554,7 +554,7 @@ OVERLAYS = r"""
   <li>
     <strong>Manual / reflective mapping.</strong> Parsing the PE headers
     of an image already in memory, fixing relocations, resolving imports,
-    calling the entry point — all without asking the loader to add the
+    calling the entry point, all without asking the loader to add the
     module to the PEB’s list.
   </li>
   <li>
@@ -585,8 +585,8 @@ XOR = r"""
   out of a raw <code>strings</code> dump.
 </p>
 <p>
-  In a decompiler the routines look loud — a wall of SSE loads and an
-  <code>_mm_xor_ps</code> — but once you can see the pattern, undoing
+  In a decompiler the routines look loud, a wall of SSE loads and an
+  <code>_mm_xor_ps</code>, but once you can see the pattern, undoing
   them takes a few seconds.
 </p>
 
@@ -638,7 +638,7 @@ XOR = r"""
 
 <p>
   <code>_mm_xor_ps</code> is the giveaway. The <code>sub_140001010</code>
-  call at the end is the same <code>printf</code> from before — it doesn’t
+  call at the end is the same <code>printf</code> from before, it doesn’t
   care whether the string came from <code>.rdata</code> or from a decoded
   stack buffer.
 </p>
@@ -687,7 +687,7 @@ XOR = r"""
 <span class="syn-kwd">def</span> <span class="syn-fn">XOR</span><span class="syn-op">(</span><span class="syn-var">Key</span><span class="syn-op">,</span> <span class="syn-var">Str</span><span class="syn-op">):</span>
     <span class="syn-kwd">return</span> <span class="syn-var">Key</span> <span class="syn-op">^</span> <span class="syn-var">Str</span>
 
-<span class="syn-com"># little-endian order — reverse to read as ASCII</span>
+<span class="syn-com"># little-endian order, reverse to read as ASCII</span>
 <span class="syn-kwd">def</span> <span class="syn-fn">Translate</span><span class="syn-op">(</span><span class="syn-var">Result</span><span class="syn-op">):</span>
     <span class="syn-kwd">for</span> <span class="syn-var">i</span> <span class="syn-kwd">in</span> <span class="syn-fn">reversed</span><span class="syn-op">(</span><span class="syn-var">Result</span><span class="syn-op">):</span>
         <span class="syn-fn">print</span><span class="syn-op">(</span><span class="syn-var">i</span><span class="syn-op">)</span>
@@ -732,7 +732,7 @@ QUASAR = r"""
 <p>
   This one came out of routine community triage. An archive was submitted
   to a game-security board as “a working cheat”, and it got flagged for a
-  closer look because it looked odd — three binaries, one of them written
+  closer look because it looked odd, three binaries, one of them written
   in Go, and an uploader account that was less than a week old.
 </p>
 <p>
@@ -755,7 +755,7 @@ QUASAR = r"""
 <h3>1. The decoy DLL (Visual Basic)</h3>
 <p>
   First binary was a VB-compiled DLL. Decompiling it showed nothing but
-  dummy UI components — checkboxes, combo boxes, a couple of frames — with
+  dummy UI components, checkboxes, combo boxes, a couple of frames, with
   no hooks, no memory-reading code, and no game interaction of any kind.
   Its whole job was to look like a plausible cheat DLL on cursory inspection.
 </p>
@@ -764,7 +764,7 @@ QUASAR = r"""
 <p>
   Second was a 136 KB C++ executable. String analysis of the entry point
   turned up unreferenced hash-looking strings and a bunch of dead metadata.
-  Padding, essentially — enough to distract a fast heuristic scanner and
+  Padding, essentially. Enough to distract a fast heuristic scanner and
   push the overall file size up.
 </p>
 
@@ -773,9 +773,9 @@ QUASAR = r"""
   The interesting one. Three things stood out:
 </p>
 <ul>
-  <li><strong>Language.</strong> Go — common in commodity droppers because the runtime bulks the binary out and blurs the surface, but very unusual for anything claiming to be a low-level game modification.</li>
+  <li><strong>Language.</strong> Go, common in commodity droppers because the runtime bulks the binary out and blurs the surface, but very unusual for anything claiming to be a low-level game modification.</li>
   <li><strong>Size and entropy.</strong> Packed footprint with high-entropy sections.</li>
-  <li><strong>VT ratio.</strong> Initial pass came back <strong>17/71</strong> — a solid chunk of engines already flagging generic trojan-dropper behavior.</li>
+  <li><strong>VT ratio.</strong> Initial pass came back <strong>17/71</strong>. A solid chunk of engines already flagging generic trojan-dropper behavior.</li>
 </ul>
 
 <h2>Where it was calling home</h2>
@@ -805,7 +805,7 @@ QUASAR = r"""
   the process tree, the injections, and the sockets.
 </p>
 <ul>
-  <li><strong>Payload.</strong> Memory dumped from the spawned child matched Quasar RAT’s configuration structure and its published YARA signatures. Quasar is a .NET-based open-source RAT — common in this ecosystem.</li>
+  <li><strong>Payload.</strong> Memory dumped from the spawned child matched Quasar RAT’s configuration structure and its published YARA signatures. Quasar is a .NET-based open-source RAT, common in this ecosystem.</li>
   <li><strong>Capabilities observed.</strong> Keystroke logging, remote desktop streaming, browser credential theft, reverse shell.</li>
 </ul>
 
@@ -819,7 +819,7 @@ QUASAR = r"""
     <tbody>
       <tr><td><code>Run.exe</code></td><td>file</td><td>Go-compiled Quasar RAT dropper (17/71 on VT).</td></tr>
       <tr><td><code>ramsadaye-38594.portmap.io</code></td><td>domain</td><td>TCP tunnel used for C2.</td></tr>
-      <tr><td>Decoy DLL</td><td>file (VB)</td><td>Hollow UI — no functional logic.</td></tr>
+      <tr><td>Decoy DLL</td><td>file (VB)</td><td>Hollow UI, no functional logic.</td></tr>
     </tbody>
   </table>
 </div>
