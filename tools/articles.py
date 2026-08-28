@@ -836,6 +836,197 @@ QUASAR = r"""
 </p>
 """
 
+FAST_TRIAGE = r"""
+<p>
+  Some weeks I look at a binary a day. Other weeks I sit with one file for
+  a week. What I don’t do anymore is start every triage by loading the
+  sample into IDA and reading disassembly. That reads well as a workflow
+  when you’re doing it once. When you’re doing it every day, it burns
+  hours before you’ve even decided whether the file is worth the time.
+</p>
+<p>
+  What I do instead is a fast pass over the PE that answers three
+  questions before I open a disassembler. If the answers push the sample
+  past a threshold, I open IDA. If they don’t, I move on.
+</p>
+
+<h2>What the PE gives you for free</h2>
+<p>
+  The Portable Executable format is the header layout every Windows
+  binary starts with. Think of it as the index of the book: everything the
+  Windows loader needs to map, resolve, and run the file lives in there.
+  Section table, entry point, imports, resources, compiler metadata, all
+  of it. You can read all of that without executing anything, without
+  running an unpacker, and without opening the file in a heavy tool.
+</p>
+<p>
+  Three of those signals turn out to be enough to sort most triage into
+  “look closer” or “close the file and move on”.
+</p>
+
+<h2>Flag 1: does it talk to the internet?</h2>
+<p>
+  The first pass is strings. A lot of malware falls into one of two
+  archetypes at this stage, and both leak the same way.
+</p>
+<p>
+  <strong>The naive author.</strong> URLs sit in <code>.rdata</code> as
+  plaintext. C2 hostnames, Discord webhooks, port-forwarding tunnels,
+  right there in a plain strings dump. If the sample is claiming to be a
+  cracked build of a legitimate app that normally does license validation,
+  seeing a POST to <code>discord.com/api/webhooks/…</code> is the whole
+  story.
+</p>
+<p>
+  <strong>The careful author.</strong> Strings are XOR-scrambled,
+  stack-built, or resolved from constants at runtime. Nothing shows up in
+  a plain strings pass. When that happens I run
+  <a href="https://github.com/mandiant/flare-floss" rel="noopener">FLOSS</a>
+  over the file. FLOSS resolves stack strings, decoded strings, and
+  obfuscated constants without executing the binary. It’s noisy, but it
+  usually surfaces the C2 anyway.
+</p>
+<p>
+  Either way the question is the same: does this file want to reach the
+  network, and where?
+</p>
+
+<h2>Flag 2: are its imports missing?</h2>
+<p>
+  Malware often resolves Win32 API names at runtime instead of listing
+  them in the Import Address Table. That keeps
+  <code>LoadLibrary</code>/<code>OpenProcess</code>/<code>VirtualAllocEx</code>
+  from showing up in a static import listing, and it defeats the fastest
+  form of triage.
+</p>
+<p>
+  You can chase that resolution in IDA or in a debugger. That works, but
+  it’s slow. I wrote a small tool on top of Zydis that follows the calls
+  automatically and annotates each hit with the string that was almost
+  certainly being resolved. Output looks like this:
+</p>
+
+<div class="snippet">
+  <div class="snippet-bar">
+    <span class="snippet-lang">tool output</span>
+    <span class="snippet-name">dynamic import trace</span>
+  </div>
+  <pre><code>[CALL] RVA 0x0020D17B   call [0x00000000003C5218]
+              0x0020D15D  jnz  0x000000000020D196
+              0x0020D15F  lea  rcx, [0x0000000000535CA0]
+            possible function arg: "ntdll.dll"
+              0x0020D166  call [0x00000000003C5210]
+              0x0020D16C  test rax, rax
+              0x0020D16F  jz   0x000000000020D18A
+              0x0020D171  lea  rdx, [0x0000000000535CB0]
+            possible function arg: "RtlVerifyVersionInfo"
+              0x0020D178  mov  rcx, rax</code></pre>
+</div>
+
+<p>
+  Two <code>lea</code> loads of the same string reference right before a
+  call: that’s almost always a <code>GetProcAddress</code> on
+  <code>ntdll!RtlVerifyVersionInfo</code>. Doing that at scale by hand is
+  what makes triage slow. Doing it with a Zydis pass over the code section
+  takes seconds.
+</p>
+<p>
+  The same tool also handles the common inline-XOR string obfuscation
+  pattern. I wrote up how that pattern looks in
+  <a href="../blog/defeating-malware-obfuscation-xor.html">defeating XOR
+  string obfuscation</a>.
+</p>
+
+<h2>Flag 3: is there another binary inside it?</h2>
+<p>
+  This one catches a lot of cracked installers. The pitch is that
+  <code>crack.exe</code> unlocks the legitimate app, and sometimes it
+  actually does, so the user reports it as working. What they don’t see
+  is a second executable dropped alongside the crack that gets run at
+  first launch.
+</p>
+<p>
+  The tell in the PE is straightforward: an entire second
+  <code>MZ</code>/<code>PE</code> header sitting in a resource, in an
+  overlay past the end of the last section, or inside a non-code section
+  that shouldn’t hold one. My <code>pe_analyzer</code> script scans for
+  those signatures and reports the offset and size of anything it finds.
+</p>
+<p>
+  Extracting from a known offset is a few lines of Python:
+</p>
+
+<div class="snippet">
+  <div class="snippet-bar">
+    <span class="snippet-lang">Python</span>
+    <span class="snippet-name">extract.py</span>
+  </div>
+  <pre><code><span class="syn-kwd">def</span> <span class="syn-fn">main</span><span class="syn-op">():</span>
+    <span class="syn-kwd">if</span> <span class="syn-fn">len</span><span class="syn-op">(</span><span class="syn-var">sys</span><span class="syn-op">.</span><span class="syn-var">argv</span><span class="syn-op">)</span> <span class="syn-kwd">not in</span> <span class="syn-op">(</span><span class="syn-num">2</span><span class="syn-op">,</span> <span class="syn-num">3</span><span class="syn-op">):</span>
+        <span class="syn-fn">print</span><span class="syn-op">(</span>
+            <span class="syn-fn">f</span><span class="syn-str">"{R}Usage:{X} python {os.path.basename(sys.argv[0])} "</span>
+            <span class="syn-str">"&lt;filename&gt; [output_file]"</span>
+        <span class="syn-op">)</span>
+        <span class="syn-var">sys</span><span class="syn-op">.</span><span class="syn-fn">exit</span><span class="syn-op">(</span><span class="syn-num">1</span><span class="syn-op">)</span>
+
+    <span class="syn-var">filename</span> <span class="syn-op">=</span> <span class="syn-var">sys</span><span class="syn-op">.</span><span class="syn-var">argv</span><span class="syn-op">[</span><span class="syn-num">1</span><span class="syn-op">]</span>
+
+    <span class="syn-kwd">if</span> <span class="syn-kwd">not</span> <span class="syn-var">os</span><span class="syn-op">.</span><span class="syn-var">path</span><span class="syn-op">.</span><span class="syn-fn">isfile</span><span class="syn-op">(</span><span class="syn-var">filename</span><span class="syn-op">):</span>
+        <span class="syn-fn">print</span><span class="syn-op">(</span><span class="syn-fn">f</span><span class="syn-str">"{R}[-] File not found:{X} {filename}"</span><span class="syn-op">)</span>
+        <span class="syn-var">sys</span><span class="syn-op">.</span><span class="syn-fn">exit</span><span class="syn-op">(</span><span class="syn-num">1</span><span class="syn-op">)</span>
+
+    <span class="syn-kwd">try</span><span class="syn-op">:</span>
+        <span class="syn-var">offset</span> <span class="syn-op">=</span> <span class="syn-fn">parse_num</span><span class="syn-op">(</span><span class="syn-fn">input</span><span class="syn-op">(</span><span class="syn-fn">f</span><span class="syn-str">"{Y}OFFSET:{X} "</span><span class="syn-op">))</span>
+        <span class="syn-var">size</span>   <span class="syn-op">=</span> <span class="syn-fn">parse_num</span><span class="syn-op">(</span><span class="syn-fn">input</span><span class="syn-op">(</span><span class="syn-fn">f</span><span class="syn-str">"{Y}SIZE:{X} "</span><span class="syn-op">))</span>
+    <span class="syn-kwd">except</span> <span class="syn-type">ValueError</span><span class="syn-op">:</span>
+        <span class="syn-fn">print</span><span class="syn-op">(</span><span class="syn-fn">f</span><span class="syn-str">"{R}[-] Invalid number.{X}"</span><span class="syn-op">)</span>
+        <span class="syn-var">sys</span><span class="syn-op">.</span><span class="syn-fn">exit</span><span class="syn-op">(</span><span class="syn-num">1</span><span class="syn-op">)</span>
+
+    <span class="syn-var">output</span> <span class="syn-op">=</span> <span class="syn-op">(</span>
+        <span class="syn-var">sys</span><span class="syn-op">.</span><span class="syn-var">argv</span><span class="syn-op">[</span><span class="syn-num">2</span><span class="syn-op">]</span> <span class="syn-kwd">if</span> <span class="syn-fn">len</span><span class="syn-op">(</span><span class="syn-var">sys</span><span class="syn-op">.</span><span class="syn-var">argv</span><span class="syn-op">)</span> <span class="syn-op">==</span> <span class="syn-num">3</span>
+        <span class="syn-kwd">else</span> <span class="syn-var">os</span><span class="syn-op">.</span><span class="syn-var">path</span><span class="syn-op">.</span><span class="syn-fn">splitext</span><span class="syn-op">(</span><span class="syn-var">filename</span><span class="syn-op">)[</span><span class="syn-num">0</span><span class="syn-op">]</span> <span class="syn-op">+</span> <span class="syn-str">"_extracted.bin"</span>
+    <span class="syn-op">)</span>
+
+    <span class="syn-fn">print</span><span class="syn-op">(</span><span class="syn-fn">f</span><span class="syn-str">"\n{C}[*]{X} Extracting..."</span><span class="syn-op">)</span>
+
+    <span class="syn-kwd">with</span> <span class="syn-fn">open</span><span class="syn-op">(</span><span class="syn-var">filename</span><span class="syn-op">,</span> <span class="syn-str">"rb"</span><span class="syn-op">)</span> <span class="syn-kwd">as</span> <span class="syn-var">f</span><span class="syn-op">:</span>
+        <span class="syn-var">f</span><span class="syn-op">.</span><span class="syn-fn">seek</span><span class="syn-op">(</span><span class="syn-var">offset</span><span class="syn-op">)</span>
+        <span class="syn-var">data</span> <span class="syn-op">=</span> <span class="syn-var">f</span><span class="syn-op">.</span><span class="syn-fn">read</span><span class="syn-op">(</span><span class="syn-var">size</span><span class="syn-op">)</span>
+
+    <span class="syn-kwd">with</span> <span class="syn-fn">open</span><span class="syn-op">(</span><span class="syn-var">output</span><span class="syn-op">,</span> <span class="syn-str">"wb"</span><span class="syn-op">)</span> <span class="syn-kwd">as</span> <span class="syn-var">f</span><span class="syn-op">:</span>
+        <span class="syn-var">f</span><span class="syn-op">.</span><span class="syn-fn">write</span><span class="syn-op">(</span><span class="syn-var">data</span><span class="syn-op">)</span>
+
+    <span class="syn-fn">print</span><span class="syn-op">(</span><span class="syn-fn">f</span><span class="syn-str">"{G}[+]{X} Done"</span><span class="syn-op">)</span>
+    <span class="syn-fn">print</span><span class="syn-op">(</span><span class="syn-fn">f</span><span class="syn-str">"{G}[+]{X} Saved: {output}"</span><span class="syn-op">)</span>
+    <span class="syn-fn">print</span><span class="syn-op">(</span><span class="syn-fn">f</span><span class="syn-str">"{G}[+]{X} Size : {</span><span class="syn-fn">len</span><span class="syn-op">(</span><span class="syn-var">data</span><span class="syn-op">)</span><span class="syn-str">:,} bytes"</span><span class="syn-op">)</span></code></pre>
+</div>
+
+<p>
+  The whole loop takes about a second per file. If the dropped payload
+  looks worth a second look, that’s when I open IDA.
+</p>
+
+<h2>What this doesn’t catch</h2>
+<p>
+  This is a triage pass, not a verdict. A quiet PE with no interesting
+  strings, no missing imports, and no embedded files can still be
+  malicious. What flag ranking gets you is fast sorting: most samples
+  fall out of the funnel at this stage, and the ones that stay are the
+  ones worth the time it takes to reverse them properly.
+</p>
+
+<div class="note note-warn">
+  <span class="note-label">If you’re here from a “free crack” site</span>
+  <p>
+    A “crack” of a legitimate app is a great cover for a payload. I’m
+    writing up the popular crack-hosting sites and what they actually
+    ship. The short version, do not run these binaries. Either pay for
+    the software or use a free alternative. The arithmetic on the other
+    path is very bad.
+  </p>
+</div>
+"""
+
 ARTICLE_BODIES = {
     "battleye-internals": BATTLEYE.strip(),
     "windows-kernel-callbacks": KERNEL_CALLBACKS.strip(),
@@ -843,4 +1034,5 @@ ARTICLE_BODIES = {
     "overlays-and-malware-injection-mechanisms": OVERLAYS.strip(),
     "defeating-malware-obfuscation-xor": XOR.strip(),
     "triage-quasar-rat-case-study": QUASAR.strip(),
+    "fast-triage-three-pe-flags": FAST_TRIAGE.strip(),
 }

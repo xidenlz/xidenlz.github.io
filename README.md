@@ -12,13 +12,16 @@
   <a href="https://xidenlz.github.io/xidenlz/feed.xml">
     <img alt="RSS" src="https://img.shields.io/badge/rss-feed-fbbf24?style=for-the-badge&logo=rss&logoColor=white&labelColor=0a0b0d">
   </a>
+  <a href="https://github.com/xidenlz?tab=followers">
+    <img alt="GitHub followers" src="https://img.shields.io/github/followers/xidenlz?style=for-the-badge&label=followers&logo=github&logoColor=white&labelColor=0a0b0d&color=cbd5e1">
+  </a>
+</p>
+
+<p align="center">
   <a href="mailto:uint64_t@hotmail.com">
     <img alt="Email" src="https://img.shields.io/badge/email-uint64__t%40hotmail.com-cbd5e1?style=for-the-badge&logo=maildotru&logoColor=white&labelColor=0a0b0d">
   </a>
   <img alt="Discord" src="https://img.shields.io/badge/discord-xdenlz-5865f2?style=for-the-badge&logo=discord&logoColor=white&labelColor=0a0b0d">
-  <a href="https://github.com/xidenlz?tab=followers">
-    <img alt="GitHub followers" src="https://img.shields.io/github/followers/xidenlz?style=for-the-badge&label=followers&logo=github&logoColor=white&labelColor=0a0b0d&color=cbd5e1">
-  </a>
 </p>
 
 ---

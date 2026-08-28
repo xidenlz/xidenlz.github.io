@@ -482,6 +482,34 @@ ARTICLES = {
         "word_count": len(ARTICLE_BODIES["defeating-malware-obfuscation-xor"].split()),
         "body": ARTICLE_BODIES["defeating-malware-obfuscation-xor"],
     },
+    "fast-triage-three-pe-flags": {
+        "kind": "post",
+        "slug": "fast-triage-three-pe-flags",
+        "parent": "blog",
+        "category": "Malware triage",
+        "title": "Fast triage: three PE flags before I open IDA",
+        "dek": (
+            "A faster pass than opening IDA every time. Three questions I "
+            "answer from the PE first: does it talk to the network, does "
+            "it have real imports, and does it drop another binary."
+        ),
+        "short_dek": (
+            "Three questions I answer from the PE first: does it talk to "
+            "the network, does it have real imports, and does it drop "
+            "another binary."
+        ),
+        "meta_description": (
+            "How I triage Windows binaries fast by reading the PE first. "
+            "Three flags I check before opening a disassembler: internet "
+            "activity, dynamic import resolution, and embedded payloads."
+        ),
+        "tags": ["Malware triage", "PE format", "Static analysis",
+                 "Zydis", "FLOSS"],
+        "date": date(2026, 8, 28),
+        "date_display": _fmt(date(2026, 8, 28)),
+        "word_count": len(ARTICLE_BODIES["fast-triage-three-pe-flags"].split()),
+        "body": ARTICLE_BODIES["fast-triage-three-pe-flags"],
+    },
     "triage-quasar-rat-case-study": {
         "kind": "post",
         "slug": "triage-quasar-rat-case-study",

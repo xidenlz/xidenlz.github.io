@@ -6,7 +6,15 @@
     <atom:link href="https://xidenlz.github.io/xidenlz/feed.xml" rel="self" type="application/rss+xml" />
     <description>Reverse engineering, Windows internals, and anti-cheat research.</description>
     <language>en</language>
-    <lastBuildDate>Fri, 28 Aug 2026 17:19:37 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 28 Aug 2026 17:53:05 +0000</lastBuildDate>
+    <item>
+      <title>Fast triage: three PE flags before I open IDA</title>
+      <link>https://xidenlz.github.io/xidenlz/blog/fast-triage-three-pe-flags.html</link>
+      <guid isPermaLink="true">https://xidenlz.github.io/xidenlz/blog/fast-triage-three-pe-flags.html</guid>
+      <pubDate>Fri, 28 Aug 2026 00:00:00 +0000</pubDate>
+      <category>Malware triage</category>
+      <description>How I triage Windows binaries fast by reading the PE first. Three flags I check before opening a disassembler: internet activity, dynamic import resolution, and embedded payloads.</description>
+    </item>
     <item>
       <title>BattlEye: kernel-side stack walking</title>
       <link>https://xidenlz.github.io/xidenlz/research/battleye-internals.html</link>
