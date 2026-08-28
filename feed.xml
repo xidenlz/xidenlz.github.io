@@ -6,14 +6,14 @@
     <atom:link href="https://xidenlz.github.io/xidenlz/feed.xml" rel="self" type="application/rss+xml" />
     <description>Reverse engineering, Windows internals, and anti-cheat research.</description>
     <language>en</language>
-    <lastBuildDate>Fri, 28 Aug 2026 17:53:05 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 28 Aug 2026 18:08:07 +0000</lastBuildDate>
     <item>
-      <title>Fast triage: three PE flags before I open IDA</title>
-      <link>https://xidenlz.github.io/xidenlz/blog/fast-triage-three-pe-flags.html</link>
-      <guid isPermaLink="true">https://xidenlz.github.io/xidenlz/blog/fast-triage-three-pe-flags.html</guid>
+      <title>Three PE flags I check before opening IDA</title>
+      <link>https://xidenlz.github.io/xidenlz/blog/three-pe-flags-before-ida.html</link>
+      <guid isPermaLink="true">https://xidenlz.github.io/xidenlz/blog/three-pe-flags-before-ida.html</guid>
       <pubDate>Fri, 28 Aug 2026 00:00:00 +0000</pubDate>
-      <category>Malware triage</category>
-      <description>How I triage Windows binaries fast by reading the PE first. Three flags I check before opening a disassembler: internet activity, dynamic import resolution, and embedded payloads.</description>
+      <category>Malware analysis</category>
+      <description>How I screen Windows binaries fast by reading the PE first. Three flags I check before opening a disassembler: internet activity, dynamic import resolution, and embedded payloads.</description>
     </item>
     <item>
       <title>BattlEye: kernel-side stack walking</title>
@@ -57,11 +57,11 @@
     </item>
     <item>
       <title>Quasar RAT dressed as a game cheat</title>
-      <link>https://xidenlz.github.io/xidenlz/blog/triage-quasar-rat-case-study.html</link>
-      <guid isPermaLink="true">https://xidenlz.github.io/xidenlz/blog/triage-quasar-rat-case-study.html</guid>
+      <link>https://xidenlz.github.io/xidenlz/blog/quasar-rat-case-study.html</link>
+      <guid isPermaLink="true">https://xidenlz.github.io/xidenlz/blog/quasar-rat-case-study.html</guid>
       <pubDate>Thu, 22 May 2025 00:00:00 +0000</pubDate>
-      <category>Malware triage</category>
-      <description>Triage of a Quasar RAT submitted as a game cheat, decoy VB DLL, Go dropper, Portmap C2, and how it was caught.</description>
+      <category>Malware analysis</category>
+      <description>Analysis of a Quasar RAT submitted as a game cheat, decoy VB DLL, Go dropper, Portmap C2, and how it was caught.</description>
     </item>
   </channel>
 </rss>

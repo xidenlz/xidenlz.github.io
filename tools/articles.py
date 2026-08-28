@@ -730,7 +730,7 @@ XOR = r"""
 
 QUASAR = r"""
 <p>
-  This one came out of routine community triage. An archive was submitted
+  This one came out of routine community screening. An archive was submitted
   to a game-security board as “a working cheat”, and it got flagged for a
   closer look because it looked odd, three binaries, one of them written
   in Go, and an uploader account that was less than a week old.
@@ -829,17 +829,17 @@ QUASAR = r"""
   The individual pieces here are ordinary. Quasar RAT is a decade old;
   Portmap tunneling is a standard C2 pattern; “disguise malware as a game
   cheat” is an old trick because the target audience is habituated to
-  disabling AV. What made the triage clean was combining a compiler check
+  disabling AV. What made the review clean was combining a compiler check
   on the dropper, a sandbox run, and a bit of correlation on the uploader
   metadata. None of those alone is decisive; together they took about
   fifteen minutes and left no doubt.
 </p>
 """
 
-FAST_TRIAGE = r"""
+PE_FLAGS = r"""
 <p>
   Some weeks I look at a binary a day. Other weeks I sit with one file for
-  a week. What I don’t do anymore is start every triage by loading the
+  a week. What I don’t do anymore is start every screening by loading the
   sample into IDA and reading disassembly. That reads well as a workflow
   when you’re doing it once. When you’re doing it every day, it burns
   hours before you’ve even decided whether the file is worth the time.
@@ -860,7 +860,7 @@ FAST_TRIAGE = r"""
   running an unpacker, and without opening the file in a heavy tool.
 </p>
 <p>
-  Three of those signals turn out to be enough to sort most triage into
+  Three of those signals turn out to be enough to sort most reviews into
   “look closer” or “close the file and move on”.
 </p>
 
@@ -897,7 +897,7 @@ FAST_TRIAGE = r"""
   them in the Import Address Table. That keeps
   <code>LoadLibrary</code>/<code>OpenProcess</code>/<code>VirtualAllocEx</code>
   from showing up in a static import listing, and it defeats the fastest
-  form of triage.
+  form of screening.
 </p>
 <p>
   You can chase that resolution in IDA or in a debugger. That works, but
@@ -911,23 +911,23 @@ FAST_TRIAGE = r"""
     <span class="snippet-lang">tool output</span>
     <span class="snippet-name">dynamic import trace</span>
   </div>
-  <pre><code>[CALL] RVA 0x0020D17B   call [0x00000000003C5218]
-              0x0020D15D  jnz  0x000000000020D196
-              0x0020D15F  lea  rcx, [0x0000000000535CA0]
-            possible function arg: "ntdll.dll"
-              0x0020D166  call [0x00000000003C5210]
-              0x0020D16C  test rax, rax
-              0x0020D16F  jz   0x000000000020D18A
-              0x0020D171  lea  rdx, [0x0000000000535CB0]
-            possible function arg: "RtlVerifyVersionInfo"
-              0x0020D178  mov  rcx, rax</code></pre>
+  <pre><code><span class="syn-fn">[CALL]</span> <span class="syn-com">RVA</span> <span class="syn-num">0x0020D17B</span>   <span class="syn-kwd">call</span> <span class="syn-op">[</span><span class="syn-num">0x00000000003C5218</span><span class="syn-op">]</span>
+              <span class="syn-num">0x0020D15D</span>  <span class="syn-kwd">jnz</span>  <span class="syn-num">0x000000000020D196</span>
+              <span class="syn-num">0x0020D15F</span>  <span class="syn-kwd">lea</span>  <span class="syn-var">rcx</span><span class="syn-op">,</span> <span class="syn-op">[</span><span class="syn-num">0x0000000000535CA0</span><span class="syn-op">]</span>
+            <span class="syn-com">possible function arg:</span> <span class="syn-str">"ntdll.dll"</span>
+              <span class="syn-num">0x0020D166</span>  <span class="syn-kwd">call</span> <span class="syn-op">[</span><span class="syn-num">0x00000000003C5210</span><span class="syn-op">]</span>
+              <span class="syn-num">0x0020D16C</span>  <span class="syn-kwd">test</span> <span class="syn-var">rax</span><span class="syn-op">,</span> <span class="syn-var">rax</span>
+              <span class="syn-num">0x0020D16F</span>  <span class="syn-kwd">jz</span>   <span class="syn-num">0x000000000020D18A</span>
+              <span class="syn-num">0x0020D171</span>  <span class="syn-kwd">lea</span>  <span class="syn-var">rdx</span><span class="syn-op">,</span> <span class="syn-op">[</span><span class="syn-num">0x0000000000535CB0</span><span class="syn-op">]</span>
+            <span class="syn-com">possible function arg:</span> <span class="syn-str">"RtlVerifyVersionInfo"</span>
+              <span class="syn-num">0x0020D178</span>  <span class="syn-kwd">mov</span>  <span class="syn-var">rcx</span><span class="syn-op">,</span> <span class="syn-var">rax</span></code></pre>
 </div>
 
 <p>
   Two <code>lea</code> loads of the same string reference right before a
   call: that’s almost always a <code>GetProcAddress</code> on
   <code>ntdll!RtlVerifyVersionInfo</code>. Doing that at scale by hand is
-  what makes triage slow. Doing it with a Zydis pass over the code section
+  what makes screening slow. Doing it with a Zydis pass over the code section
   takes seconds.
 </p>
 <p>
@@ -1008,7 +1008,7 @@ FAST_TRIAGE = r"""
 
 <h2>What this doesn’t catch</h2>
 <p>
-  This is a triage pass, not a verdict. A quiet PE with no interesting
+  This is a screening pass, not a verdict. A quiet PE with no interesting
   strings, no missing imports, and no embedded files can still be
   malicious. What flag ranking gets you is fast sorting: most samples
   fall out of the funnel at this stage, and the ones that stay are the
@@ -1033,6 +1033,6 @@ ARTICLE_BODIES = {
     "pe-headers-deep-dive": PE_HEADERS.strip(),
     "overlays-and-malware-injection-mechanisms": OVERLAYS.strip(),
     "defeating-malware-obfuscation-xor": XOR.strip(),
-    "triage-quasar-rat-case-study": QUASAR.strip(),
-    "fast-triage-three-pe-flags": FAST_TRIAGE.strip(),
+    "quasar-rat-case-study": QUASAR.strip(),
+    "three-pe-flags-before-ida": PE_FLAGS.strip(),
 }

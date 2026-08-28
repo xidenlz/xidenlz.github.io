@@ -58,7 +58,7 @@ ABOUT = {
                 "x86 / x64 disassembly",
                 "PE and ELF structure",
                 "Memory analysis and pattern scanning",
-                "Malware triage",
+                "Malware analysis",
             ],
         },
         {
@@ -139,8 +139,8 @@ RESEARCH_INDEX = {
 PROJECTS_INDEX = {
     "slug": "projects",
     "title": "Projects",
-    "description": "Windows injection, hooking utilities, and binary triage tools.",
-    "subtitle": "Injection, hooking, and triage code.",
+    "description": "Windows injection, hooking utilities, and binary analysis tools.",
+    "subtitle": "Injection, hooking, and analysis code.",
     "crumbs": [("home", "index.html"), ("projects", "projects.html")],
     "og": "projects",
 }
@@ -148,7 +148,7 @@ PROJECTS_INDEX = {
 BLOG_INDEX = {
     "slug": "blog",
     "title": "Blog",
-    "description": "Short notes on reverse engineering, kernel work, and malware triage.",
+    "description": "Short notes on reverse engineering, kernel work, and malware analysis.",
     "subtitle": "Short notes. Things I want to write down before I forget them.",
     "crumbs": [("home", "index.html"), ("blog", "blog.html")],
     "og": "blog",
@@ -162,7 +162,7 @@ CONTACT = {
     "crumbs": [("home", "index.html"), ("contact", "contact.html")],
     "og": "contact",
     "intro": (
-        "I'm happy to talk about anti-cheat, kernel work, malware triage, "
+        "I'm happy to talk about anti-cheat, kernel work, malware analysis, "
         "or an internship opportunity. Email is the fastest way to reach me; "
         "Discord works too."
     ),
@@ -287,16 +287,16 @@ PROJECTS = {
     },
     "pe-analyzer": {
         "slug": "pe-analyzer",
-        "category": "Binary triage",
+        "category": "Binary analysis",
         "status": "Private tooling",
         "stack": "Python · C++ · Zydis",
         "title": "PE Analyzer Suite",
         "dek": (
-            "Sample-triage tooling, Python for PE/ELF inspection and payload "
+            "Sample-inspection tooling. Python for PE/ELF parsing and payload "
             "extraction, C++/Zydis for instruction-level tracing."
         ),
         "long_dek": (
-            "Tooling I use for sample triage. Python scripts do the boring "
+            "Tooling I use to look at incoming samples. Python scripts do the boring "
             "part, parsing PE/ELF headers, dumping embedded binaries by "
             "computing exact offset and size, running heuristic scans over "
             "strings and section entropy. A separate C++ tool uses Zydis to "
@@ -315,7 +315,7 @@ PROJECTS = {
              "Zydis-backed x86/x64 pass for tracing dynamic import "
              "resolution and following calls to <code>GetProcAddress</code>."),
         ],
-        "tags": ["Python", "C++", "Zydis", "PE/ELF", "Triage"],
+        "tags": ["Python", "C++", "Zydis", "PE/ELF", "Analysis"],
         "link_url": None,
     },
 }
@@ -482,12 +482,12 @@ ARTICLES = {
         "word_count": len(ARTICLE_BODIES["defeating-malware-obfuscation-xor"].split()),
         "body": ARTICLE_BODIES["defeating-malware-obfuscation-xor"],
     },
-    "fast-triage-three-pe-flags": {
+    "three-pe-flags-before-ida": {
         "kind": "post",
-        "slug": "fast-triage-three-pe-flags",
+        "slug": "three-pe-flags-before-ida",
         "parent": "blog",
-        "category": "Malware triage",
-        "title": "Fast triage: three PE flags before I open IDA",
+        "category": "Malware analysis",
+        "title": "Three PE flags I check before opening IDA",
         "dek": (
             "A faster pass than opening IDA every time. Three questions I "
             "answer from the PE first: does it talk to the network, does "
@@ -499,22 +499,22 @@ ARTICLES = {
             "another binary."
         ),
         "meta_description": (
-            "How I triage Windows binaries fast by reading the PE first. "
+            "How I screen Windows binaries fast by reading the PE first. "
             "Three flags I check before opening a disassembler: internet "
             "activity, dynamic import resolution, and embedded payloads."
         ),
-        "tags": ["Malware triage", "PE format", "Static analysis",
+        "tags": ["Malware analysis", "PE format", "Static analysis",
                  "Zydis", "FLOSS"],
         "date": date(2026, 8, 28),
         "date_display": _fmt(date(2026, 8, 28)),
-        "word_count": len(ARTICLE_BODIES["fast-triage-three-pe-flags"].split()),
-        "body": ARTICLE_BODIES["fast-triage-three-pe-flags"],
+        "word_count": len(ARTICLE_BODIES["three-pe-flags-before-ida"].split()),
+        "body": ARTICLE_BODIES["three-pe-flags-before-ida"],
     },
-    "triage-quasar-rat-case-study": {
+    "quasar-rat-case-study": {
         "kind": "post",
-        "slug": "triage-quasar-rat-case-study",
+        "slug": "quasar-rat-case-study",
         "parent": "blog",
-        "category": "Malware triage",
+        "category": "Malware analysis",
         "title": "Quasar RAT dressed as a game cheat",
         "dek": (
             "A community submission that looked like a cheat: a hollow VB DLL, "
@@ -522,16 +522,16 @@ ARTICLES = {
         ),
         "short_dek": (
             "A hollow VB DLL, a Go dropper, and a Quasar RAT reaching a "
-            "Portmap tunnel, a submission I flagged during triage."
+            "Portmap tunnel, a submission I flagged during a review."
         ),
         "meta_description": (
-            "Triage of a Quasar RAT submitted as a game cheat, decoy VB DLL, "
+            "Analysis of a Quasar RAT submitted as a game cheat, decoy VB DLL, "
             "Go dropper, Portmap C2, and how it was caught."
         ),
-        "tags": ["Malware triage", "Quasar RAT", "Any.Run", "Threat intel"],
+        "tags": ["Malware analysis", "Quasar RAT", "Any.Run", "Threat intel"],
         "date": date(2025, 5, 22),
         "date_display": _fmt(date(2025, 5, 22)),
-        "word_count": len(ARTICLE_BODIES["triage-quasar-rat-case-study"].split()),
-        "body": ARTICLE_BODIES["triage-quasar-rat-case-study"],
+        "word_count": len(ARTICLE_BODIES["quasar-rat-case-study"].split()),
+        "body": ARTICLE_BODIES["quasar-rat-case-study"],
     },
 }

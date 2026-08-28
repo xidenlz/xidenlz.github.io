@@ -3,23 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fast triage: three PE flags before I open IDA · Musaed</title>
-  <meta name="description" content="How I triage Windows binaries fast by reading the PE first. Three flags I check before opening a disassembler: internet activity, dynamic import resolution, and embedded payloads.">
+  <title>Three PE flags I check before opening IDA · Musaed</title>
+  <meta name="description" content="How I screen Windows binaries fast by reading the PE first. Three flags I check before opening a disassembler: internet activity, dynamic import resolution, and embedded payloads.">
   <meta name="author" content="Musaed">
   <meta name="theme-color" content="#0a0b0d">
-  <link rel="canonical" href="https://xidenlz.github.io/xidenlz/blog/fast-triage-three-pe-flags.html">
+  <link rel="canonical" href="https://xidenlz.github.io/xidenlz/blog/three-pe-flags-before-ida.html">
   <meta property="og:site_name" content="Musaed">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://xidenlz.github.io/xidenlz/blog/fast-triage-three-pe-flags.html">
-  <meta property="og:title" content="Fast triage: three PE flags before I open IDA">
-  <meta property="og:description" content="How I triage Windows binaries fast by reading the PE first. Three flags I check before opening a disassembler: internet activity, dynamic import resolution, and embedded payloads.">
-  <meta property="og:image" content="https://xidenlz.github.io/xidenlz/assets/og/blog-fast-triage-three-pe-flags.png">
+  <meta property="og:url" content="https://xidenlz.github.io/xidenlz/blog/three-pe-flags-before-ida.html">
+  <meta property="og:title" content="Three PE flags I check before opening IDA">
+  <meta property="og:description" content="How I screen Windows binaries fast by reading the PE first. Three flags I check before opening a disassembler: internet activity, dynamic import resolution, and embedded payloads.">
+  <meta property="og:image" content="https://xidenlz.github.io/xidenlz/assets/og/blog-three-pe-flags-before-ida.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Fast triage: three PE flags before I open IDA">
-  <meta name="twitter:description" content="How I triage Windows binaries fast by reading the PE first. Three flags I check before opening a disassembler: internet activity, dynamic import resolution, and embedded payloads.">
-  <meta name="twitter:image" content="https://xidenlz.github.io/xidenlz/assets/og/blog-fast-triage-three-pe-flags.png">
+  <meta name="twitter:title" content="Three PE flags I check before opening IDA">
+  <meta name="twitter:description" content="How I screen Windows binaries fast by reading the PE first. Three flags I check before opening a disassembler: internet activity, dynamic import resolution, and embedded payloads.">
+  <meta name="twitter:image" content="https://xidenlz.github.io/xidenlz/assets/og/blog-three-pe-flags-before-ida.png">
   <meta property="article:published_time" content="2026-08-28">
   <meta property="article:author" content="Musaed">
   <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
@@ -29,7 +29,7 @@
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="../css/style.css">
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Fast triage: three PE flags before I open IDA", "author": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}, "datePublished": "2026-08-28", "url": "https://xidenlz.github.io/xidenlz/blog/fast-triage-three-pe-flags.html", "description": "How I triage Windows binaries fast by reading the PE first. Three flags I check before opening a disassembler: internet activity, dynamic import resolution, and embedded payloads.", "image": "https://xidenlz.github.io/xidenlz/assets/og/blog-fast-triage-three-pe-flags.png", "publisher": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Three PE flags I check before opening IDA", "author": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}, "datePublished": "2026-08-28", "url": "https://xidenlz.github.io/xidenlz/blog/three-pe-flags-before-ida.html", "description": "How I screen Windows binaries fast by reading the PE first. Three flags I check before opening a disassembler: internet activity, dynamic import resolution, and embedded payloads.", "image": "https://xidenlz.github.io/xidenlz/assets/og/blog-three-pe-flags-before-ida.png", "publisher": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}}</script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -64,16 +64,16 @@
         <div class="crumbs">
           <a href="../index.html">home</a> /
           <a href="../blog.html">blog</a> /
-          <span aria-current="page">fast-triage-three-pe-flags</span>
+          <span aria-current="page">three-pe-flags-before-ida</span>
         </div>
-        <h1>Fast triage: three PE flags before I open IDA</h1>
-        <div class="byline"><span>Musaed</span><span><b>Published</b> August 28, 2026</span><span><b>Category</b> Malware triage</span><span><b>Read</b> ~5 min</span></div>
+        <h1>Three PE flags I check before opening IDA</h1>
+        <div class="byline"><span>Musaed</span><span><b>Published</b> August 28, 2026</span><span><b>Category</b> Malware analysis</span><span><b>Read</b> ~5 min</span></div>
       </div>
       <div class="article">
         <article class="prose">
         <p>
   Some weeks I look at a binary a day. Other weeks I sit with one file for
-  a week. What I don’t do anymore is start every triage by loading the
+  a week. What I don’t do anymore is start every screening by loading the
   sample into IDA and reading disassembly. That reads well as a workflow
   when you’re doing it once. When you’re doing it every day, it burns
   hours before you’ve even decided whether the file is worth the time.
@@ -94,7 +94,7 @@
   running an unpacker, and without opening the file in a heavy tool.
 </p>
 <p>
-  Three of those signals turn out to be enough to sort most triage into
+  Three of those signals turn out to be enough to sort most reviews into
   “look closer” or “close the file and move on”.
 </p>
 
@@ -131,7 +131,7 @@
   them in the Import Address Table. That keeps
   <code>LoadLibrary</code>/<code>OpenProcess</code>/<code>VirtualAllocEx</code>
   from showing up in a static import listing, and it defeats the fastest
-  form of triage.
+  form of screening.
 </p>
 <p>
   You can chase that resolution in IDA or in a debugger. That works, but
@@ -145,23 +145,23 @@
     <span class="snippet-lang">tool output</span>
     <span class="snippet-name">dynamic import trace</span>
   </div>
-  <pre><code>[CALL] RVA 0x0020D17B   call [0x00000000003C5218]
-              0x0020D15D  jnz  0x000000000020D196
-              0x0020D15F  lea  rcx, [0x0000000000535CA0]
-            possible function arg: "ntdll.dll"
-              0x0020D166  call [0x00000000003C5210]
-              0x0020D16C  test rax, rax
-              0x0020D16F  jz   0x000000000020D18A
-              0x0020D171  lea  rdx, [0x0000000000535CB0]
-            possible function arg: "RtlVerifyVersionInfo"
-              0x0020D178  mov  rcx, rax</code></pre>
+  <pre><code><span class="syn-fn">[CALL]</span> <span class="syn-com">RVA</span> <span class="syn-num">0x0020D17B</span>   <span class="syn-kwd">call</span> <span class="syn-op">[</span><span class="syn-num">0x00000000003C5218</span><span class="syn-op">]</span>
+              <span class="syn-num">0x0020D15D</span>  <span class="syn-kwd">jnz</span>  <span class="syn-num">0x000000000020D196</span>
+              <span class="syn-num">0x0020D15F</span>  <span class="syn-kwd">lea</span>  <span class="syn-var">rcx</span><span class="syn-op">,</span> <span class="syn-op">[</span><span class="syn-num">0x0000000000535CA0</span><span class="syn-op">]</span>
+            <span class="syn-com">possible function arg:</span> <span class="syn-str">"ntdll.dll"</span>
+              <span class="syn-num">0x0020D166</span>  <span class="syn-kwd">call</span> <span class="syn-op">[</span><span class="syn-num">0x00000000003C5210</span><span class="syn-op">]</span>
+              <span class="syn-num">0x0020D16C</span>  <span class="syn-kwd">test</span> <span class="syn-var">rax</span><span class="syn-op">,</span> <span class="syn-var">rax</span>
+              <span class="syn-num">0x0020D16F</span>  <span class="syn-kwd">jz</span>   <span class="syn-num">0x000000000020D18A</span>
+              <span class="syn-num">0x0020D171</span>  <span class="syn-kwd">lea</span>  <span class="syn-var">rdx</span><span class="syn-op">,</span> <span class="syn-op">[</span><span class="syn-num">0x0000000000535CB0</span><span class="syn-op">]</span>
+            <span class="syn-com">possible function arg:</span> <span class="syn-str">"RtlVerifyVersionInfo"</span>
+              <span class="syn-num">0x0020D178</span>  <span class="syn-kwd">mov</span>  <span class="syn-var">rcx</span><span class="syn-op">,</span> <span class="syn-var">rax</span></code></pre>
 </div>
 
 <p>
   Two <code>lea</code> loads of the same string reference right before a
   call: that’s almost always a <code>GetProcAddress</code> on
   <code>ntdll!RtlVerifyVersionInfo</code>. Doing that at scale by hand is
-  what makes triage slow. Doing it with a Zydis pass over the code section
+  what makes screening slow. Doing it with a Zydis pass over the code section
   takes seconds.
 </p>
 <p>
@@ -242,7 +242,7 @@
 
 <h2>What this doesn’t catch</h2>
 <p>
-  This is a triage pass, not a verdict. A quiet PE with no interesting
+  This is a screening pass, not a verdict. A quiet PE with no interesting
   strings, no missing imports, and no embedded files can still be
   malicious. What flag ranking gets you is fast sorting: most samples
   fall out of the funnel at this stage, and the ones that stay are the
@@ -259,7 +259,7 @@
     path is very bad.
   </p>
 </div>
-        <ul class="tags" aria-label="Tags"><li>Malware triage</li><li>PE format</li><li>Static analysis</li><li>Zydis</li><li>FLOSS</li></ul>
+        <ul class="tags" aria-label="Tags"><li>Malware analysis</li><li>PE format</li><li>Static analysis</li><li>Zydis</li><li>FLOSS</li></ul>
       </article>
         <aside class="toc" aria-label="On this page">
         <details open>

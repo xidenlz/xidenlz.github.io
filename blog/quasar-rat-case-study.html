@@ -4,22 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quasar RAT dressed as a game cheat · Musaed</title>
-  <meta name="description" content="Triage of a Quasar RAT submitted as a game cheat, decoy VB DLL, Go dropper, Portmap C2, and how it was caught.">
+  <meta name="description" content="Analysis of a Quasar RAT submitted as a game cheat, decoy VB DLL, Go dropper, Portmap C2, and how it was caught.">
   <meta name="author" content="Musaed">
   <meta name="theme-color" content="#0a0b0d">
-  <link rel="canonical" href="https://xidenlz.github.io/xidenlz/blog/triage-quasar-rat-case-study.html">
+  <link rel="canonical" href="https://xidenlz.github.io/xidenlz/blog/quasar-rat-case-study.html">
   <meta property="og:site_name" content="Musaed">
   <meta property="og:type" content="article">
-  <meta property="og:url" content="https://xidenlz.github.io/xidenlz/blog/triage-quasar-rat-case-study.html">
+  <meta property="og:url" content="https://xidenlz.github.io/xidenlz/blog/quasar-rat-case-study.html">
   <meta property="og:title" content="Quasar RAT dressed as a game cheat">
-  <meta property="og:description" content="Triage of a Quasar RAT submitted as a game cheat, decoy VB DLL, Go dropper, Portmap C2, and how it was caught.">
-  <meta property="og:image" content="https://xidenlz.github.io/xidenlz/assets/og/blog-triage-quasar-rat-case-study.png">
+  <meta property="og:description" content="Analysis of a Quasar RAT submitted as a game cheat, decoy VB DLL, Go dropper, Portmap C2, and how it was caught.">
+  <meta property="og:image" content="https://xidenlz.github.io/xidenlz/assets/og/blog-quasar-rat-case-study.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Quasar RAT dressed as a game cheat">
-  <meta name="twitter:description" content="Triage of a Quasar RAT submitted as a game cheat, decoy VB DLL, Go dropper, Portmap C2, and how it was caught.">
-  <meta name="twitter:image" content="https://xidenlz.github.io/xidenlz/assets/og/blog-triage-quasar-rat-case-study.png">
+  <meta name="twitter:description" content="Analysis of a Quasar RAT submitted as a game cheat, decoy VB DLL, Go dropper, Portmap C2, and how it was caught.">
+  <meta name="twitter:image" content="https://xidenlz.github.io/xidenlz/assets/og/blog-quasar-rat-case-study.png">
   <meta property="article:published_time" content="2025-05-22">
   <meta property="article:author" content="Musaed">
   <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
@@ -29,7 +29,7 @@
   <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="../css/style.css">
-  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Quasar RAT dressed as a game cheat", "author": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}, "datePublished": "2025-05-22", "url": "https://xidenlz.github.io/xidenlz/blog/triage-quasar-rat-case-study.html", "description": "Triage of a Quasar RAT submitted as a game cheat, decoy VB DLL, Go dropper, Portmap C2, and how it was caught.", "image": "https://xidenlz.github.io/xidenlz/assets/og/blog-triage-quasar-rat-case-study.png", "publisher": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Quasar RAT dressed as a game cheat", "author": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}, "datePublished": "2025-05-22", "url": "https://xidenlz.github.io/xidenlz/blog/quasar-rat-case-study.html", "description": "Analysis of a Quasar RAT submitted as a game cheat, decoy VB DLL, Go dropper, Portmap C2, and how it was caught.", "image": "https://xidenlz.github.io/xidenlz/assets/og/blog-quasar-rat-case-study.png", "publisher": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}}</script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -64,15 +64,15 @@
         <div class="crumbs">
           <a href="../index.html">home</a> /
           <a href="../blog.html">blog</a> /
-          <span aria-current="page">triage-quasar-rat-case-study</span>
+          <span aria-current="page">quasar-rat-case-study</span>
         </div>
         <h1>Quasar RAT dressed as a game cheat</h1>
-        <div class="byline"><span>Musaed</span><span><b>Published</b> May 22, 2025</span><span><b>Category</b> Malware triage</span><span><b>Read</b> ~2 min</span></div>
+        <div class="byline"><span>Musaed</span><span><b>Published</b> May 22, 2025</span><span><b>Category</b> Malware analysis</span><span><b>Read</b> ~2 min</span></div>
       </div>
       <div class="article">
         <article class="prose">
         <p>
-  This one came out of routine community triage. An archive was submitted
+  This one came out of routine community screening. An archive was submitted
   to a game-security board as “a working cheat”, and it got flagged for a
   closer look because it looked odd, three binaries, one of them written
   in Go, and an uploader account that was less than a week old.
@@ -171,12 +171,12 @@
   The individual pieces here are ordinary. Quasar RAT is a decade old;
   Portmap tunneling is a standard C2 pattern; “disguise malware as a game
   cheat” is an old trick because the target audience is habituated to
-  disabling AV. What made the triage clean was combining a compiler check
+  disabling AV. What made the review clean was combining a compiler check
   on the dropper, a sandbox run, and a bit of correlation on the uploader
   metadata. None of those alone is decisive; together they took about
   fifteen minutes and left no doubt.
 </p>
-        <ul class="tags" aria-label="Tags"><li>Malware triage</li><li>Quasar RAT</li><li>Any.Run</li><li>Threat intel</li></ul>
+        <ul class="tags" aria-label="Tags"><li>Malware analysis</li><li>Quasar RAT</li><li>Any.Run</li><li>Threat intel</li></ul>
       </article>
         <aside class="toc" aria-label="On this page">
         <details open>

@@ -133,13 +133,13 @@ def main():
 
     make_card(OUT / "projects.png",
               "Projects",
-              "Injection, hooking, triage.",
+              "Injection, hooking, analysis.",
               "Framework code and reverse-engineering tools.")
 
     make_card(OUT / "blog.png",
               "Blog",
               "Short notes and findings.",
-              "Reverse engineering, kernel work, malware triage.")
+              "Reverse engineering, kernel work, malware analysis.")
 
     make_card(OUT / "contact.png",
               "Contact",
