@@ -3,117 +3,133 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BattlEye: Stack Walking | Musaed &lt;/&gt;</title>
-  <meta name="description" content="Kernel-side stack walking analysis and origin validation in BattlEye.">
-  <meta name="theme-color" content="#38bdf8">
-  <meta property="og:title" content="BattlEye: Stack Walking | Musaed &lt;/&gt;">
-  <meta property="og:description" content="Kernel-side stack walking analysis and origin validation in BattlEye.">
+  <title>BattlEye: kernel-side stack walking · Musaed</title>
+  <meta name="description" content="BattlEye kernel-side stack walking — thread lookup, APC-driven capture with RtlWalkFrameChain, image-boundary checks, and report dispatch.">
+  <meta name="author" content="Musaed">
+  <meta name="theme-color" content="#0a0b0d">
+  <link rel="canonical" href="https://xidenlz.github.io/xidenlz/research/battleye-internals.html">
+  <meta property="og:site_name" content="Musaed">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://xidenlz.github.io/xidenlz/research/battleye-internals.html">
+  <meta property="og:title" content="BattlEye: kernel-side stack walking">
+  <meta property="og:description" content="BattlEye kernel-side stack walking — thread lookup, APC-driven capture with RtlWalkFrameChain, image-boundary checks, and report dispatch.">
+  <meta property="og:image" content="https://xidenlz.github.io/xidenlz/assets/og/research-battleye-internals.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="BattlEye: kernel-side stack walking">
+  <meta name="twitter:description" content="BattlEye kernel-side stack walking — thread lookup, APC-driven capture with RtlWalkFrameChain, image-boundary checks, and report dispatch.">
+  <meta name="twitter:image" content="https://xidenlz.github.io/xidenlz/assets/og/research-battleye-internals.png">
+  <meta property="article:published_time" content="2026-06-12">
+  <meta property="article:author" content="Musaed">
   <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="alternate" type="application/rss+xml" title="Musaed — Research feed" href="https://xidenlz.github.io/xidenlz/feed.xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "BattlEye: kernel-side stack walking", "author": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}, "datePublished": "2026-06-12", "url": "https://xidenlz.github.io/xidenlz/research/battleye-internals.html", "description": "BattlEye kernel-side stack walking \u2014 thread lookup, APC-driven capture with RtlWalkFrameChain, image-boundary checks, and report dispatch.", "image": "https://xidenlz.github.io/xidenlz/assets/og/research-battleye-internals.png", "publisher": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}}</script>
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-  <header class="site-header">
-    <div class="container nav-container">
-      <a href="../index.html" class="brand-link" aria-label="Musaed Home">
-        Musaed <span class="brand-prefix">&lt;/&gt;</span>
+  <header class="masthead">
+    <div class="wrap masthead-inner">
+      <a class="wordmark" href="../index.html" aria-label="Musaed — home">
+        Musaed <span>&lt;/&gt;</span>
       </a>
-      <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
+      <button class="nav-toggle" type="button"
+              aria-label="Toggle navigation" aria-expanded="false"
+              aria-controls="nav-list">
+        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
-      <nav>
-        <ul class="nav-links">
-          <li><a href="../index.html" class="nav-link">Home</a></li>
-          <li><a href="../about.html" class="nav-link">About</a></li>
-          <li><a href="../research.html" class="nav-link active">Research</a></li>
-          <li><a href="../projects.html" class="nav-link">Projects</a></li>
-          <li><a href="../blog.html" class="nav-link">Blog</a></li>
-          <li><a href="../contact.html" class="nav-link">Contact</a></li>
+      <nav aria-label="Primary">
+        <ul id="nav-list" class="nav-list">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="../about.html">About</a></li>
+            <li><a href="../research.html" aria-current="page">Research</a></li>
+            <li><a href="../projects.html">Projects</a></li>
+            <li><a href="../blog.html">Blog</a></li>
+            <li><a href="../contact.html">Contact</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
-  <main>
-    <div class="container article-container">
-      
-      <div class="article-header">
-        <div class="article-breadcrumbs">
-          <a href="../index.html">home</a> / <a href="../research.html">research</a> / <span>battleye-stack-walking</span>
+  <main id="main">
+    <div class="wrap">
+      <div class="article-head">
+        <div class="crumbs">
+          <a href="../index.html">home</a> /
+          <a href="../research.html">research</a> /
+          <span aria-current="page">battleye-internals</span>
         </div>
-        <h1 class="article-title">BattlEye: Stack Walking</h1>
-        <div class="article-meta">
-          <div class="article-meta-item">
-            <span class="article-meta-label">Author:</span>
-            <span class="article-meta-value">Musaed</span>
-          </div>
-          <div class="article-meta-item">
-            <span class="article-meta-label">Published:</span>
-            <span class="article-meta-value">2026</span>
-          </div>
-          <div class="article-meta-item">
-            <span class="article-meta-label">Category:</span>
-            <span class="article-meta-value">Anti-Cheat Research / Kernel Internals</span>
-          </div>
-        </div>
+        <h1>BattlEye: kernel-side stack walking</h1>
+        <div class="byline"><span>Musaed</span><span><b>Published</b> June 12, 2026</span><span><b>Category</b> Anti-cheat · Kernel</span><span><b>Read</b> ~4 min</span></div>
       </div>
-
-      <div class="article-content">
-        
-        <h2>Overview &amp; Motivation</h2>
+      <div class="article">
+        <article class="prose">
         <p>
-          One of the more interesting mechanisms encountered while reversing BattlEye is its kernel-side stack-walking and validation logic.
-        </p>
-        <p>
-          A primary reason for performing stack analysis is that code can execute from memory without necessarily appearing in the process's normal module list. Manual mapping is a classic example: an executable image can be manually mapped into memory without ever being registered as a conventional loaded module in the Process Environment Block (PEB) or kernel loader structures.
-        </p>
-        <p>
-          This makes the <strong>origin of execution</strong> a valuable telemetry signal. Rather than simply enumerating modules, the kernel routine can inspect active stack frames and determine whether the return addresses involved in execution correspond to expected, legitimate image bounds.
-        </p>
+  BattlEye keeps a running check on <em>where</em> code is executing from,
+  not just <em>what</em> is loaded. The routine I want to describe here
+  is the one that walks a thread’s call stack from the kernel, validates
+  the return addresses against known image ranges, and reports the result
+  through <code>BEDaisy</code>.
+</p>
 
-        <div class="callout">
-          <div class="callout-title">Core Concept</div>
-          <p class="callout-body">
-            Stack walking verifies not just where an image claims to be loaded, but where instructions are actively executing from. An address residing outside known module boundaries serves as a primary signal for deeper control-flow analysis.
-          </p>
-        </div>
+<p>
+  The reason it matters: a manually mapped image never shows up in the PEB’s
+  loader lists. Enumerating modules will miss it. But the manually mapped
+  code still leaves return addresses on some thread’s stack. Walking that
+  stack, then asking whether each frame lands inside a legitimately loaded
+  image, is a different signal than enumerating modules — and a much harder
+  one to hide from.
+</p>
 
-        <h2>1. Obtaining the Target Thread &amp; Queuing the Kernel APC</h2>
-        <p>
-          The routine begins by obtaining a reference to the target thread object. It compares the target thread ID against the current execution context and resolves the corresponding <code>ETHREAD</code> pointer via <code>PsLookupThreadByThreadId</code>:
-        </p>
+<div class="note">
+  <span class="note-label">Core idea</span>
+  <p>
+    Stack walking asks where instructions are executing right now, not where
+    the module list <em>says</em> they should be. An address that lands
+    outside every known image range doesn’t prove a manual map — it’s a
+    starting point for further checks.
+  </p>
+</div>
 
-        <div class="code-block">
-          <div class="code-header">
-            <span class="code-lang">C / Decompiled</span>
-            <span>Target Thread Lookup</span>
-          </div>
-          <pre><code><span class="syn-var">CurrentThreadId</span> <span class="syn-op">=</span> <span class="syn-fn">PsGetCurrentThreadId</span><span class="syn-op">();</span>
+<h2>1. Getting a reference to the target thread</h2>
+<p>
+  The routine begins by resolving the target thread. If the ID doesn’t match
+  the caller, it grabs an <code>ETHREAD</code> reference through
+  <code>PsLookupThreadByThreadId</code>:
+</p>
+
+<div class="snippet">
+  <div class="snippet-bar">
+    <span class="snippet-lang">C · decompiled</span>
+    <span class="snippet-name">thread lookup</span>
+  </div>
+  <pre><code><span class="syn-var">CurrentThreadId</span> <span class="syn-op">=</span> <span class="syn-fn">PsGetCurrentThreadId</span><span class="syn-op">();</span>
 
 <span class="syn-kwd">if</span> <span class="syn-op">(</span><span class="syn-var">v20</span> <span class="syn-op">!=</span> <span class="syn-var">CurrentThreadId</span><span class="syn-op">)</span>
 <span class="syn-op">{</span>
     <span class="syn-fn">LODWORD</span><span class="syn-op">(</span><span class="syn-var">CurrentThreadId</span><span class="syn-op">)</span> <span class="syn-op">=</span>
         <span class="syn-fn">PsLookupThreadByThreadId</span><span class="syn-op">(</span><span class="syn-var">v20</span><span class="syn-op">,</span> <span class="syn-op">&amp;</span><span class="syn-var">Thread</span><span class="syn-op">);</span>
 <span class="syn-op">}</span></code></pre>
-        </div>
+</div>
 
-        <p>
-          After obtaining the <code>ETHREAD</code> pointer, the driver allocates a context structure in pool memory and initializes a kernel Asynchronous Procedure Call (APC):
-        </p>
+<p>
+  With the <code>ETHREAD</code> in hand, the driver allocates a context in
+  non-paged pool and sets up an APC:
+</p>
 
-        <div class="code-block">
-          <div class="code-header">
-            <span class="code-lang">C / Decompiled</span>
-            <span>APC Initialization and Insertion</span>
-          </div>
-          <pre><code><span class="syn-fn">KeInitializeApc</span><span class="syn-op">(</span>
+<div class="snippet">
+  <div class="snippet-bar">
+    <span class="snippet-lang">C · decompiled</span>
+    <span class="snippet-name">APC init and queue</span>
+  </div>
+  <pre><code><span class="syn-fn">KeInitializeApc</span><span class="syn-op">(</span>
     <span class="syn-var">AllocatedPool</span><span class="syn-op">,</span>
     <span class="syn-var">Thread</span><span class="syn-op">,</span>
     <span class="syn-num">0</span><span class="syn-op">,</span>
@@ -130,23 +146,31 @@
     <span class="syn-num">0</span><span class="syn-op">,</span>
     <span class="syn-num">2</span>
 <span class="syn-op">);</span></code></pre>
-        </div>
+</div>
 
-        <p>
-          This design is significant because stack collection is performed directly in the context of the target thread via an APC, rather than attempting to walk an arbitrary foreign thread from the caller's context.
-        </p>
+<p>
+  The APC is the interesting choice. Instead of trying to walk another
+  thread’s stack from outside its context — which would race with anything
+  that thread was doing — the collection runs inside the target thread when
+  the APC fires. The caller then just waits on a signaled event.
+</p>
 
-        <h2>2. Collecting the Stack via RtlWalkFrameChain</h2>
-        <p>
-          Once the APC fires in the target thread context, execution reaches the <code>StackUpdater</code> callback routine:
-        </p>
+<p>
+  (The typo <code>UpdateCurrnetStack</code> is theirs. I left it as it appears
+  in the binary.)
+</p>
 
-        <div class="code-block">
-          <div class="code-header">
-            <span class="code-lang">C / Decompiled</span>
-            <span>StackUpdater Routine</span>
-          </div>
-          <pre><code><span class="syn-type">LONG</span> <span class="syn-kwd">__fastcall</span> <span class="syn-fn">StackUpdater</span><span class="syn-op">(</span>
+<h2>2. Collecting frames with RtlWalkFrameChain</h2>
+<p>
+  When the APC lands in the target thread, it hits this callback:
+</p>
+
+<div class="snippet">
+  <div class="snippet-bar">
+    <span class="snippet-lang">C · decompiled</span>
+    <span class="snippet-name">StackUpdater</span>
+  </div>
+  <pre><code><span class="syn-type">LONG</span> <span class="syn-kwd">__fastcall</span> <span class="syn-fn">StackUpdater</span><span class="syn-op">(</span>
     <span class="syn-type">__int64</span> <span class="syn-var">threadContext</span><span class="syn-op">,</span>
     <span class="syn-type">__int64</span> <span class="syn-var">flags</span><span class="syn-op">,</span>
     <span class="syn-type">__int64</span> <span class="syn-var">priority</span><span class="syn-op">,</span>
@@ -167,120 +191,129 @@
         <span class="syn-num">0</span><span class="syn-op">,</span>
         <span class="syn-num">0</span><span class="syn-op">);</span>
 <span class="syn-op">}</span></code></pre>
-        </div>
+</div>
 
-        <p>
-          The critical operation in this routine is:
-        </p>
-        <div class="code-block">
-          <div class="code-header">
-            <span class="code-lang">C</span>
-            <span>Frame Chain Capture</span>
-          </div>
-          <pre><code><span class="syn-fn">RtlWalkFrameChain</span><span class="syn-op">(...,</span> <span class="syn-num">0x100</span><span class="syn-op">,</span> <span class="syn-num">0</span><span class="syn-op">);</span></code></pre>
-        </div>
-        <p>
-          The routine captures up to <code>0x100</code> (256) stack frames and records the resulting frame count directly in its context structure. It then signals an event (<code>KeSetEvent</code>) to notify the collector thread that the stack capture is complete.
-        </p>
+<p>
+  The important call is:
+</p>
 
-        <h2>3. Validating Frame Addresses Against Known Image Ranges</h2>
-        <p>
-          The collected return addresses are subsequently evaluated against known executable image boundaries. A simplified representation of the validation logic:
-        </p>
+<div class="snippet">
+  <div class="snippet-bar">
+    <span class="snippet-lang">C</span>
+    <span class="snippet-name">frame chain capture</span>
+  </div>
+  <pre><code><span class="syn-fn">RtlWalkFrameChain</span><span class="syn-op">(...,</span> <span class="syn-num">0x100</span><span class="syn-op">,</span> <span class="syn-num">0</span><span class="syn-op">);</span></code></pre>
+</div>
 
-        <div class="code-block">
-          <div class="code-header">
-            <span class="code-lang">C / Decompiled</span>
-            <span>Range Boundary Check</span>
-          </div>
-          <pre><code><span class="syn-var">_RDX</span> <span class="syn-op">=</span> <span class="syn-op">*(</span><span class="syn-type">_QWORD</span> <span class="syn-op">*)&amp;</span><span class="syn-var">AllocatedPool</span><span class="syn-op">[</span><span class="syn-num">2</span> <span class="syn-op">*</span> <span class="syn-var">v38</span> <span class="syn-op">+</span> <span class="syn-num">28</span><span class="syn-op">];</span>
+<p>
+  Up to <code>0x100</code> (256) frames get written into the context, the
+  count goes into the same context at offset <code>+2160</code>, and
+  <code>KeSetEvent</code> unblocks the collector thread.
+</p>
+
+<h2>3. Validating each frame against known image ranges</h2>
+<p>
+  Once the frames are back with the caller, each one is checked against a
+  table of known image ranges. In decompiled form the check looks like this:
+</p>
+
+<div class="snippet">
+  <div class="snippet-bar">
+    <span class="snippet-lang">C · decompiled</span>
+    <span class="snippet-name">range check</span>
+  </div>
+  <pre><code><span class="syn-var">_RDX</span> <span class="syn-op">=</span> <span class="syn-op">*(</span><span class="syn-type">_QWORD</span> <span class="syn-op">*)&amp;</span><span class="syn-var">AllocatedPool</span><span class="syn-op">[</span><span class="syn-num">2</span> <span class="syn-op">*</span> <span class="syn-var">v38</span> <span class="syn-op">+</span> <span class="syn-num">28</span><span class="syn-op">];</span>
 
 <span class="syn-kwd">if</span> <span class="syn-op">(</span><span class="syn-var">_RDX</span> <span class="syn-op">&lt;</span> <span class="syn-var">_RCX</span> <span class="syn-op">||</span>
     <span class="syn-var">_RDX</span> <span class="syn-op">&gt;=</span> <span class="syn-op">*(</span><span class="syn-type">unsigned int</span> <span class="syn-op">*)(</span><span class="syn-var">qword_1400171D8</span> <span class="syn-op">+</span> <span class="syn-num">32</span><span class="syn-op">)</span> <span class="syn-op">+</span> <span class="syn-var">_RCX</span><span class="syn-op">)</span>
-<span class="syn-op">{</span>
-    <span class="syn-com">// Address falls outside primary image range; walk auxiliary image metadata</span>
-    <span class="syn-op">...</span>
-<span class="syn-op">}</span></code></pre>
-        </div>
+<span class="syn-op">{</span></code></pre>
+</div>
 
-        <p>
-          The code tests whether the frame address falls within the expected base and size of known legitimate modules. If an address falls outside the primary image range, the routine walks additional image metadata.
-        </p>
+<div class="note note-warn">
+  <span class="note-label">Read it carefully</span>
+  <p>
+    A frame outside every known image range is <em>not</em> a “gotcha”.
+    It’s an execution address that doesn’t sit in any expected module —
+    which is enough to feed the report pipeline. What happens next is the
+    interesting part.
+  </p>
+</div>
 
-        <div class="callout callout-warning">
-          <div class="callout-title">Key Analytical Insight</div>
-          <p class="callout-body">
-            An address outside a known module is not automatically treated as definitive proof of a manually mapped DLL. Instead, it marks an execution address that does not match expected module bounds, initiating the secondary validation and telemetry reporting pipeline.
-          </p>
-        </div>
+<h2>4. Reporting</h2>
+<p>
+  The results — frames, thread context, per-module offsets — get bundled up
+  and passed to one of two report paths depending on how the routine got
+  invoked:
+</p>
 
-        <h2>4. Report Dispatching</h2>
-        <p>
-          After collecting the stack frames, verifying image bounds, and assembling execution metadata, the routine builds a structured report package. The final path dispatches the collected telemetry via:
-        </p>
-
-        <div class="code-block">
-          <div class="code-header">
-            <span class="code-lang">C++ / Decompiled</span>
-            <span>Thread Stack Report Dispatch</span>
-          </div>
-          <pre><code><span class="syn-fn">BEDaisy::Report::ThreadStackReport</span><span class="syn-op">(</span>
+<div class="snippet">
+  <div class="snippet-bar">
+    <span class="snippet-lang">C++ · decompiled</span>
+    <span class="snippet-name">primary report path</span>
+  </div>
+  <pre><code><span class="syn-fn">BEDaisy::Report::ThreadStackReport</span><span class="syn-op">(</span>
     <span class="syn-var">v127</span><span class="syn-op">,</span>
     <span class="syn-var">v103</span>
 <span class="syn-op">);</span></code></pre>
-        </div>
+</div>
 
-        <p>
-          Or, depending on the internal reporting pipeline state:
-        </p>
+<div class="snippet">
+  <div class="snippet-bar">
+    <span class="snippet-lang">C · decompiled</span>
+    <span class="snippet-name">alternate APC report path</span>
+  </div>
+  <pre><code><span class="syn-fn">FnThreadApcStackReport</span><span class="syn-op">(</span><span class="syn-var">v127</span><span class="syn-op">,</span> <span class="syn-var">v103</span><span class="syn-op">);</span></code></pre>
+</div>
 
-        <div class="code-block">
-          <div class="code-header">
-            <span class="code-lang">C / Decompiled</span>
-            <span>Alternative APC Stack Report Handler</span>
-          </div>
-          <pre><code><span class="syn-fn">FnThreadApcStackReport</span><span class="syn-op">(</span><span class="syn-var">v127</span><span class="syn-op">,</span> <span class="syn-var">v103</span><span class="syn-op">);</span></code></pre>
-        </div>
+<h2>5. Full flow</h2>
+<p>
+  The six stages together:
+</p>
 
-        <h2>5. Architecture &amp; Execution Flow Summary</h2>
-        <p>
-          The complete workflow of the kernel stack-walking mechanism is illustrated in the architectural diagram below:
-        </p>
+<figure>
+  <img src="../assets/diagrams/battleye_stack_flow.svg"
+       alt="Six-stage flow: thread lookup, APC dispatch, frame capture, image bounds check, aggregation, report dispatch."
+       loading="lazy" width="760" height="700">
+  <figcaption>Kernel-side flow of the BattlEye stack-walking routine.</figcaption>
+</figure>
 
-        <div style="margin: 2rem 0; border: 1px solid var(--border-subtle); border-radius: var(--radius-md); overflow: hidden; background-color: var(--bg-surface);">
-          <img src="../assets/diagrams/battleye_stack_flow.svg" alt="BattlEye Kernel Stack-Walking Workflow Diagram" style="width: 100%; height: auto; display: block;" loading="lazy">
-        </div>
-
-        <h2>Conclusion</h2>
-        <p>
-          The fundamental takeaway from reversing this subsystem is that the mechanism is most accurately characterized as <strong>stack-based execution-origin validation</strong> rather than simply a standalone check for manually mapped DLLs.
-        </p>
-        <p>
-          While manually mapped modules represent one source of execution addresses not backed by normal loaded images, dynamically generated code (JITs, shellcode, hooks, trampolines) can produce similar conditions.
-        </p>
-        <p>
-          Crucially, <strong>an unmapped or unexpected stack address serves as a signal rather than an immediate verdict</strong>. The subsequent boundary checks and metadata collection are what establish the context needed for report generation.
-        </p>
-
+<h2>Takeaway</h2>
+<p>
+  The routine is best described as <strong>execution-origin validation over
+  a captured stack</strong>, not a manual-map detector. Manually mapped
+  images are one thing it will catch; JIT’d code, shellcode, inline hooks,
+  and generated trampolines can all leave frames outside every mapped
+  image too.
+</p>
+<p>
+  What made this worth writing up is the design choice, not the check
+  itself. Running the collection inside the target thread on an APC lets
+  the driver capture a coherent, atomic view of the stack without the
+  synchronization mess of walking a foreign thread from outside. The
+  boundary check that follows is almost mechanical once you have that view.
+</p>
+        <ul class="tags" aria-label="Tags"><li>Kernel</li><li>APC</li><li>RtlWalkFrameChain</li><li>Anti-cheat</li><li>Stack walking</li><li>Reverse engineering</li></ul>
+      </article>
+        <aside class="toc" aria-label="On this page">
+        <details open>
+          <summary>On this page</summary>
+        </details>
+      </aside>
       </div>
-
     </div>
   </main>
 
   <footer class="site-footer">
-    <div class="container footer-content">
-      <div class="footer-status">
-        <span class="hero-status-dot"></span>
-        <span>Security Research &amp; Engineering</span>
-      </div>
-      <div>&copy; 2026 Musaed. All rights reserved.</div>
-      <div class="footer-links">
-        <a href="https://github.com/xidenlz" target="_blank" rel="noopener noreferrer">GitHub</a>
-        <a href="../contact.html">Contact</a>
-      </div>
+    <div class="wrap footer-inner">
+      <div>&copy; 2026 Musaed &middot; xidenlz</div>
+      <ul class="footer-nav">
+        <li><a href="https://github.com/xidenlz" rel="me noopener">GitHub</a></li>
+        <li><a href="../feed.xml">RSS</a></li>
+        <li><a href="../contact.html">Contact</a></li>
+      </ul>
     </div>
   </footer>
 
-  <script src="../js/main.js"></script>
+  <script src="../js/main.js" defer></script>
 </body>
 </html>

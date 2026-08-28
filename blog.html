@@ -3,176 +3,97 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blog | Musaed &lt;/&gt;</title>
-  <meta name="description" content="Technical notes on Windows internals and binary analysis.">
-  <meta name="theme-color" content="#38bdf8">
-  <meta property="og:title" content="Blog | Musaed &lt;/&gt;">
-  <meta property="og:description" content="Technical notes on Windows internals and binary analysis.">
+  <title>Blog · Musaed</title>
+  <meta name="description" content="Short notes on reverse engineering, kernel work, and malware triage.">
+  <meta name="author" content="Musaed">
+  <meta name="theme-color" content="#0a0b0d">
+  <link rel="canonical" href="https://xidenlz.github.io/xidenlz/blog">
+  <meta property="og:site_name" content="Musaed">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://xidenlz.github.io/xidenlz/blog">
+  <meta property="og:title" content="Blog">
+  <meta property="og:description" content="Short notes on reverse engineering, kernel work, and malware triage.">
+  <meta property="og:image" content="https://xidenlz.github.io/xidenlz/assets/og/blog.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Blog">
+  <meta name="twitter:description" content="Short notes on reverse engineering, kernel work, and malware triage.">
+  <meta name="twitter:image" content="https://xidenlz.github.io/xidenlz/assets/og/blog.png">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="alternate" type="application/rss+xml" title="Musaed — Research feed" href="https://xidenlz.github.io/xidenlz/feed.xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-  <header class="site-header">
-    <div class="container nav-container">
-      <a href="index.html" class="brand-link" aria-label="Musaed Home">
-        Musaed <span class="brand-prefix">&lt;/&gt;</span>
+  <header class="masthead">
+    <div class="wrap masthead-inner">
+      <a class="wordmark" href="index.html" aria-label="Musaed — home">
+        Musaed <span>&lt;/&gt;</span>
       </a>
-      <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
+      <button class="nav-toggle" type="button"
+              aria-label="Toggle navigation" aria-expanded="false"
+              aria-controls="nav-list">
+        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
-      <nav>
-        <ul class="nav-links">
-          <li><a href="index.html" class="nav-link">Home</a></li>
-          <li><a href="about.html" class="nav-link">About</a></li>
-          <li><a href="research.html" class="nav-link">Research</a></li>
-          <li><a href="projects.html" class="nav-link">Projects</a></li>
-          <li><a href="blog.html" class="nav-link active">Blog</a></li>
-          <li><a href="contact.html" class="nav-link">Contact</a></li>
+      <nav aria-label="Primary">
+        <ul id="nav-list" class="nav-list">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="research.html">Research</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="blog.html" aria-current="page">Blog</a></li>
+            <li><a href="contact.html">Contact</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
-  <main>
-    <div class="container">
-      
-      <div class="article-header">
-        <div class="article-breadcrumbs">
-          <a href="index.html">home</a> / <span>blog</span>
-        </div>
-        <h1 class="article-title">Technical Notes &amp; Blog</h1>
-        <p class="hero-tagline" style="margin-bottom: 0;">Articles on Reverse Engineering, Windows Internals, Malware Triage &amp; Binary Analysis</p>
-      </div>
-
-      <div style="display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2rem;">
-        
-        <!-- Post 1: Real World Triage Case Study -->
-        <article class="card">
-          <div class="card-meta">
-            <span class="card-category">Malware Triage</span>
-            <span>2026</span>
-          </div>
-          <h2 class="card-title" style="font-size: 1.3rem;">
-            <a href="blog/triage-quasar-rat-case-study.html">Malware Triage: Uncovering a Quasar RAT Disguised as a Game Cheat</a>
-          </h2>
-          <p class="card-desc">
-            A real-world breakdown of a multi-stage decoy submission: dissecting a dummy Visual Basic GUI, analyzing a Go-compiled dropper, tracking port-forwarding C2 infrastructure (<code>portmap.io</code>), and confirming Quasar RAT execution in Any.Run.
-          </p>
-          <div class="card-tags">
-            <span class="tag">Malware Triage</span>
-            <span class="tag">Quasar RAT</span>
-            <span class="tag">Any.Run</span>
-            <span class="tag">Threat Intelligence</span>
-          </div>
-        </article>
-
-        <!-- Post 2: XOR Obfuscation -->
-        <article class="card">
-          <div class="card-meta">
-            <span class="card-category">Reverse Engineering</span>
-            <span>2025-09</span>
-          </div>
-          <h2 class="card-title" style="font-size: 1.3rem;">
-            <a href="blog/defeating-malware-obfuscation-xor.html">Defeating Malware Obfuscation: XOR String De-obfuscation</a>
-          </h2>
-          <p class="card-desc">
-            Recognizing SIMD vector operations (<code>_mm_xor_ps</code>) in IDA Pro, calculating bitwise XOR keys, and automating string recovery with Python.
-          </p>
-          <div class="card-tags">
-            <span class="tag">Reverse Engineering</span>
-            <span class="tag">XOR Deobfuscation</span>
-            <span class="tag">IDA Pro</span>
-            <span class="tag">Python</span>
-          </div>
-        </article>
-
-        <!-- Post 3: Overlays vs Malware -->
-        <article class="card">
-          <div class="card-meta">
-            <span class="card-category">Windows Internals</span>
-            <span>2025-11</span>
-          </div>
-          <h2 class="card-title" style="font-size: 1.3rem;">
-            <a href="blog/overlays-and-malware-injection-mechanisms.html">How Overlays &amp; Malware Use the Same Low-Level Tricks</a>
-          </h2>
-          <p class="card-desc">
-            Comparing how legitimate software (Steam, Discord) and malware leverage DirectX swap chain hooking, DLL injection, Thread Hijacking, and native <code>LdrLoadDll</code> calls.
-          </p>
-          <div class="card-tags">
-            <span class="tag">Process Injection</span>
-            <span class="tag">Thread Hijacking</span>
-            <span class="tag">DirectX Hooking</span>
-            <span class="tag">LdrLoadDll</span>
-          </div>
-        </article>
-
-        <!-- Post 4: PE Headers -->
-        <article class="card">
-          <div class="card-meta">
-            <span class="card-category">PE Format</span>
-            <span>2026-03</span>
-          </div>
-          <h2 class="card-title" style="font-size: 1.3rem;">
-            <a href="blog/pe-headers-deep-dive.html">PE Format: Deep Dive into Optional Headers and Data Directories</a>
-          </h2>
-          <p class="card-desc">
-            An architectural breakdown of the IMAGE_OPTIONAL_HEADER structure in PE32 and PE32+ binaries. Explores section alignment rules, EntryPoint RVA calculations, and how the loader resolves Import Address Tables (IAT) at runtime.
-          </p>
-          <div class="card-tags">
-            <span class="tag">PE32+</span>
-            <span class="tag">Windows Internals</span>
-            <span class="tag">Virtual Memory</span>
-            <span class="tag">C/C++</span>
-          </div>
-        </article>
-
-        <!-- Post 5: Kernel Callbacks -->
-        <article class="card">
-          <div class="card-meta">
-            <span class="card-category">Kernel Security</span>
-            <span>2026-02</span>
-          </div>
-          <h2 class="card-title" style="font-size: 1.3rem;">
-            <a href="blog/windows-kernel-callbacks.html">Understanding Windows Kernel Process &amp; Thread Callbacks</a>
-          </h2>
-          <p class="card-desc">
-            A practical analysis of how Windows kernel drivers monitor process life cycles and strip handle access using <code>PsSetCreateProcessNotifyRoutineEx</code> and <code>ObRegisterCallbacks</code>.
-          </p>
-          <div class="card-tags">
-            <span class="tag">Windows Kernel</span>
-            <span class="tag">Callbacks</span>
-            <span class="tag">Security Drivers</span>
-            <span class="tag">x64</span>
-          </div>
-        </article>
-
-      </div>
-
+  <main id="main">
+    <div class="wrap">
+      <div class="page-head">
+      <div class="crumbs"><a href="index.html">home</a> / <span aria-current="page">blog</span></div>
+      <h1>Blog</h1>
+      <p class="page-sub">Short notes. Things I want to write down before I forget them.</p>
+    </div>
+      <ol class="index">
+      <li class="entry">
+        <div class="entry-aside"><span class="kicker">PE format</span><span>March 1, 2026</span></div>
+        <div class="entry-body"><h3 class="entry-title"><a href="blog/pe-headers-deep-dive.html">PE optional headers and data directories</a></h3><p class="entry-dek"><code>IMAGE_OPTIONAL_HEADER64</code>, section alignment, RVA-to-file-offset math, and the 16 data directories.</p><ul class="tags" aria-label="Tags"><li>PE32+</li><li>Windows loader</li><li>Virtual memory</li><li>C/C++</li></ul></div>
+      </li><li class="entry">
+        <div class="entry-aside"><span class="kicker">Kernel</span><span>February 18, 2026</span></div>
+        <div class="entry-body"><h3 class="entry-title"><a href="blog/windows-kernel-callbacks.html">Windows kernel process and thread callbacks</a></h3><p class="entry-dek">How drivers watch process lifecycles and strip handle access using <code>PsSetCreateProcessNotifyRoutineEx</code> and <code>ObRegisterCallbacks</code>.</p><ul class="tags" aria-label="Tags"><li>Windows kernel</li><li>Callbacks</li><li>Security drivers</li><li>x64</li></ul></div>
+      </li><li class="entry">
+        <div class="entry-aside"><span class="kicker">Windows internals</span><span>November 6, 2025</span></div>
+        <div class="entry-body"><h3 class="entry-title"><a href="blog/overlays-and-malware-injection-mechanisms.html">Overlays and malware share the same primitives</a></h3><p class="entry-dek">Steam, Discord, EDRs, and injectors all use the same handful of Windows primitives. Notes on the shared surface.</p><ul class="tags" aria-label="Tags"><li>Process injection</li><li>Thread hijacking</li><li>DirectX</li><li>LdrLoadDll</li></ul></div>
+      </li><li class="entry">
+        <div class="entry-aside"><span class="kicker">Reverse engineering</span><span>September 14, 2025</span></div>
+        <div class="entry-body"><h3 class="entry-title"><a href="blog/defeating-malware-obfuscation-xor.html">XOR string de-obfuscation, in practice</a></h3><p class="entry-dek">Recognizing <code>_mm_xor_ps</code> in IDA, working out the key, and a small Python helper for doing it in bulk.</p><ul class="tags" aria-label="Tags"><li>Reverse engineering</li><li>XOR</li><li>IDA Pro</li><li>Python</li></ul></div>
+      </li><li class="entry">
+        <div class="entry-aside"><span class="kicker">Malware triage</span><span>May 22, 2025</span></div>
+        <div class="entry-body"><h3 class="entry-title"><a href="blog/triage-quasar-rat-case-study.html">Quasar RAT dressed as a game cheat</a></h3><p class="entry-dek">A hollow VB DLL, a Go dropper, and a Quasar RAT reaching a Portmap tunnel — a submission I flagged during triage.</p><ul class="tags" aria-label="Tags"><li>Malware triage</li><li>Quasar RAT</li><li>Any.Run</li><li>Threat intel</li></ul></div>
+      </li>
+    </ol>
     </div>
   </main>
 
   <footer class="site-footer">
-    <div class="container footer-content">
-      <div class="footer-status">
-        <span class="hero-status-dot"></span>
-        <span>Security Research &amp; Engineering</span>
-      </div>
-      <div>&copy; 2026 Musaed. All rights reserved.</div>
-      <div class="footer-links">
-        <a href="https://github.com/xidenlz" target="_blank" rel="noopener noreferrer">GitHub</a>
-        <a href="contact.html">Contact</a>
-      </div>
+    <div class="wrap footer-inner">
+      <div>&copy; 2026 Musaed &middot; xidenlz</div>
+      <ul class="footer-nav">
+        <li><a href="https://github.com/xidenlz" rel="me noopener">GitHub</a></li>
+        <li><a href="feed.xml">RSS</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
     </div>
   </footer>
 
-  <script src="js/main.js"></script>
+  <script src="js/main.js" defer></script>
 </body>
 </html>

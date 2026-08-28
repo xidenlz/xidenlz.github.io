@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://xidenlz.github.io/xidenlz/sitemap.xml

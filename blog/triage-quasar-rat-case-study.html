@@ -3,187 +3,201 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Triage: Quasar RAT Case Study | Musaed &lt;/&gt;</title>
-  <meta name="description" content="Triage breakdown of a multi-stage decoy concealing Quasar RAT.">
-  <meta name="theme-color" content="#38bdf8">
-  <meta property="og:title" content="Triage: Quasar RAT Case Study | Musaed &lt;/&gt;">
-  <meta property="og:description" content="Triage breakdown of a multi-stage decoy concealing Quasar RAT.">
+  <title>Quasar RAT dressed as a game cheat · Musaed</title>
+  <meta name="description" content="Triage of a Quasar RAT submitted as a game cheat — decoy VB DLL, Go dropper, Portmap C2, and how it was caught.">
+  <meta name="author" content="Musaed">
+  <meta name="theme-color" content="#0a0b0d">
+  <link rel="canonical" href="https://xidenlz.github.io/xidenlz/blog/triage-quasar-rat-case-study.html">
+  <meta property="og:site_name" content="Musaed">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://xidenlz.github.io/xidenlz/blog/triage-quasar-rat-case-study.html">
+  <meta property="og:title" content="Quasar RAT dressed as a game cheat">
+  <meta property="og:description" content="Triage of a Quasar RAT submitted as a game cheat — decoy VB DLL, Go dropper, Portmap C2, and how it was caught.">
+  <meta property="og:image" content="https://xidenlz.github.io/xidenlz/assets/og/blog-triage-quasar-rat-case-study.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Quasar RAT dressed as a game cheat">
+  <meta name="twitter:description" content="Triage of a Quasar RAT submitted as a game cheat — decoy VB DLL, Go dropper, Portmap C2, and how it was caught.">
+  <meta name="twitter:image" content="https://xidenlz.github.io/xidenlz/assets/og/blog-triage-quasar-rat-case-study.png">
+  <meta property="article:published_time" content="2025-05-22">
+  <meta property="article:author" content="Musaed">
   <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="alternate" type="application/rss+xml" title="Musaed — Research feed" href="https://xidenlz.github.io/xidenlz/feed.xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Quasar RAT dressed as a game cheat", "author": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}, "datePublished": "2025-05-22", "url": "https://xidenlz.github.io/xidenlz/blog/triage-quasar-rat-case-study.html", "description": "Triage of a Quasar RAT submitted as a game cheat \u2014 decoy VB DLL, Go dropper, Portmap C2, and how it was caught.", "image": "https://xidenlz.github.io/xidenlz/assets/og/blog-triage-quasar-rat-case-study.png", "publisher": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}}</script>
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-  <header class="site-header">
-    <div class="container nav-container">
-      <a href="../index.html" class="brand-link" aria-label="Musaed Home">
-        Musaed <span class="brand-prefix">&lt;/&gt;</span>
+  <header class="masthead">
+    <div class="wrap masthead-inner">
+      <a class="wordmark" href="../index.html" aria-label="Musaed — home">
+        Musaed <span>&lt;/&gt;</span>
       </a>
-      <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
+      <button class="nav-toggle" type="button"
+              aria-label="Toggle navigation" aria-expanded="false"
+              aria-controls="nav-list">
+        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
-      <nav>
-        <ul class="nav-links">
-          <li><a href="../index.html" class="nav-link">Home</a></li>
-          <li><a href="../about.html" class="nav-link">About</a></li>
-          <li><a href="../research.html" class="nav-link">Research</a></li>
-          <li><a href="../projects.html" class="nav-link">Projects</a></li>
-          <li><a href="../blog.html" class="nav-link active">Blog</a></li>
-          <li><a href="../contact.html" class="nav-link">Contact</a></li>
+      <nav aria-label="Primary">
+        <ul id="nav-list" class="nav-list">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="../about.html">About</a></li>
+            <li><a href="../research.html">Research</a></li>
+            <li><a href="../projects.html">Projects</a></li>
+            <li><a href="../blog.html" aria-current="page">Blog</a></li>
+            <li><a href="../contact.html">Contact</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
-  <main>
-    <div class="container article-container">
-      
-      <div class="article-header">
-        <div class="article-breadcrumbs">
-          <a href="../index.html">home</a> / <a href="../blog.html">blog</a> / <span>quasar-rat-triage</span>
+  <main id="main">
+    <div class="wrap">
+      <div class="article-head">
+        <div class="crumbs">
+          <a href="../index.html">home</a> /
+          <a href="../blog.html">blog</a> /
+          <span aria-current="page">triage-quasar-rat-case-study</span>
         </div>
-        <h1 class="article-title">Malware Triage: Uncovering a Quasar RAT Disguised as a Game Cheat</h1>
-        <div class="article-meta">
-          <div class="article-meta-item">
-            <span class="article-meta-label">Author:</span>
-            <span class="article-meta-value">Musaed</span>
-          </div>
-          <div class="article-meta-item">
-            <span class="article-meta-label">Published:</span>
-            <span class="article-meta-value">2026</span>
-          </div>
-          <div class="article-meta-item">
-            <span class="article-meta-label">Category:</span>
-            <span class="article-meta-value">Malware Triage / Threat Intelligence</span>
-          </div>
-        </div>
+        <h1>Quasar RAT dressed as a game cheat</h1>
+        <div class="byline"><span>Musaed</span><span><b>Published</b> May 22, 2025</span><span><b>Category</b> Malware triage</span><span><b>Read</b> ~2 min</span></div>
       </div>
-
-      <div class="article-content">
-        
-        <h2>Incident Overview</h2>
+      <div class="article">
+        <article class="prose">
         <p>
-          During routine community file moderation, an archive submitted under the guise of an operational game cheat was flagged for in-depth inspection. Attackers routinely weaponize game security communities by masquerading remote access trojans (RATs) as legitimate cheats, capitalizing on users who are accustomed to disabling AV real-time protection to run unverified software.
-        </p>
-        <p>
-          Static disassembly and behavioral sandbox analysis confirmed that the submitted package was a multi-stage decoy concealing a <strong>Quasar RAT</strong> payload communicating over Portmap infrastructure.
-        </p>
+  This one came out of routine community triage. An archive was submitted
+  to a game-security board as “a working cheat”, and it got flagged for a
+  closer look because it looked odd — three binaries, one of them written
+  in Go, and an uploader account that was less than a week old.
+</p>
+<p>
+  Static and dynamic passes both agreed: the archive was a decoy shell
+  around a <strong>Quasar RAT</strong> reaching for a Portmap tunnel. This
+  is what the check looked like.
+</p>
 
-        <div class="callout callout-warning">
-          <div class="callout-title">Verdict</div>
-          <p class="callout-body">
-            <strong>DO NOT APPROVE / MALICIOUS:</strong> Multi-tier social engineering payload containing decoy GUI binaries, a Go-compiled dropper, and an active Quasar RAT connecting to an external dynamic C2.
-          </p>
-        </div>
+<div class="note note-warn">
+  <span class="note-label">Verdict</span>
+  <p>
+    <strong>Reject / malicious.</strong> Multi-stage social-engineering
+    package: two decoy binaries, a Go dropper, and a Quasar RAT payload
+    connecting to a dynamic C2 endpoint.
+  </p>
+</div>
 
-        <h2>Multi-Stage Component Analysis</h2>
+<h2>The three binaries in the archive</h2>
 
-        <h3>1. Decoy DLL (Visual Basic)</h3>
-        <p>
-          Static inspection of the included dynamic-link library revealed that it was compiled in Visual Basic. Decompilation showed that the file consisted entirely of dummy graphical components (checkboxes, comboboxes, and layout frames) with zero functional hooks, memory reading routines, or game interaction logic. Its sole purpose was to serve as visual camouflage during surface-level user inspection.
-        </p>
+<h3>1. The decoy DLL (Visual Basic)</h3>
+<p>
+  First binary was a VB-compiled DLL. Decompiling it showed nothing but
+  dummy UI components — checkboxes, combo boxes, a couple of frames — with
+  no hooks, no memory-reading code, and no game interaction of any kind.
+  Its whole job was to look like a plausible cheat DLL on cursory inspection.
+</p>
 
-        <h3>2. Secondary Binary (136 KB C++ Stub)</h3>
-        <p>
-          The second executable (136 KB, compiled in C++) functioned as an intermediate dummy loader. String analysis of the main entry point revealed unreferenced hash strings and obfuscated metadata designed to pad the binary and distract automated heuristic parsers.
-        </p>
+<h3>2. A 136 KB C++ stub</h3>
+<p>
+  Second was a 136 KB C++ executable. String analysis of the entry point
+  turned up unreferenced hash-looking strings and a bunch of dead metadata.
+  Padding, essentially — enough to distract a fast heuristic scanner and
+  push the overall file size up.
+</p>
 
-        <h3>3. Primary Payload: Run.exe (Go Dropper)</h3>
-        <p>
-          The third binary, <code>Run.exe</code>, exhibited multiple severe anomalies:
-        </p>
-        <ul>
-          <li><strong>Language &amp; Runtime:</strong> Compiled in Go. While Go is common in modern malware development for cross-platform evasion and binary bloat, it is extremely atypical for low-level game modifications.</li>
-          <li><strong>File Size &amp; Entropy:</strong> Large packed footprint with high entropy sections.</li>
-          <li><strong>Multi-Engine Detection:</strong> VirusTotal initial scan returned a <strong>17/71</strong> detection ratio, triggering heuristic alerts for generic trojan droppers.</li>
-        </ul>
+<h3>3. Run.exe (Go dropper)</h3>
+<p>
+  The interesting one. Three things stood out:
+</p>
+<ul>
+  <li><strong>Language.</strong> Go — common in commodity droppers because the runtime bulks the binary out and blurs the surface, but very unusual for anything claiming to be a low-level game modification.</li>
+  <li><strong>Size and entropy.</strong> Packed footprint with high-entropy sections.</li>
+  <li><strong>VT ratio.</strong> Initial pass came back <strong>17/71</strong> — a solid chunk of engines already flagging generic trojan-dropper behavior.</li>
+</ul>
 
-        <h2>Infrastructure &amp; Network Indicators (IOCs)</h2>
-        <p>
-          Behavioral network analysis and DNS query logs revealed that <code>Run.exe</code> immediately attempted resolution of:
-        </p>
-        <div class="code-block">
-          <div class="code-header">
-            <span class="code-lang">Network IOC</span>
-            <span>C2 Domain &amp; Port Forwarding</span>
-          </div>
-          <pre><code><span class="syn-var">Domain:</span>   <span class="syn-str">ramsadaye-38594.portmap.io</span>
-<span class="syn-var">Service:</span>  <span class="syn-type">Portmap.io (TCP Tunneling / Port Forwarding)</span>
-<span class="syn-var">Context:</span>  <span class="syn-com">Subdomain prefix matched uploader handle registered 5 days prior</span></code></pre>
-        </div>
-        <p>
-          Portmap.io is frequently leveraged by threat actors to route inbound C2 traffic through TCP tunnels without requiring port forwarding on their home ISP. Cross-referencing community metadata revealed the uploader account had been registered just five days prior, with this being their first submission.
-        </p>
+<h2>Where it was calling home</h2>
 
-        <h2>Dynamic Sandbox Execution (Any.Run)</h2>
-        <p>
-          The binary was executed in an isolated Any.Run interactive sandbox environment to observe process tree spawning, memory injection, and network socket activity.
-        </p>
-        <ul>
-          <li><strong>Payload Classification:</strong> The memory dumped from the spawned subprocess matched known YARA signatures and configuration structures for <strong>Quasar RAT</strong> (.NET-based open-source remote access tool).</li>
-          <li><strong>Capabilities Identified:</strong> Keystroke logging, remote desktop streaming, credential theft from web browsers, and reverse shell execution.</li>
-        </ul>
+<div class="snippet">
+  <div class="snippet-bar">
+    <span class="snippet-lang">indicator</span>
+    <span class="snippet-name">network</span>
+  </div>
+  <pre><code><span class="syn-var">domain</span>   <span class="syn-op">=</span> <span class="syn-str">ramsadaye-38594.portmap.io</span>
+<span class="syn-var">service</span>  <span class="syn-op">=</span> <span class="syn-type">Portmap.io (TCP tunneling)</span>
+<span class="syn-var">note</span>     <span class="syn-op">=</span> <span class="syn-com">subdomain prefix matched an uploader handle</span>
+                                <span class="syn-com">registered 5 days prior</span></code></pre>
+</div>
 
-        <h2>Indicators of Compromise (IOCs)</h2>
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Artifact</th>
-                <th>Type</th>
-                <th>Details / Classification</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>Run.exe</code></td>
-                <td>SHA256 / File</td>
-                <td>Go-compiled Quasar RAT dropper (17/71 on VirusTotal).</td>
-              </tr>
-              <tr>
-                <td><code>ramsadaye-38594.portmap.io</code></td>
-                <td>Domain / C2</td>
-                <td>Dynamic TCP tunnel used for remote C2 command traffic.</td>
-              </tr>
-              <tr>
-                <td><code>Decoy.dll</code></td>
-                <td>File (VB)</td>
-                <td>Empty graphical user interface shell.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+<p>
+  Portmap.io is a tunneling service, common in this kind of dropper because
+  it lets whoever’s operating the RAT accept inbound connections without
+  opening a port on their own ISP. The subdomain prefix lining up with an
+  account created five days earlier tied the C2 to the uploader closely
+  enough to make the decision easy.
+</p>
 
-        <h2>Conclusion &amp; Remediation</h2>
-        <p>
-          The submission was permanently rejected and blocked, preventing deployment to end users. This triage underscores the necessity of combining static binary triage (compiler detection, section parsing) with automated dynamic sandbox analysis and infrastructure threat correlation.
-        </p>
+<h2>Sandbox confirmation</h2>
+<p>
+  Detonated <code>Run.exe</code> in an interactive Any.Run sandbox to watch
+  the process tree, the injections, and the sockets.
+</p>
+<ul>
+  <li><strong>Payload.</strong> Memory dumped from the spawned child matched Quasar RAT’s configuration structure and its published YARA signatures. Quasar is a .NET-based open-source RAT — common in this ecosystem.</li>
+  <li><strong>Capabilities observed.</strong> Keystroke logging, remote desktop streaming, browser credential theft, reverse shell.</li>
+</ul>
 
+<h2>Indicators</h2>
+
+<div class="table-scroll">
+  <table>
+    <thead>
+      <tr><th>Artifact</th><th>Type</th><th>Notes</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>Run.exe</code></td><td>file</td><td>Go-compiled Quasar RAT dropper (17/71 on VT).</td></tr>
+      <tr><td><code>ramsadaye-38594.portmap.io</code></td><td>domain</td><td>TCP tunnel used for C2.</td></tr>
+      <tr><td>Decoy DLL</td><td>file (VB)</td><td>Hollow UI — no functional logic.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<h2>What this one teaches</h2>
+<p>
+  The individual pieces here are ordinary. Quasar RAT is a decade old;
+  Portmap tunneling is a standard C2 pattern; “disguise malware as a game
+  cheat” is an old trick because the target audience is habituated to
+  disabling AV. What made the triage clean was combining a compiler check
+  on the dropper, a sandbox run, and a bit of correlation on the uploader
+  metadata. None of those alone is decisive; together they took about
+  fifteen minutes and left no doubt.
+</p>
+        <ul class="tags" aria-label="Tags"><li>Malware triage</li><li>Quasar RAT</li><li>Any.Run</li><li>Threat intel</li></ul>
+      </article>
+        <aside class="toc" aria-label="On this page">
+        <details open>
+          <summary>On this page</summary>
+        </details>
+      </aside>
       </div>
-
     </div>
   </main>
 
   <footer class="site-footer">
-    <div class="container footer-content">
-      <div class="footer-status">
-        <span class="hero-status-dot"></span>
-        <span>Security Research &amp; Engineering</span>
-      </div>
-      <div>&copy; 2026 Musaed. All rights reserved.</div>
-      <div class="footer-links">
-        <a href="https://github.com/xidenlz" target="_blank" rel="noopener noreferrer">GitHub</a>
-        <a href="../contact.html">Contact</a>
-      </div>
+    <div class="wrap footer-inner">
+      <div>&copy; 2026 Musaed &middot; xidenlz</div>
+      <ul class="footer-nav">
+        <li><a href="https://github.com/xidenlz" rel="me noopener">GitHub</a></li>
+        <li><a href="../feed.xml">RSS</a></li>
+        <li><a href="../contact.html">Contact</a></li>
+      </ul>
     </div>
   </footer>
 
-  <script src="../js/main.js"></script>
+  <script src="../js/main.js" defer></script>
 </body>
 </html>

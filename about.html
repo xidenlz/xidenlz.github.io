@@ -3,174 +3,120 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>About | Musaed &lt;/&gt;</title>
-  <meta name="description" content="About Musaed, CS student and security researcher.">
-  <meta name="theme-color" content="#38bdf8">
-  <meta property="og:title" content="About | Musaed &lt;/&gt;">
-  <meta property="og:description" content="About Musaed, CS student and security researcher.">
+  <title>About · Musaed</title>
+  <meta name="description" content="About Musaed — CS student at KFU, low-level and security research.">
+  <meta name="author" content="Musaed">
+  <meta name="theme-color" content="#0a0b0d">
+  <link rel="canonical" href="https://xidenlz.github.io/xidenlz/about">
+  <meta property="og:site_name" content="Musaed">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://xidenlz.github.io/xidenlz/about">
+  <meta property="og:title" content="About">
+  <meta property="og:description" content="About Musaed — CS student at KFU, low-level and security research.">
+  <meta property="og:image" content="https://xidenlz.github.io/xidenlz/assets/og/about.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="About">
+  <meta name="twitter:description" content="About Musaed — CS student at KFU, low-level and security research.">
+  <meta name="twitter:image" content="https://xidenlz.github.io/xidenlz/assets/og/about.png">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="alternate" type="application/rss+xml" title="Musaed — Research feed" href="https://xidenlz.github.io/xidenlz/feed.xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-  <header class="site-header">
-    <div class="container nav-container">
-      <a href="index.html" class="brand-link" aria-label="Musaed Home">
-        Musaed <span class="brand-prefix">&lt;/&gt;</span>
+  <header class="masthead">
+    <div class="wrap masthead-inner">
+      <a class="wordmark" href="index.html" aria-label="Musaed — home">
+        Musaed <span>&lt;/&gt;</span>
       </a>
-      <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
+      <button class="nav-toggle" type="button"
+              aria-label="Toggle navigation" aria-expanded="false"
+              aria-controls="nav-list">
+        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
-      <nav>
-        <ul class="nav-links">
-          <li><a href="index.html" class="nav-link">Home</a></li>
-          <li><a href="about.html" class="nav-link active">About</a></li>
-          <li><a href="research.html" class="nav-link">Research</a></li>
-          <li><a href="projects.html" class="nav-link">Projects</a></li>
-          <li><a href="blog.html" class="nav-link">Blog</a></li>
-          <li><a href="contact.html" class="nav-link">Contact</a></li>
+      <nav aria-label="Primary">
+        <ul id="nav-list" class="nav-list">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html" aria-current="page">About</a></li>
+            <li><a href="research.html">Research</a></li>
+            <li><a href="projects.html">Projects</a></li>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="contact.html">Contact</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
-  <main>
-    <div class="container container-narrow">
-      
-      <div class="article-header">
-        <div class="article-breadcrumbs">
-          <a href="index.html">home</a> / <span>about</span>
-        </div>
-        <h1 class="article-title">About Me</h1>
-        <p class="hero-tagline" style="margin-bottom: 0;">Computer Science • Data Analysis • Low-Level Systems &amp; Security</p>
+  <main id="main">
+    <div class="wrap">
+      <div class="page-head">
+      <div class="crumbs"><a href="index.html">home</a> / <span aria-current="page">about</span></div>
+      <h1>About</h1>
+      <p class="page-sub">CS student at KFU. I read binaries and write about what I find.</p>
+    </div>
+      <div class="prose">
+        <h2>Background</h2>
+        <p>I'm a Computer Science and Data Analysis student at <strong>King Faisal University</strong>, graduating February 2027. I spend most of my time reading disassembly — mostly Windows binaries, mostly the parts that touch the kernel. The write-ups here are the record of that work: what I looked at, what I found, and what I got wrong.</p>
+
+        <h2>Focus</h2>
+        <p>Right now I'm working on Windows internals and anti-cheat research. I'm looking for a security or reverse-engineering internship for 2026 — if that overlaps with what your team does, <a href="contact.html">reach out</a>.</p>
       </div>
-
-      <div class="article-content">
-        <h2>Technical Background</h2>
-        <p>
-          I am a Computer Science and Data Analysis student at King Faisal University (KFU), set to graduate in February 2027, with a dedicated focus on low-level software development, 
-          reverse engineering, Windows internals, binary analysis, and software security.
-        </p>
-        <p>
-          My work revolves around dissecting compiled binaries, analyzing execution flow at the instruction level, understanding operating 
-          system internals, and evaluating security architectures. I routinely apply both static and dynamic analysis methodologies 
-          to explore how software behaves, how protections are implemented, and where security boundaries can be strengthened.
-        </p>
-
-        <h2>Core Competencies</h2>
-        <p>
-          Primary focus areas and technical proficiencies:
-        </p>
-
-        <div class="skills-grid">
-          <div class="skill-category">
-            <div class="skill-cat-title">Analysis &amp; Reversing</div>
-            <ul class="skill-list">
-              <li>Static &amp; Dynamic Binary Analysis</li>
-              <li>x86 / x64 Disassembly</li>
-              <li>PE File Structure Inspection</li>
-              <li>Memory Analysis &amp; Pattern Scanning</li>
-              <li>Malware Triage &amp; Behavioral Analysis</li>
-            </ul>
+      <section>
+        <div class="section-head"><h2>Skills</h2></div>
+        <div class="cols"><div class="col">
+          <h3>Analysis</h3>
+          <ul><li>Static and dynamic binary analysis</li><li>x86 / x64 disassembly</li><li>PE and ELF structure</li><li>Memory analysis and pattern scanning</li><li>Malware triage</li></ul>
+        </div><div class="col">
+          <h3>Tools</h3>
+          <ul><li>IDA Pro, Ghidra</li><li>x64dbg, x32dbg</li><li>WinDbg — kernel and user</li><li>Zydis</li><li>Sysinternals, Any.Run</li></ul>
+        </div><div class="col">
+          <h3>Languages</h3>
+          <ul><li>C / C++</li><li>Python</li><li>x86 / x64 assembly</li><li>Windows API and NT native API</li><li>SQL</li></ul>
+        </div><div class="col">
+          <h3>Systems</h3>
+          <ul><li>Windows internals and kernel callbacks</li><li>Anti-cheat drivers</li><li>Hooking and detection</li><li>Process injection primitives</li><li>Authenticode and digital signatures</li></ul>
+        </div></div>
+      </section>
+      <section>
+        <div class="section-head"><h2>Record</h2></div>
+        <div class="record"><div class="record-item">
+          <div class="record-when">6+ years</div>
+          <div class="record-what">
+            <h3>VirusTotal community contributor</h3>
+            <p class="record-where">Independent volunteer</p>
+            <p>Triaging suspicious files submitted to the community — static and dynamic passes, verdicts, and short notes for other analysts.</p>
           </div>
-
-          <div class="skill-category">
-            <div class="skill-cat-title">Tools &amp; Environments</div>
-            <ul class="skill-list">
-              <li>IDA Pro &amp; Ghidra</li>
-              <li>x64dbg / x32dbg</li>
-              <li>WinDbg (Kernel &amp; User Mode)</li>
-              <li>Zydis Disassembly Engine</li>
-              <li>Sysinternals Suite &amp; Any.Run Sandbox</li>
-            </ul>
+        </div><div class="record-item">
+          <div class="record-when">Ongoing</div>
+          <div class="record-what">
+            <h3>UnknownCheats staff / contributor</h3>
+            <p class="record-where">Reverse engineering community</p>
+            <p>Discussion and analysis around game security, anti-cheat drivers, memory protection, and low-level Windows development.</p>
           </div>
-
-          <div class="skill-category">
-            <div class="skill-cat-title">Languages &amp; Core Tech</div>
-            <ul class="skill-list">
-              <li>C / C++ (Modern &amp; Low-Level)</li>
-              <li>Python (Automation, Tooling &amp; Analysis)</li>
-              <li>x86 / x64 Assembly</li>
-              <li>Windows API &amp; NT Native API</li>
-              <li>SQL &amp; Data Analysis Frameworks</li>
-            </ul>
-          </div>
-
-          <div class="skill-category">
-            <div class="skill-cat-title">Systems &amp; Security</div>
-            <ul class="skill-list">
-              <li>Windows Internals &amp; Kernel Callbacks</li>
-              <li>Anti-Cheat Architecture &amp; Driver Research</li>
-              <li>Hooking Techniques &amp; Evasion Detection</li>
-              <li>Process Injection &amp; Handle Stripping</li>
-              <li>Authenticode &amp; Digital Signatures</li>
-            </ul>
-          </div>
-        </div>
-
-        <h2>Community &amp; Research Contributions</h2>
-
-        <div class="timeline">
-          
-          <div class="timeline-item">
-            <div class="timeline-dot"></div>
-            <div class="timeline-time">6+ Years (Ongoing)</div>
-            <h3 class="timeline-title">VirusTotal Community Contributor</h3>
-            <div class="timeline-role">Independent Community Volunteer</div>
-            <p>
-              Active community volunteer on VirusTotal for over six years. Contribution involves independently analyzing suspicious files, 
-              evaluating unknown binary samples, performing static and dynamic triage, and submitting verdicts and technical findings to assist 
-              the broader community in understanding potentially malicious indicators.
-            </p>
-          </div>
-
-          <div class="timeline-item">
-            <div class="timeline-dot"></div>
-            <div class="timeline-time">Ongoing</div>
-            <h3 class="timeline-title">UnknownCheats Technical Staff &amp; Contributor</h3>
-            <div class="timeline-role">Community Staff / Technical Researcher</div>
-            <p>
-              Participated as a staff member and technical contributor within the UnknownCheats reverse engineering community. 
-              Engaged in technical analysis, binary reversing, debugging, and discussions centered around game security, anti-cheat mechanisms, 
-              memory protection techniques, and low-level development.
-            </p>
-          </div>
-
-        </div>
-
-        <h2>Research Philosophy</h2>
-        <p>
-          I approach software security through rigorous empirical verification: examining the assembly instructions, reconstructing 
-          data structures, and validating execution pathways in isolated environments. The goal of this site is to maintain an open, 
-          structured archive of technical write-ups, analysis findings, and utility code for fellow researchers and low-level engineers.
-        </p>
-
-      </div>
-
+        </div></div>
+      </section>
     </div>
   </main>
 
   <footer class="site-footer">
-    <div class="container footer-content">
-      <div class="footer-status">
-        <span class="hero-status-dot"></span>
-        <span>Security Research &amp; Engineering</span>
-      </div>
-      <div>&copy; 2026 Musaed. All rights reserved.</div>
-      <div class="footer-links">
-        <a href="https://github.com/xidenlz" target="_blank" rel="noopener noreferrer">GitHub</a>
-        <a href="contact.html">Contact</a>
-      </div>
+    <div class="wrap footer-inner">
+      <div>&copy; 2026 Musaed &middot; xidenlz</div>
+      <ul class="footer-nav">
+        <li><a href="https://github.com/xidenlz" rel="me noopener">GitHub</a></li>
+        <li><a href="feed.xml">RSS</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
     </div>
   </footer>
 
-  <script src="js/main.js"></script>
+  <script src="js/main.js" defer></script>
 </body>
 </html>

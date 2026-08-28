@@ -3,172 +3,214 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Windows Kernel Callbacks | Musaed &lt;/&gt;</title>
-  <meta name="description" content="Analyzing process creation and object handle callbacks in Windows kernel drivers.">
-  <meta name="theme-color" content="#38bdf8">
-  <meta property="og:title" content="Windows Kernel Callbacks | Musaed &lt;/&gt;">
-  <meta property="og:description" content="Analyzing process creation and object handle callbacks in Windows kernel drivers.">
+  <title>Windows kernel process and thread callbacks · Musaed</title>
+  <meta name="description" content="Windows kernel process and thread notification callbacks — PsSetCreateProcessNotifyRoutineEx and ObRegisterCallbacks in practice.">
+  <meta name="author" content="Musaed">
+  <meta name="theme-color" content="#0a0b0d">
+  <link rel="canonical" href="https://xidenlz.github.io/xidenlz/blog/windows-kernel-callbacks.html">
+  <meta property="og:site_name" content="Musaed">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://xidenlz.github.io/xidenlz/blog/windows-kernel-callbacks.html">
+  <meta property="og:title" content="Windows kernel process and thread callbacks">
+  <meta property="og:description" content="Windows kernel process and thread notification callbacks — PsSetCreateProcessNotifyRoutineEx and ObRegisterCallbacks in practice.">
+  <meta property="og:image" content="https://xidenlz.github.io/xidenlz/assets/og/blog-windows-kernel-callbacks.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Windows kernel process and thread callbacks">
+  <meta name="twitter:description" content="Windows kernel process and thread notification callbacks — PsSetCreateProcessNotifyRoutineEx and ObRegisterCallbacks in practice.">
+  <meta name="twitter:image" content="https://xidenlz.github.io/xidenlz/assets/og/blog-windows-kernel-callbacks.png">
+  <meta property="article:published_time" content="2026-02-18">
+  <meta property="article:author" content="Musaed">
   <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="alternate" type="application/rss+xml" title="Musaed — Research feed" href="https://xidenlz.github.io/xidenlz/feed.xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Windows kernel process and thread callbacks", "author": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}, "datePublished": "2026-02-18", "url": "https://xidenlz.github.io/xidenlz/blog/windows-kernel-callbacks.html", "description": "Windows kernel process and thread notification callbacks \u2014 PsSetCreateProcessNotifyRoutineEx and ObRegisterCallbacks in practice.", "image": "https://xidenlz.github.io/xidenlz/assets/og/blog-windows-kernel-callbacks.png", "publisher": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}}</script>
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-  <header class="site-header">
-    <div class="container nav-container">
-      <a href="../index.html" class="brand-link" aria-label="Musaed Home">
-        Musaed <span class="brand-prefix">&lt;/&gt;</span>
+  <header class="masthead">
+    <div class="wrap masthead-inner">
+      <a class="wordmark" href="../index.html" aria-label="Musaed — home">
+        Musaed <span>&lt;/&gt;</span>
       </a>
-      <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
+      <button class="nav-toggle" type="button"
+              aria-label="Toggle navigation" aria-expanded="false"
+              aria-controls="nav-list">
+        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
-      <nav>
-        <ul class="nav-links">
-          <li><a href="../index.html" class="nav-link">Home</a></li>
-          <li><a href="../about.html" class="nav-link">About</a></li>
-          <li><a href="../research.html" class="nav-link">Research</a></li>
-          <li><a href="../projects.html" class="nav-link">Projects</a></li>
-          <li><a href="../blog.html" class="nav-link active">Blog</a></li>
-          <li><a href="../contact.html" class="nav-link">Contact</a></li>
+      <nav aria-label="Primary">
+        <ul id="nav-list" class="nav-list">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="../about.html">About</a></li>
+            <li><a href="../research.html">Research</a></li>
+            <li><a href="../projects.html">Projects</a></li>
+            <li><a href="../blog.html" aria-current="page">Blog</a></li>
+            <li><a href="../contact.html">Contact</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
-  <main>
-    <div class="container article-container">
-      
-      <div class="article-header">
-        <div class="article-breadcrumbs">
-          <a href="../index.html">home</a> / <a href="../blog.html">blog</a> / <span>windows-kernel-callbacks</span>
+  <main id="main">
+    <div class="wrap">
+      <div class="article-head">
+        <div class="crumbs">
+          <a href="../index.html">home</a> /
+          <a href="../blog.html">blog</a> /
+          <span aria-current="page">windows-kernel-callbacks</span>
         </div>
-        <h1 class="article-title">Understanding Windows Kernel Process &amp; Thread Callbacks</h1>
-        <div class="article-meta">
-          <div class="article-meta-item">
-            <span class="article-meta-label">Author:</span>
-            <span class="article-meta-value">Musaed</span>
-          </div>
-          <div class="article-meta-item">
-            <span class="article-meta-label">Published:</span>
-            <span class="article-meta-value">February 18, 2026</span>
-          </div>
-          <div class="article-meta-item">
-            <span class="article-meta-label">Topic:</span>
-            <span class="article-meta-value">Windows Kernel / Driver Security</span>
-          </div>
-        </div>
+        <h1>Windows kernel process and thread callbacks</h1>
+        <div class="byline"><span>Musaed</span><span><b>Published</b> February 18, 2026</span><span><b>Category</b> Kernel</span><span><b>Read</b> ~2 min</span></div>
       </div>
-
-      <div class="article-content">
-        
-        <h2>Overview</h2>
+      <div class="article">
+        <article class="prose">
         <p>
-          In modern 64-bit Windows environments, Kernel Patch Protection (PatchGuard) prevents security drivers and software from modifying the System Service Descriptor Table (SSDT) or performing inline hooks on kernel code. 
-          To provide legitimate security software, EDRs, and anti-cheat drivers with visibility and control over process execution, Microsoft introduced official notification routines and Object Manager callbacks.
-        </p>
+  On 64-bit Windows, PatchGuard rules out most of the tricks security
+  drivers used to reach for — SSDT hooks, inline patches on kernel code.
+  What Microsoft gave everyone else in exchange is a small set of
+  documented callback interfaces. Drivers register a function, the kernel
+  calls it when the right thing happens, and that’s the whole surface.
+</p>
+<p>
+  Two of these carry most of the weight for EDR and anti-cheat work: the
+  process notification routines and the Object Manager callbacks. I want
+  to look at both.
+</p>
 
-        <h2>Process Creation Notifications</h2>
-        <p>
-          Drivers register for process creation events using <code>PsSetCreateProcessNotifyRoutineEx</code>. The callback receives a pointer to a <code>PS_CREATE_NOTIFY_INFO</code> structure containing:
-        </p>
-        <ul>
-          <li>Parent Process ID and Creator Thread ID.</li>
-          <li>The fully qualified image file path of the executable.</li>
-          <li>The complete command line string.</li>
-          <li>A status output field (<code>CreationStatus</code>) allowing the driver to block process startup with <code>STATUS_ACCESS_DENIED</code>.</li>
-        </ul>
+<h2>Process creation notifications</h2>
+<p>
+  A driver registers for process events with
+  <code>PsSetCreateProcessNotifyRoutineEx</code>. The callback gets a
+  <code>PS_CREATE_NOTIFY_INFO</code> pointer on creation, holding:
+</p>
+<ul>
+  <li>Parent PID and creator thread ID.</li>
+  <li>The full image path of the new executable.</li>
+  <li>The command line.</li>
+  <li>A writeable <code>CreationStatus</code> the driver can set to <code>STATUS_ACCESS_DENIED</code> to abort the launch.</li>
+</ul>
+<p>
+  On termination the same callback fires with <code>CreateInfo == NULL</code>.
+</p>
 
-        <div class="code-block">
-          <div class="code-header">
-            <span class="code-lang">C</span>
-            <span>Process Creation Callback Handler</span>
-          </div>
-          <pre><code><span class="syn-type">VOID</span> <span class="syn-fn">ProcessNotifyCallbackEx</span><span class="syn-op">(</span>
+<div class="snippet">
+  <div class="snippet-bar">
+    <span class="snippet-lang">C</span>
+    <span class="snippet-name">process notify callback</span>
+  </div>
+  <pre><code><span class="syn-type">VOID</span> <span class="syn-fn">ProcessNotifyCallbackEx</span><span class="syn-op">(</span>
     <span class="syn-type">PEPROCESS</span> <span class="syn-var">Process</span><span class="syn-op">,</span>
     <span class="syn-type">HANDLE</span> <span class="syn-var">ProcessId</span><span class="syn-op">,</span>
     <span class="syn-type">PPS_CREATE_NOTIFY_INFO</span> <span class="syn-var">CreateInfo</span>
 <span class="syn-op">)</span> <span class="syn-op">{</span>
     <span class="syn-kwd">if</span> <span class="syn-op">(</span><span class="syn-var">CreateInfo</span> <span class="syn-op">!=</span> <span class="syn-num">NULL</span><span class="syn-op">)</span> <span class="syn-op">{</span>
-        <span class="syn-com">// Process is starting up</span>
-        <span class="syn-fn">KdPrint</span><span class="syn-op">((</span><span class="syn-str">"[+] New Process Spawned: PID %llu | Path: %wZ\n"</span><span class="syn-op">,</span> 
+        <span class="syn-com">// process is starting</span>
+        <span class="syn-fn">KdPrint</span><span class="syn-op">((</span><span class="syn-str">"[+] spawn PID %llu | %wZ\n"</span><span class="syn-op">,</span>
             <span class="syn-op">(</span><span class="syn-type">ULONG_PTR</span><span class="syn-op">)</span><span class="syn-var">ProcessId</span><span class="syn-op">,</span> <span class="syn-var">CreateInfo</span><span class="syn-op">-&gt;</span><span class="syn-var">ImageFileName</span><span class="syn-op">));</span>
-            
-        <span class="syn-com">// Inspect or enforce policy</span>
+
         <span class="syn-kwd">if</span> <span class="syn-op">(</span><span class="syn-fn">IsBlockedBinary</span><span class="syn-op">(</span><span class="syn-var">CreateInfo</span><span class="syn-op">-&gt;</span><span class="syn-var">ImageFileName</span><span class="syn-op">))</span> <span class="syn-op">{</span>
             <span class="syn-var">CreateInfo</span><span class="syn-op">-&gt;</span><span class="syn-var">CreationStatus</span> <span class="syn-op">=</span> <span class="syn-num">STATUS_ACCESS_DENIED</span><span class="syn-op">;</span>
         <span class="syn-op">}</span>
     <span class="syn-op">}</span> <span class="syn-kwd">else</span> <span class="syn-op">{</span>
-        <span class="syn-com">// Process is terminating</span>
-        <span class="syn-fn">KdPrint</span><span class="syn-op">((</span><span class="syn-str">"[-] Process Terminated: PID %llu\n"</span><span class="syn-op">,</span> <span class="syn-op">(</span><span class="syn-type">ULONG_PTR</span><span class="syn-op">)</span><span class="syn-var">ProcessId</span><span class="syn-op">));</span>
+        <span class="syn-fn">KdPrint</span><span class="syn-op">((</span><span class="syn-str">"[-] exit  PID %llu\n"</span><span class="syn-op">,</span> <span class="syn-op">(</span><span class="syn-type">ULONG_PTR</span><span class="syn-op">)</span><span class="syn-var">ProcessId</span><span class="syn-op">));</span>
     <span class="syn-op">}</span>
 <span class="syn-op">}</span></code></pre>
-        </div>
+</div>
 
-        <h2>Object Manager Callbacks: ObRegisterCallbacks</h2>
-        <p>
-          While notification routines inform the driver after an event occurs, <code>ObRegisterCallbacks</code> provides pre-operation and post-operation interception of handle creation for <code>*PsProcessType</code> and <code>*PsThreadType</code>.
-        </p>
-        <p>
-          Inside the pre-operation callback, the driver can inspect <code>OperationInformation-&gt;Parameters-&gt;CreateHandleInformation.DesiredAccess</code> and strip sensitive access rights before the Object Manager returns the handle to the caller.
-        </p>
+<div class="note">
+  <span class="note-label">Watch the IRQL</span>
+  <p>
+    The callback runs at <code>PASSIVE_LEVEL</code>, so paged memory is fair
+    game — but the callback array is limited to 64 entries system-wide.
+    Registering and unregistering blindly during driver load and unload is
+    a fast way to leak slots on a busy system.
+  </p>
+</div>
 
-        <div class="code-block">
-          <div class="code-header">
-            <span class="code-lang">C</span>
-            <span>Pre-Operation Handle Access Filtering</span>
-          </div>
-          <pre><code><span class="syn-type">OB_PREOP_CALLBACK_STATUS</span> <span class="syn-fn">HandlePreCallback</span><span class="syn-op">(</span>
+<h2>Object Manager callbacks: ObRegisterCallbacks</h2>
+<p>
+  Process notifications tell you what happened. <code>ObRegisterCallbacks</code>
+  lets you intervene <em>before</em> a handle to <code>*PsProcessType</code>
+  or <code>*PsThreadType</code> is returned to the caller.
+</p>
+<p>
+  In the pre-operation callback the driver reads
+  <code>OperationInformation-&gt;Parameters-&gt;CreateHandleInformation.DesiredAccess</code>
+  and can mask off rights before the Object Manager hands the handle back.
+</p>
+
+<div class="snippet">
+  <div class="snippet-bar">
+    <span class="snippet-lang">C</span>
+    <span class="snippet-name">pre-op handle filter</span>
+  </div>
+  <pre><code><span class="syn-type">OB_PREOP_CALLBACK_STATUS</span> <span class="syn-fn">HandlePreCallback</span><span class="syn-op">(</span>
     <span class="syn-type">PVOID</span> <span class="syn-var">RegistrationContext</span><span class="syn-op">,</span>
     <span class="syn-type">POB_PRE_OPERATION_INFORMATION</span> <span class="syn-var">OpInfo</span>
 <span class="syn-op">)</span> <span class="syn-op">{</span>
     <span class="syn-kwd">if</span> <span class="syn-op">(</span><span class="syn-var">OpInfo</span><span class="syn-op">-&gt;</span><span class="syn-var">ObjectType</span> <span class="syn-op">==</span> <span class="syn-op">*</span><span class="syn-type">PsProcessType</span><span class="syn-op">)</span> <span class="syn-op">{</span>
         <span class="syn-type">PEPROCESS</span> <span class="syn-var">TargetProcess</span> <span class="syn-op">=</span> <span class="syn-op">(</span><span class="syn-type">PEPROCESS</span><span class="syn-op">)</span><span class="syn-var">OpInfo</span><span class="syn-op">-&gt;</span><span class="syn-var">Object</span><span class="syn-op">;</span>
-        
+
         <span class="syn-kwd">if</span> <span class="syn-op">(</span><span class="syn-fn">IsProtectedProcess</span><span class="syn-op">(</span><span class="syn-var">TargetProcess</span><span class="syn-op">))</span> <span class="syn-op">{</span>
-            <span class="syn-com">// Strip write, read, and thread injection permissions</span>
-            <span class="syn-type">ACCESS_MASK</span> <span class="syn-var">MaskToStrip</span> <span class="syn-op">=</span> <span class="syn-num">PROCESS_VM_READ</span> <span class="syn-op">|</span> 
-                                      <span class="syn-num">PROCESS_VM_WRITE</span> <span class="syn-op">|</span> 
-                                      <span class="syn-num">PROCESS_VM_OPERATION</span> <span class="syn-op">|</span> 
-                                      <span class="syn-num">PROCESS_CREATE_THREAD</span> <span class="syn-op">|</span> 
+            <span class="syn-com">// strip R/W/thread/dup rights before the handle is returned</span>
+            <span class="syn-type">ACCESS_MASK</span> <span class="syn-var">MaskToStrip</span> <span class="syn-op">=</span> <span class="syn-num">PROCESS_VM_READ</span> <span class="syn-op">|</span>
+                                      <span class="syn-num">PROCESS_VM_WRITE</span> <span class="syn-op">|</span>
+                                      <span class="syn-num">PROCESS_VM_OPERATION</span> <span class="syn-op">|</span>
+                                      <span class="syn-num">PROCESS_CREATE_THREAD</span> <span class="syn-op">|</span>
                                       <span class="syn-num">PROCESS_DUP_HANDLE</span><span class="syn-op">;</span>
-                                      
+
             <span class="syn-var">OpInfo</span><span class="syn-op">-&gt;</span><span class="syn-var">Parameters</span><span class="syn-op">-&gt;</span><span class="syn-var">CreateHandleInformation</span><span class="syn-op">.</span><span class="syn-var">DesiredAccess</span> <span class="syn-op">&amp;=</span> <span class="syn-op">~</span><span class="syn-var">MaskToStrip</span><span class="syn-op">;</span>
         <span class="syn-op">}</span>
     <span class="syn-op">}</span>
     <span class="syn-kwd">return</span> <span class="syn-num">OB_PREOP_SUCCESS</span><span class="syn-op">;</span>
 <span class="syn-op">}</span></code></pre>
-        </div>
+</div>
 
-        <h2>Security Implications</h2>
-        <p>
-          Object manager filtering makes user-mode API hooking and debugging against protected applications ineffective through standard user-mode debugging interfaces. Security researchers investigating protected environments must examine how drivers validate handle origins, whether handle duplication can be leveraged, or how kernel-mode communications are authenticated.
-        </p>
-
+<h2>What this closes off</h2>
+<p>
+  Once a driver is stripping rights on <code>PsProcessType</code>, user-mode
+  code trying to <code>OpenProcess</code> a protected target for
+  <code>VM_READ</code>/<code>VM_WRITE</code>/<code>CREATE_THREAD</code>
+  gets a handle back — but not with those rights. Standard injection
+  primitives, ordinary API hooks, most out-of-process debuggers: all
+  neutered without any inline patching.
+</p>
+<p>
+  What’s <em>still</em> interesting for anyone poking at these systems is
+  the seams: how the driver decides which process to protect, whether that
+  decision reads state a caller can influence, and whether an already-open
+  handle from before protection kicked in can be duplicated back into
+  something useful. That’s where the actual bugs tend to live.
+</p>
+        <ul class="tags" aria-label="Tags"><li>Windows kernel</li><li>Callbacks</li><li>Security drivers</li><li>x64</li></ul>
+      </article>
+        <aside class="toc" aria-label="On this page">
+        <details open>
+          <summary>On this page</summary>
+        </details>
+      </aside>
       </div>
-
     </div>
   </main>
 
   <footer class="site-footer">
-    <div class="container footer-content">
-      <div class="footer-status">
-        <span class="hero-status-dot"></span>
-        <span>Security Research &amp; Engineering</span>
-      </div>
-      <div>&copy; 2026 Musaed. All rights reserved.</div>
-      <div class="footer-links">
-        <a href="https://github.com/xidenlz" target="_blank" rel="noopener noreferrer">GitHub</a>
-        <a href="../contact.html">Contact</a>
-      </div>
+    <div class="wrap footer-inner">
+      <div>&copy; 2026 Musaed &middot; xidenlz</div>
+      <ul class="footer-nav">
+        <li><a href="https://github.com/xidenlz" rel="me noopener">GitHub</a></li>
+        <li><a href="../feed.xml">RSS</a></li>
+        <li><a href="../contact.html">Contact</a></li>
+      </ul>
     </div>
   </footer>
 
-  <script src="../js/main.js"></script>
+  <script src="../js/main.js" defer></script>
 </body>
 </html>

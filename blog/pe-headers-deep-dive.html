@@ -3,88 +3,99 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PE Headers &amp; Data Directories | Musaed &lt;/&gt;</title>
-  <meta name="description" content="Analyzing PE32+ Optional Headers, section alignment, and data directories.">
-  <meta name="theme-color" content="#38bdf8">
-  <meta property="og:title" content="PE Headers &amp; Data Directories | Musaed &lt;/&gt;">
-  <meta property="og:description" content="Analyzing PE32+ Optional Headers, section alignment, and data directories.">
+  <title>PE optional headers and data directories · Musaed</title>
+  <meta name="description" content="The PE Optional Header explained — IMAGE_OPTIONAL_HEADER64, section alignment, RVA to file-offset conversion, data directories.">
+  <meta name="author" content="Musaed">
+  <meta name="theme-color" content="#0a0b0d">
+  <link rel="canonical" href="https://xidenlz.github.io/xidenlz/blog/pe-headers-deep-dive.html">
+  <meta property="og:site_name" content="Musaed">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://xidenlz.github.io/xidenlz/blog/pe-headers-deep-dive.html">
+  <meta property="og:title" content="PE optional headers and data directories">
+  <meta property="og:description" content="The PE Optional Header explained — IMAGE_OPTIONAL_HEADER64, section alignment, RVA to file-offset conversion, data directories.">
+  <meta property="og:image" content="https://xidenlz.github.io/xidenlz/assets/og/blog-pe-headers-deep-dive.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="PE optional headers and data directories">
+  <meta name="twitter:description" content="The PE Optional Header explained — IMAGE_OPTIONAL_HEADER64, section alignment, RVA to file-offset conversion, data directories.">
+  <meta name="twitter:image" content="https://xidenlz.github.io/xidenlz/assets/og/blog-pe-headers-deep-dive.png">
+  <meta property="article:published_time" content="2026-03-01">
+  <meta property="article:author" content="Musaed">
   <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+  <link rel="alternate" type="application/rss+xml" title="Musaed — Research feed" href="https://xidenlz.github.io/xidenlz/feed.xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="../css/style.css">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "PE optional headers and data directories", "author": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}, "datePublished": "2026-03-01", "url": "https://xidenlz.github.io/xidenlz/blog/pe-headers-deep-dive.html", "description": "The PE Optional Header explained \u2014 IMAGE_OPTIONAL_HEADER64, section alignment, RVA to file-offset conversion, data directories.", "image": "https://xidenlz.github.io/xidenlz/assets/og/blog-pe-headers-deep-dive.png", "publisher": {"@type": "Person", "name": "Musaed", "url": "https://xidenlz.github.io/xidenlz/"}}</script>
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
 
-  <header class="site-header">
-    <div class="container nav-container">
-      <a href="../index.html" class="brand-link" aria-label="Musaed Home">
-        Musaed <span class="brand-prefix">&lt;/&gt;</span>
+  <header class="masthead">
+    <div class="wrap masthead-inner">
+      <a class="wordmark" href="../index.html" aria-label="Musaed — home">
+        Musaed <span>&lt;/&gt;</span>
       </a>
-      <button class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="3" y1="12" x2="21" y2="12"></line>
-          <line x1="3" y1="6" x2="21" y2="6"></line>
-          <line x1="3" y1="18" x2="21" y2="18"></line>
-        </svg>
+      <button class="nav-toggle" type="button"
+              aria-label="Toggle navigation" aria-expanded="false"
+              aria-controls="nav-list">
+        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
       </button>
-      <nav>
-        <ul class="nav-links">
-          <li><a href="../index.html" class="nav-link">Home</a></li>
-          <li><a href="../about.html" class="nav-link">About</a></li>
-          <li><a href="../research.html" class="nav-link">Research</a></li>
-          <li><a href="../projects.html" class="nav-link">Projects</a></li>
-          <li><a href="../blog.html" class="nav-link active">Blog</a></li>
-          <li><a href="../contact.html" class="nav-link">Contact</a></li>
+      <nav aria-label="Primary">
+        <ul id="nav-list" class="nav-list">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="../about.html">About</a></li>
+            <li><a href="../research.html">Research</a></li>
+            <li><a href="../projects.html">Projects</a></li>
+            <li><a href="../blog.html" aria-current="page">Blog</a></li>
+            <li><a href="../contact.html">Contact</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
-  <main>
-    <div class="container article-container">
-      
-      <div class="article-header">
-        <div class="article-breadcrumbs">
-          <a href="../index.html">home</a> / <a href="../blog.html">blog</a> / <span>pe-headers-deep-dive</span>
+  <main id="main">
+    <div class="wrap">
+      <div class="article-head">
+        <div class="crumbs">
+          <a href="../index.html">home</a> /
+          <a href="../blog.html">blog</a> /
+          <span aria-current="page">pe-headers-deep-dive</span>
         </div>
-        <h1 class="article-title">PE Format: Deep Dive into Optional Headers &amp; Data Directories</h1>
-        <div class="article-meta">
-          <div class="article-meta-item">
-            <span class="article-meta-label">Author:</span>
-            <span class="article-meta-value">Musaed</span>
-          </div>
-          <div class="article-meta-item">
-            <span class="article-meta-label">Published:</span>
-            <span class="article-meta-value">March 1, 2026</span>
-          </div>
-          <div class="article-meta-item">
-            <span class="article-meta-label">Topic:</span>
-            <span class="article-meta-value">Windows Internals / PE Structure</span>
-          </div>
-        </div>
+        <h1>PE optional headers and data directories</h1>
+        <div class="byline"><span>Musaed</span><span><b>Published</b> March 1, 2026</span><span><b>Category</b> PE format</span><span><b>Read</b> ~3 min</span></div>
       </div>
-
-      <div class="article-content">
-        
-        <h2>Introduction</h2>
+      <div class="article">
+        <article class="prose">
         <p>
-          The Portable Executable (PE) format is the standard executable file structure utilized by modern 32-bit and 64-bit Windows operating systems. 
-          While the legacy DOS header and COFF File Header establish basic file validation, the <code>IMAGE_OPTIONAL_HEADER</code> structure contains 
-          the vital parameters required by the Windows OS loader (<code>ntdll!LdrpInitializeProcess</code>) to map image sections into virtual memory.
-        </p>
+  Every 32- and 64-bit Windows executable and DLL is a PE file. The DOS
+  header and COFF file header handle the basic “yes this is a real image”
+  check, but the parameters the Windows loader really cares about live in
+  <code>IMAGE_OPTIONAL_HEADER</code> — which, despite the name, is required.
+</p>
+<p>
+  I want to walk through the parts of the optional header that come up
+  most often when I’m reading a binary or writing a loader.
+</p>
 
-        <h2>The IMAGE_OPTIONAL_HEADER64 Structure</h2>
-        <p>
-          Despite its name, the Optional Header is mandatory for executable files and dynamic-link libraries. In 64-bit binaries (PE32+), key 32-bit fields such as <code>ImageBase</code>, <code>SizeOfStackReserve</code>, and <code>SizeOfHeapReserve</code> are expanded to 64-bit integers (<code>ULONGLONG</code>).
-        </p>
+<h2>The 64-bit shape</h2>
+<p>
+  PE32+ (the 64-bit flavor) widens the fields that hold pointers.
+  <code>ImageBase</code>, <code>SizeOfStackReserve</code>,
+  <code>SizeOfHeapReserve</code>, and friends become <code>ULONGLONG</code>.
+  Everything else keeps its width.
+</p>
 
-        <div class="code-block">
-          <div class="code-header">
-            <span class="code-lang">C / WinNT.h</span>
-            <span>IMAGE_OPTIONAL_HEADER64 Definition</span>
-          </div>
-          <pre><code><span class="syn-kwd">typedef struct</span> <span class="syn-type">_IMAGE_OPTIONAL_HEADER64</span> <span class="syn-op">{</span>
+<div class="snippet">
+  <div class="snippet-bar">
+    <span class="snippet-lang">C · winnt.h</span>
+    <span class="snippet-name">IMAGE_OPTIONAL_HEADER64</span>
+  </div>
+  <pre><code><span class="syn-kwd">typedef struct</span> <span class="syn-type">_IMAGE_OPTIONAL_HEADER64</span> <span class="syn-op">{</span>
     <span class="syn-type">WORD</span>        <span class="syn-var">Magic</span><span class="syn-op">;</span>                       <span class="syn-com">// 0x020b for PE32+ (x64)</span>
     <span class="syn-type">BYTE</span>        <span class="syn-var">MajorLinkerVersion</span><span class="syn-op">;</span>
     <span class="syn-type">BYTE</span>        <span class="syn-var">MinorLinkerVersion</span><span class="syn-op">;</span>
@@ -93,118 +104,108 @@
     <span class="syn-type">DWORD</span>       <span class="syn-var">SizeOfUninitializedData</span><span class="syn-op">;</span>
     <span class="syn-type">DWORD</span>       <span class="syn-var">AddressOfEntryPoint</span><span class="syn-op">;</span>        <span class="syn-com">// RVA of entry point</span>
     <span class="syn-type">DWORD</span>       <span class="syn-var">BaseOfCode</span><span class="syn-op">;</span>                 <span class="syn-com">// RVA of code section</span>
-    <span class="syn-type">ULONGLONG</span>   <span class="syn-var">ImageBase</span><span class="syn-op">;</span>                  <span class="syn-com">// Preferred load address (e.g. 0x140000000)</span>
-    <span class="syn-type">DWORD</span>       <span class="syn-var">SectionAlignment</span><span class="syn-op">;</span>           <span class="syn-com">// In-memory page alignment (typically 0x1000)</span>
-    <span class="syn-type">DWORD</span>       <span class="syn-var">FileAlignment</span><span class="syn-op">;</span>              <span class="syn-com">// On-disk file alignment (typically 0x200)</span>
+    <span class="syn-type">ULONGLONG</span>   <span class="syn-var">ImageBase</span><span class="syn-op">;</span>                  <span class="syn-com">// preferred load address, e.g. 0x140000000</span>
+    <span class="syn-type">DWORD</span>       <span class="syn-var">SectionAlignment</span><span class="syn-op">;</span>           <span class="syn-com">// in-memory page alignment, usually 0x1000</span>
+    <span class="syn-type">DWORD</span>       <span class="syn-var">FileAlignment</span><span class="syn-op">;</span>              <span class="syn-com">// on-disk alignment, usually 0x200</span>
     <span class="syn-type">WORD</span>        <span class="syn-var">MajorOperatingSystemVersion</span><span class="syn-op">;</span>
-    <span class="syn-com">// ... Subsystem &amp; DLL Characteristics ...</span>
-    <span class="syn-type">DWORD</span>       <span class="syn-var">NumberOfRvaAndSizes</span><span class="syn-op">;</span>        <span class="syn-com">// Number of DataDirectory entries (16)</span>
+    <span class="syn-com">// ... subsystem and DLL characteristics ...</span>
+    <span class="syn-type">DWORD</span>       <span class="syn-var">NumberOfRvaAndSizes</span><span class="syn-op">;</span>        <span class="syn-com">// number of DataDirectory entries (16)</span>
     <span class="syn-type">IMAGE_DATA_DIRECTORY</span> <span class="syn-var">DataDirectory</span><span class="syn-op">[</span><span class="syn-num">16</span><span class="syn-op">];</span>
 <span class="syn-op">}</span> <span class="syn-type">IMAGE_OPTIONAL_HEADER64</span><span class="syn-op">, *</span><span class="syn-type">PIMAGE_OPTIONAL_HEADER64</span><span class="syn-op">;</span></code></pre>
-        </div>
+</div>
 
-        <h2>Section vs File Alignment</h2>
-        <p>
-          One of the fundamental differences when parsing PE files statically versus reading mapped memory is the alignment discrepancy:
-        </p>
-        <ul>
-          <li><strong>FileAlignment:</strong> Dictates the granularity of section boundaries on disk (commonly 512 bytes / <code>0x200</code>).</li>
-          <li><strong>SectionAlignment:</strong> Dictates the page granularity of section boundaries when mapped into the process virtual address space (commonly 4096 bytes / <code>0x1000</code>).</li>
-        </ul>
-        <p>
-          Because of this difference, a Relative Virtual Address (RVA) does not map 1:1 to a raw file offset. To calculate the raw offset for an address located in a given section:
-        </p>
+<h2>Section alignment versus file alignment</h2>
+<p>
+  These two fields catch people out, especially the first time they try
+  to write a manual mapper.
+</p>
+<ul>
+  <li><strong><code>FileAlignment</code></strong> is how sections are packed on disk. Commonly <code>0x200</code>.</li>
+  <li><strong><code>SectionAlignment</code></strong> is how they end up in virtual memory. Commonly <code>0x1000</code> — one page.</li>
+</ul>
+<p>
+  Because those numbers are different, an RVA doesn’t line up 1:1 with a
+  file offset. To go from RVA to a raw offset you need to find which
+  section contains the RVA, then subtract that section’s
+  <code>VirtualAddress</code> and add its <code>PointerToRawData</code>:
+</p>
 
-        <div class="code-block">
-          <div class="code-header">
-            <span class="code-lang">C++</span>
-            <span>RVA to File Offset Conversion</span>
-          </div>
-          <pre><code><span class="syn-type">DWORD</span> <span class="syn-fn">RvaToRawOffset</span><span class="syn-op">(</span><span class="syn-type">DWORD</span> <span class="syn-var">dwRva</span><span class="syn-op">,</span> <span class="syn-type">PIMAGE_NT_HEADERS</span> <span class="syn-var">pNtHeaders</span><span class="syn-op">)</span> <span class="syn-op">{</span>
+<div class="snippet">
+  <div class="snippet-bar">
+    <span class="snippet-lang">C++</span>
+    <span class="snippet-name">RVA -&gt; file offset</span>
+  </div>
+  <pre><code><span class="syn-type">DWORD</span> <span class="syn-fn">RvaToRawOffset</span><span class="syn-op">(</span><span class="syn-type">DWORD</span> <span class="syn-var">dwRva</span><span class="syn-op">,</span> <span class="syn-type">PIMAGE_NT_HEADERS</span> <span class="syn-var">pNtHeaders</span><span class="syn-op">)</span> <span class="syn-op">{</span>
     <span class="syn-type">PIMAGE_SECTION_HEADER</span> <span class="syn-var">pSection</span> <span class="syn-op">=</span> <span class="syn-fn">IMAGE_FIRST_SECTION</span><span class="syn-op">(</span><span class="syn-var">pNtHeaders</span><span class="syn-op">);</span>
     <span class="syn-kwd">for</span> <span class="syn-op">(</span><span class="syn-type">WORD</span> <span class="syn-var">i</span> <span class="syn-op">=</span> <span class="syn-num">0</span><span class="syn-op">;</span> <span class="syn-var">i</span> <span class="syn-op">&lt;</span> <span class="syn-var">pNtHeaders</span><span class="syn-op">-&gt;</span><span class="syn-var">FileHeader</span><span class="syn-op">.</span><span class="syn-var">NumberOfSections</span><span class="syn-op">;</span> <span class="syn-op">++</span><span class="syn-var">i</span><span class="syn-op">,</span> <span class="syn-op">++</span><span class="syn-var">pSection</span><span class="syn-op">)</span> <span class="syn-op">{</span>
-        <span class="syn-kwd">if</span> <span class="syn-op">(</span><span class="syn-var">dwRva</span> <span class="syn-op">&gt;=</span> <span class="syn-var">pSection</span><span class="syn-op">-&gt;</span><span class="syn-var">VirtualAddress</span> <span class="syn-op">&amp;&amp;</span> 
+        <span class="syn-kwd">if</span> <span class="syn-op">(</span><span class="syn-var">dwRva</span> <span class="syn-op">&gt;=</span> <span class="syn-var">pSection</span><span class="syn-op">-&gt;</span><span class="syn-var">VirtualAddress</span> <span class="syn-op">&amp;&amp;</span>
             <span class="syn-var">dwRva</span> <span class="syn-op">&lt;</span> <span class="syn-op">(</span><span class="syn-var">pSection</span><span class="syn-op">-&gt;</span><span class="syn-var">VirtualAddress</span> <span class="syn-op">+</span> <span class="syn-var">pSection</span><span class="syn-op">-&gt;</span><span class="syn-var">Misc</span><span class="syn-op">.</span><span class="syn-var">VirtualSize</span><span class="syn-op">))</span> <span class="syn-op">{</span>
             <span class="syn-kwd">return</span> <span class="syn-op">(</span><span class="syn-var">dwRva</span> <span class="syn-op">-</span> <span class="syn-var">pSection</span><span class="syn-op">-&gt;</span><span class="syn-var">VirtualAddress</span><span class="syn-op">)</span> <span class="syn-op">+</span> <span class="syn-var">pSection</span><span class="syn-op">-&gt;</span><span class="syn-var">PointerToRawData</span><span class="syn-op">;</span>
         <span class="syn-op">}</span>
     <span class="syn-op">}</span>
-    <span class="syn-kwd">return</span> <span class="syn-num">0</span><span class="syn-op">;</span> <span class="syn-com">// Not found in mapped sections</span>
+    <span class="syn-kwd">return</span> <span class="syn-num">0</span><span class="syn-op">;</span> <span class="syn-com">// not in any mapped section</span>
 <span class="syn-op">}</span></code></pre>
-        </div>
+</div>
 
-        <h2>Key Data Directories</h2>
-        <p>
-          The array of 16 <code>IMAGE_DATA_DIRECTORY</code> elements at the tail of the Optional Header points to primary subsystem tables:
-        </p>
+<h2>The data directories</h2>
+<p>
+  The tail of the optional header is an array of 16
+  <code>IMAGE_DATA_DIRECTORY</code> entries. Each is an RVA plus a size,
+  pointing at a subsystem table. The first six are the ones you touch
+  most often:
+</p>
 
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Index</th>
-                <th>Directory Constant</th>
-                <th>Description</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><code>0</code></td>
-                <td><code>IMAGE_DIRECTORY_ENTRY_EXPORT</code></td>
-                <td>Export Directory Table (functions exported by DLLs).</td>
-              </tr>
-              <tr>
-                <td><code>1</code></td>
-                <td><code>IMAGE_DIRECTORY_ENTRY_IMPORT</code></td>
-                <td>Import Directory Table (imported external APIs).</td>
-              </tr>
-              <tr>
-                <td><code>2</code></td>
-                <td><code>IMAGE_DIRECTORY_ENTRY_RESOURCE</code></td>
-                <td>Resource Directory Table (icons, dialogs, version info).</td>
-              </tr>
-              <tr>
-                <td><code>3</code></td>
-                <td><code>IMAGE_DIRECTORY_ENTRY_EXCEPTION</code></td>
-                <td>Exception Directory (.pdata table for x64 SEH unwinding).</td>
-              </tr>
-              <tr>
-                <td><code>4</code></td>
-                <td><code>IMAGE_DIRECTORY_ENTRY_SECURITY</code></td>
-                <td>Security Directory (Authenticode signatures, PKCS #7).</td>
-              </tr>
-              <tr>
-                <td><code>5</code></td>
-                <td><code>IMAGE_DIRECTORY_ENTRY_BASERELOC</code></td>
-                <td>Base Relocation Table (fixups required if ASLR reallocates image base).</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+<div class="table-scroll">
+  <table>
+    <thead>
+      <tr>
+        <th>Index</th>
+        <th>Directory</th>
+        <th>What it points at</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><code>0</code></td><td><code>EXPORT</code></td><td>Exports — functions this DLL makes available.</td></tr>
+      <tr><td><code>1</code></td><td><code>IMPORT</code></td><td>Imports — external APIs this image needs.</td></tr>
+      <tr><td><code>2</code></td><td><code>RESOURCE</code></td><td>Resources — icons, version info, dialogs.</td></tr>
+      <tr><td><code>3</code></td><td><code>EXCEPTION</code></td><td><code>.pdata</code> — x64 SEH unwind data.</td></tr>
+      <tr><td><code>4</code></td><td><code>SECURITY</code></td><td>Authenticode signatures (PKCS #7).</td></tr>
+      <tr><td><code>5</code></td><td><code>BASERELOC</code></td><td>Relocation fixups if ASLR moves the image.</td></tr>
+    </tbody>
+  </table>
+</div>
 
-        <h2>Conclusion</h2>
-        <p>
-          Mastering the PE Optional Header layout is foundational for low-level reverse engineering, writing custom loaders, unpacking obfuscated binaries, and conducting binary analysis.
-        </p>
-
+<h2>Why this matters in practice</h2>
+<p>
+  If you’re writing a loader, these fields are the whole contract with the
+  OS loader: get the alignment right, walk the sections into memory, apply
+  fixups from directory 5, resolve imports from directory 1, and honor
+  the entry-point RVA. If you’re doing static analysis on an obfuscated
+  sample, understanding what the loader trusts here is often the shortest
+  path to figuring out what the sample is hiding.
+</p>
+        <ul class="tags" aria-label="Tags"><li>PE32+</li><li>Windows loader</li><li>Virtual memory</li><li>C/C++</li></ul>
+      </article>
+        <aside class="toc" aria-label="On this page">
+        <details open>
+          <summary>On this page</summary>
+        </details>
+      </aside>
       </div>
-
     </div>
   </main>
 
   <footer class="site-footer">
-    <div class="container footer-content">
-      <div class="footer-status">
-        <span class="hero-status-dot"></span>
-        <span>Security Research &amp; Engineering</span>
-      </div>
-      <div>&copy; 2026 Musaed. All rights reserved.</div>
-      <div class="footer-links">
-        <a href="https://github.com/xidenlz" target="_blank" rel="noopener noreferrer">GitHub</a>
-        <a href="../contact.html">Contact</a>
-      </div>
+    <div class="wrap footer-inner">
+      <div>&copy; 2026 Musaed &middot; xidenlz</div>
+      <ul class="footer-nav">
+        <li><a href="https://github.com/xidenlz" rel="me noopener">GitHub</a></li>
+        <li><a href="../feed.xml">RSS</a></li>
+        <li><a href="../contact.html">Contact</a></li>
+      </ul>
     </div>
   </footer>
 
-  <script src="../js/main.js"></script>
+  <script src="../js/main.js" defer></script>
 </body>
 </html>
