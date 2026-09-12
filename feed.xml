@@ -2,63 +2,63 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Musaed: research and notes</title>
-    <link>https://xidenlz.github.io/xidenlz/</link>
-    <atom:link href="https://xidenlz.github.io/xidenlz/feed.xml" rel="self" type="application/rss+xml" />
+    <link>https://xidenlz.github.io/</link>
+    <atom:link href="https://xidenlz.github.io/feed.xml" rel="self" type="application/rss+xml" />
     <description>Reverse engineering, Windows internals, and anti-cheat research.</description>
     <language>en</language>
     <lastBuildDate>Fri, 28 Aug 2026 18:08:07 +0000</lastBuildDate>
     <item>
       <title>Three PE flags I check before opening IDA</title>
-      <link>https://xidenlz.github.io/xidenlz/blog/three-pe-flags-before-ida.html</link>
-      <guid isPermaLink="true">https://xidenlz.github.io/xidenlz/blog/three-pe-flags-before-ida.html</guid>
+      <link>https://xidenlz.github.io/blog/three-pe-flags-before-ida.html</link>
+      <guid isPermaLink="true">https://xidenlz.github.io/blog/three-pe-flags-before-ida.html</guid>
       <pubDate>Fri, 28 Aug 2026 00:00:00 +0000</pubDate>
       <category>Malware analysis</category>
       <description>How I screen Windows binaries fast by reading the PE first. Three flags I check before opening a disassembler: internet activity, dynamic import resolution, and embedded payloads.</description>
     </item>
     <item>
       <title>BattlEye: kernel-side stack walking</title>
-      <link>https://xidenlz.github.io/xidenlz/research/battleye-internals.html</link>
-      <guid isPermaLink="true">https://xidenlz.github.io/xidenlz/research/battleye-internals.html</guid>
+      <link>https://xidenlz.github.io/research/battleye-internals.html</link>
+      <guid isPermaLink="true">https://xidenlz.github.io/research/battleye-internals.html</guid>
       <pubDate>Fri, 12 Jun 2026 00:00:00 +0000</pubDate>
       <category>Anti-cheat · Kernel</category>
       <description>BattlEye kernel-side stack walking, thread lookup, APC-driven capture with RtlWalkFrameChain, image-boundary checks, and report dispatch.</description>
     </item>
     <item>
       <title>PE optional headers and data directories</title>
-      <link>https://xidenlz.github.io/xidenlz/blog/pe-headers-deep-dive.html</link>
-      <guid isPermaLink="true">https://xidenlz.github.io/xidenlz/blog/pe-headers-deep-dive.html</guid>
+      <link>https://xidenlz.github.io/blog/pe-headers-deep-dive.html</link>
+      <guid isPermaLink="true">https://xidenlz.github.io/blog/pe-headers-deep-dive.html</guid>
       <pubDate>Sun, 01 Mar 2026 00:00:00 +0000</pubDate>
       <category>PE format</category>
       <description>The PE Optional Header explained, IMAGE_OPTIONAL_HEADER64, section alignment, RVA to file-offset conversion, data directories.</description>
     </item>
     <item>
       <title>Windows kernel process and thread callbacks</title>
-      <link>https://xidenlz.github.io/xidenlz/blog/windows-kernel-callbacks.html</link>
-      <guid isPermaLink="true">https://xidenlz.github.io/xidenlz/blog/windows-kernel-callbacks.html</guid>
+      <link>https://xidenlz.github.io/blog/windows-kernel-callbacks.html</link>
+      <guid isPermaLink="true">https://xidenlz.github.io/blog/windows-kernel-callbacks.html</guid>
       <pubDate>Wed, 18 Feb 2026 00:00:00 +0000</pubDate>
       <category>Kernel</category>
       <description>Windows kernel process and thread notification callbacks, PsSetCreateProcessNotifyRoutineEx and ObRegisterCallbacks in practice.</description>
     </item>
     <item>
       <title>Overlays and malware share the same primitives</title>
-      <link>https://xidenlz.github.io/xidenlz/blog/overlays-and-malware-injection-mechanisms.html</link>
-      <guid isPermaLink="true">https://xidenlz.github.io/xidenlz/blog/overlays-and-malware-injection-mechanisms.html</guid>
+      <link>https://xidenlz.github.io/blog/overlays-and-malware-injection-mechanisms.html</link>
+      <guid isPermaLink="true">https://xidenlz.github.io/blog/overlays-and-malware-injection-mechanisms.html</guid>
       <pubDate>Thu, 06 Nov 2025 00:00:00 +0000</pubDate>
       <category>Windows internals</category>
       <description>Overlays, EDR agents, and process-injection malware share the same Windows primitives, DLL injection, thread hijacking, LdrLoadDll, swap-chain hooks.</description>
     </item>
     <item>
       <title>XOR string de-obfuscation, in practice</title>
-      <link>https://xidenlz.github.io/xidenlz/blog/defeating-malware-obfuscation-xor.html</link>
-      <guid isPermaLink="true">https://xidenlz.github.io/xidenlz/blog/defeating-malware-obfuscation-xor.html</guid>
+      <link>https://xidenlz.github.io/blog/defeating-malware-obfuscation-xor.html</link>
+      <guid isPermaLink="true">https://xidenlz.github.io/blog/defeating-malware-obfuscation-xor.html</guid>
       <pubDate>Sun, 14 Sep 2025 00:00:00 +0000</pubDate>
       <category>Reverse engineering</category>
       <description>Undoing inline XOR string obfuscation, reading vectorized _mm_xor_ps in IDA, computing the XOR key, and automating with Python.</description>
     </item>
     <item>
       <title>Quasar RAT dressed as a game cheat</title>
-      <link>https://xidenlz.github.io/xidenlz/blog/quasar-rat-case-study.html</link>
-      <guid isPermaLink="true">https://xidenlz.github.io/xidenlz/blog/quasar-rat-case-study.html</guid>
+      <link>https://xidenlz.github.io/blog/quasar-rat-case-study.html</link>
+      <guid isPermaLink="true">https://xidenlz.github.io/blog/quasar-rat-case-study.html</guid>
       <pubDate>Thu, 22 May 2025 00:00:00 +0000</pubDate>
       <category>Malware analysis</category>
       <description>Analysis of a Quasar RAT submitted as a game cheat, decoy VB DLL, Go dropper, Portmap C2, and how it was caught.</description>

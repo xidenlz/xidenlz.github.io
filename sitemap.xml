@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://xidenlz.github.io/xidenlz/</loc><lastmod>2026-08-28</lastmod></url>
-  <url><loc>https://xidenlz.github.io/xidenlz/about.html</loc><lastmod>2026-08-28</lastmod></url>
-  <url><loc>https://xidenlz.github.io/xidenlz/research.html</loc><lastmod>2026-08-28</lastmod></url>
-  <url><loc>https://xidenlz.github.io/xidenlz/projects.html</loc><lastmod>2026-08-28</lastmod></url>
-  <url><loc>https://xidenlz.github.io/xidenlz/blog.html</loc><lastmod>2026-08-28</lastmod></url>
-  <url><loc>https://xidenlz.github.io/xidenlz/contact.html</loc><lastmod>2026-08-28</lastmod></url>
-  <url><loc>https://xidenlz.github.io/xidenlz/research/battleye-internals.html</loc><lastmod>2026-06-12</lastmod></url>
-  <url><loc>https://xidenlz.github.io/xidenlz/blog/windows-kernel-callbacks.html</loc><lastmod>2026-02-18</lastmod></url>
-  <url><loc>https://xidenlz.github.io/xidenlz/blog/pe-headers-deep-dive.html</loc><lastmod>2026-03-01</lastmod></url>
-  <url><loc>https://xidenlz.github.io/xidenlz/blog/overlays-and-malware-injection-mechanisms.html</loc><lastmod>2025-11-06</lastmod></url>
-  <url><loc>https://xidenlz.github.io/xidenlz/blog/defeating-malware-obfuscation-xor.html</loc><lastmod>2025-09-14</lastmod></url>
-  <url><loc>https://xidenlz.github.io/xidenlz/blog/three-pe-flags-before-ida.html</loc><lastmod>2026-08-28</lastmod></url>
-  <url><loc>https://xidenlz.github.io/xidenlz/blog/quasar-rat-case-study.html</loc><lastmod>2025-05-22</lastmod></url>
+  <url><loc>https://xidenlz.github.io/</loc><lastmod>2026-08-28</lastmod></url>
+  <url><loc>https://xidenlz.github.io/about.html</loc><lastmod>2026-08-28</lastmod></url>
+  <url><loc>https://xidenlz.github.io/research.html</loc><lastmod>2026-08-28</lastmod></url>
+  <url><loc>https://xidenlz.github.io/projects.html</loc><lastmod>2026-08-28</lastmod></url>
+  <url><loc>https://xidenlz.github.io/blog.html</loc><lastmod>2026-08-28</lastmod></url>
+  <url><loc>https://xidenlz.github.io/contact.html</loc><lastmod>2026-08-28</lastmod></url>
+  <url><loc>https://xidenlz.github.io/research/battleye-internals.html</loc><lastmod>2026-06-12</lastmod></url>
+  <url><loc>https://xidenlz.github.io/blog/windows-kernel-callbacks.html</loc><lastmod>2026-02-18</lastmod></url>
+  <url><loc>https://xidenlz.github.io/blog/pe-headers-deep-dive.html</loc><lastmod>2026-03-01</lastmod></url>
+  <url><loc>https://xidenlz.github.io/blog/overlays-and-malware-injection-mechanisms.html</loc><lastmod>2025-11-06</lastmod></url>
+  <url><loc>https://xidenlz.github.io/blog/defeating-malware-obfuscation-xor.html</loc><lastmod>2025-09-14</lastmod></url>
+  <url><loc>https://xidenlz.github.io/blog/three-pe-flags-before-ida.html</loc><lastmod>2026-08-28</lastmod></url>
+  <url><loc>https://xidenlz.github.io/blog/quasar-rat-case-study.html</loc><lastmod>2025-05-22</lastmod></url>
 </urlset>
