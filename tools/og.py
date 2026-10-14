@@ -1,12 +1,3 @@
-"""
-Generate OG social cards under assets/og/.
-
-Each card is 1200x630 PNG, dark background, cyan accent, matching the site
-style. Runs with the Windows-shipped Consolas + Segoe UI so it doesn't need
-any downloaded fonts.
-
-    py tools/og.py
-"""
 from __future__ import annotations
 
 import textwrap
@@ -30,10 +21,10 @@ INK_FAINT = (106, 114, 128)
 ACCENT = (56, 189, 248)
 
 FONTS = [
-    r"C:\Windows\Fonts\segoeuib.ttf",   # Segoe UI Bold — title
-    r"C:\Windows\Fonts\segoeui.ttf",    # Segoe UI — body
-    r"C:\Windows\Fonts\consola.ttf",    # Consolas — kicker/mono
-    r"C:\Windows\Fonts\consolab.ttf",   # Consolas Bold — wordmark
+    r"C:\Windows\Fonts\segoeuib.ttf",
+    r"C:\Windows\Fonts\segoeui.ttf",
+    r"C:\Windows\Fonts\consola.ttf",
+    r"C:\Windows\Fonts\consolab.ttf",
 ]
 
 
@@ -64,26 +55,21 @@ def make_card(path, kicker, title, subtitle, footer=None):
     img = Image.new("RGB", (W, H), BG)
     d = ImageDraw.Draw(img)
 
-    # subtle inset background band
     d.rectangle([(0, H - 90), (W, H)], fill=BG_RAISED)
     d.line([(0, H - 90), (W, H - 90)], fill=LINE, width=1)
 
-    # accent bar top-left
     d.rectangle([(80, 80), (84, 260)], fill=ACCENT)
 
     padding = 110
 
-    # wordmark
     wm_font = font(3, 30)
     d.text((padding, 80), "Musaed", fill=INK, font=wm_font)
     slash_w = d.textlength("Musaed ", font=wm_font)
     d.text((padding + slash_w, 80), "</>", fill=ACCENT, font=wm_font)
 
-    # kicker
     kicker_font = font(2, 24)
     d.text((padding, 160), kicker.upper(), fill=ACCENT, font=kicker_font)
 
-    # title
     max_title_w = W - padding * 2
     for size in (78, 68, 60, 52, 46):
         title_font = font(0, size)
@@ -96,7 +82,6 @@ def make_card(path, kicker, title, subtitle, footer=None):
         d.text((padding, y), line, fill=INK, font=title_font)
         y += int(size * 1.1)
 
-    # subtitle
     if subtitle:
         sub_font = font(1, 26)
         sub_lines = wrap(d, subtitle, sub_font, max_title_w)[:2]
@@ -105,9 +90,8 @@ def make_card(path, kicker, title, subtitle, footer=None):
             d.text((padding, y), line, fill=INK_DIM, font=sub_font)
             y += 34
 
-    # footer
     footer_font = font(2, 20)
-    d.text((padding, H - 60), (footer or "xidenlz.github.io/xidenlz").upper(),
+    d.text((padding, H - 60), (footer or "xidenlz.github.io").upper(),
            fill=INK_FAINT, font=footer_font)
 
     img.save(path, "PNG", optimize=True)
@@ -144,7 +128,7 @@ def main():
     make_card(OUT / "contact.png",
               "Contact",
               "Email, GitHub, Discord.",
-              "Open for internships and research collaboration.")
+              "Anti-cheat, kernel work, malware analysis.")
 
     make_card(OUT / "404.png",
               "404",

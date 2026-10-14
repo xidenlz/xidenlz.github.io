@@ -1,13 +1,3 @@
-"""
-Static site generator for xidenlz.github.io.
-
-Content lives in `pages.py`. Running this script writes every HTML file,
-plus sitemap.xml, feed.xml, robots.txt, and .nojekyll.
-
-    py tools/build.py
-
-Layouts are composed here; page-specific text is in pages.py.
-"""
 from __future__ import annotations
 
 import html
@@ -22,9 +12,6 @@ from pages import (
 
 ROOT = Path(__file__).resolve().parent.parent
 
-# ---------------------------------------------------------------------------
-# partials
-# ---------------------------------------------------------------------------
 
 def head(page):
     title = page["title"]
@@ -157,9 +144,6 @@ def page_template(page, body_html):
 </html>
 '''
 
-# ---------------------------------------------------------------------------
-# helpers used inside page content
-# ---------------------------------------------------------------------------
 
 def crumbs(page):
     trail = page.get("crumbs")
@@ -241,9 +225,6 @@ def render_section(title, section_link, body_html):
       {body_html}
     </section>'''
 
-# ---------------------------------------------------------------------------
-# home
-# ---------------------------------------------------------------------------
 
 def render_home():
     hero_actions = "".join([
@@ -311,9 +292,6 @@ def render_home():
 
     return page_template(HOME, body)
 
-# ---------------------------------------------------------------------------
-# about
-# ---------------------------------------------------------------------------
 
 def render_about():
     prose_html = f'''<div class="prose">
@@ -356,9 +334,6 @@ def render_about():
       </section>'''
     return page_template(ABOUT, body)
 
-# ---------------------------------------------------------------------------
-# research index
-# ---------------------------------------------------------------------------
 
 def render_research_index():
     research = sorted(
@@ -391,9 +366,6 @@ def render_research_index():
       {render_index(entries)}'''
     return page_template(RESEARCH_INDEX, body)
 
-# ---------------------------------------------------------------------------
-# projects
-# ---------------------------------------------------------------------------
 
 def render_projects():
     entries = []
@@ -416,11 +388,9 @@ def render_projects():
             "actions": actions,
         })
 
-    # entries are placed as <li>, but on projects page we want the slug id
     listing = []
     for entry, project in zip(entries, PROJECTS.values()):
         node = render_entry(entry)
-        # attach id to the li so # anchors from the home page still work
         node = node.replace('<li class="entry">', f'<li class="entry" id="{project["slug"]}">', 1)
         listing.append(node)
 
@@ -428,9 +398,6 @@ def render_projects():
       <ol class="index">{"".join(listing)}</ol>'''
     return page_template(PROJECTS_INDEX, body)
 
-# ---------------------------------------------------------------------------
-# blog index
-# ---------------------------------------------------------------------------
 
 def render_blog_index():
     posts = sorted(
@@ -452,9 +419,6 @@ def render_blog_index():
       {render_index(entries)}'''
     return page_template(BLOG_INDEX, body)
 
-# ---------------------------------------------------------------------------
-# contact
-# ---------------------------------------------------------------------------
 
 def render_contact():
     channels_html = "".join(
@@ -474,9 +438,6 @@ def render_contact():
       <ul class="channels">{channels_html}</ul>'''
     return page_template(CONTACT, body)
 
-# ---------------------------------------------------------------------------
-# 404
-# ---------------------------------------------------------------------------
 
 def render_404():
     body = f'''<div class="notfound">
@@ -494,9 +455,6 @@ def render_404():
     </div>'''
     return page_template(NOT_FOUND, body)
 
-# ---------------------------------------------------------------------------
-# article
-# ---------------------------------------------------------------------------
 
 def render_article(article):
     byline_parts = [
@@ -539,7 +497,6 @@ def render_article(article):
       </div>
       {head_html.replace("article-head", "article-head-placeholder")}'''
 
-    # Actually place article-head BEFORE the article grid.
     body = f'''{head_html}
       <div class="article">
         {prose_html}
@@ -579,9 +536,6 @@ def build_article_schema(article):
         "publisher": {"@type": "Person", "name": AUTHOR, "url": SITE_URL},
     }, indent=None)
 
-# ---------------------------------------------------------------------------
-# feeds and site infra
-# ---------------------------------------------------------------------------
 
 def write_sitemap():
     entries = [
@@ -656,9 +610,6 @@ Sitemap: {SITE_URL}sitemap.xml
 """
     (ROOT / "robots.txt").write_text(txt, encoding="utf-8")
 
-# ---------------------------------------------------------------------------
-# entry point
-# ---------------------------------------------------------------------------
 
 def write(path, content):
     p = ROOT / path

@@ -7,7 +7,7 @@ py tools/build.py       # rewrite all HTML + sitemap.xml + feed.xml + robots.txt
 py tools/og.py          # regenerate 1200x630 OG social cards
 ```
 
-`build.py` is idempotent — run it after editing anything under `tools/` and
+`build.py` is idempotent. Run it after editing anything under `tools/` and
 commit the resulting HTML.
 
 ## What lives where

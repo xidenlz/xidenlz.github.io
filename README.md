@@ -11,8 +11,8 @@
   <tr>
     <td align="right"><b>Links</b></td>
     <td>
-      <a href="https://xidenlz.github.io/xidenlz/"><img alt="Site" src="https://img.shields.io/badge/site-xidenlz.github.io-38bdf8?style=flat-square&logo=githubpages&logoColor=white&labelColor=0a0b0d"></a>
-      <a href="https://xidenlz.github.io/xidenlz/feed.xml"><img alt="RSS" src="https://img.shields.io/badge/rss-feed-fbbf24?style=flat-square&logo=rss&logoColor=white&labelColor=0a0b0d"></a>
+      <a href="https://xidenlz.github.io/"><img alt="Site" src="https://img.shields.io/badge/site-xidenlz.github.io-38bdf8?style=flat-square&logo=githubpages&logoColor=white&labelColor=0a0b0d"></a>
+      <a href="https://xidenlz.github.io/feed.xml"><img alt="RSS" src="https://img.shields.io/badge/rss-feed-fbbf24?style=flat-square&logo=rss&logoColor=white&labelColor=0a0b0d"></a>
       <a href="https://github.com/xidenlz?tab=followers"><img alt="Followers" src="https://img.shields.io/github/followers/xidenlz?style=flat-square&label=followers&logo=github&logoColor=white&labelColor=0a0b0d&color=cbd5e1"></a>
     </td>
   </tr>
@@ -57,20 +57,14 @@ Windows internals, kernel drivers, and the reverse engineering that sits
 next to them. Most of what I do falls into one of three buckets:
 
 - **Anti-cheat research.** Kernel-mode drivers, callback surfaces, integrity
-  checks. Latest write-up looks at [BattlEye's stack-walking routine](https://xidenlz.github.io/xidenlz/research/battleye-internals.html).
+  checks. Latest write-up looks at [BattlEye's stack-walking routine](https://xidenlz.github.io/research/battleye-internals.html).
 - **Binary analysis.** PE internals, disassembly, malware analysis. Long-time
   volunteer contributor on VirusTotal.
 - **Low-level tooling.** Injection frameworks, hooking utilities, and
-  analysis scripts. See [projects](https://xidenlz.github.io/xidenlz/projects.html).
+  analysis scripts. See [projects](https://xidenlz.github.io/projects.html).
 
 ### Selected work
 
-- [BattlEye: kernel-side stack walking](https://xidenlz.github.io/xidenlz/research/battleye-internals.html) &nbsp;·&nbsp; kernel APCs, `RtlWalkFrameChain`, `BEDaisy::Report`
+- [BattlEye: kernel-side stack walking](https://xidenlz.github.io/research/battleye-internals.html) &nbsp;·&nbsp; kernel APCs, `RtlWalkFrameChain`, `BEDaisy::Report`
 - [NtInjector (NtLoader)](https://www.unknowncheats.me/forum/general-programming-and-reversing/735809-ntldr-windowsnt-injector.html) &nbsp;·&nbsp; NT-native injection framework
 - [Screenshot-Detection-Bypass](https://github.com/xidenlz/Screenshot-Detection-Bypass) &nbsp;·&nbsp; `gdi32!BitBlt` hook
-
----
-
-<sub>Open to security or reverse-engineering internships for 2026. If that's in your wheelhouse, please <a href="mailto:uint64_t@hotmail.com">get in touch</a>.</sub>
-
-<!-- source for xidenlz.github.io lives in this repo; build notes in tools/README.md -->

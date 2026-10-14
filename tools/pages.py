@@ -1,8 +1,3 @@
-"""
-Content for xidenlz.github.io.
-
-Text lives here. Layout lives in build.py.
-"""
 from datetime import date
 from articles import ARTICLE_BODIES
 
@@ -18,9 +13,6 @@ NAV = [
     ("Contact",  "contact.html"),
 ]
 
-# ---------------------------------------------------------------------------
-# top-level pages
-# ---------------------------------------------------------------------------
 
 HOME = {
     "root": True,
@@ -45,10 +37,9 @@ ABOUT = {
         "record of that work: what I looked at, what I found, and what I got wrong."
     ),
     "focus": (
-        "Right now I'm working on Windows internals and anti-cheat research. "
-        "I'm looking for a security or reverse-engineering internship for 2026, "
-        "if that overlaps with what your team does, "
-        "<a href=\"contact.html\">reach out</a>."
+        "Right now I'm reversing the kernel side of Tencent's Anti-Cheat Expert (ACE) "
+        "for my next write-up, alongside my COOP training at the Ministry of Justice, "
+        "where I work on endpoint and systems support across internal infrastructure."
     ),
     "skills": [
         {
@@ -158,12 +149,12 @@ CONTACT = {
     "slug": "contact",
     "title": "Contact",
     "description": "Email, GitHub, and Discord.",
-    "subtitle": "The best ways to reach me for research, collaboration, or internships.",
+    "subtitle": "The best ways to reach me for research or collaboration.",
     "crumbs": [("home", "index.html"), ("contact", "contact.html")],
     "og": "contact",
     "intro": (
-        "I'm happy to talk about anti-cheat, kernel work, malware analysis, "
-        "or an internship opportunity. Email is the fastest way to reach me; "
+        "I'm happy to talk about anti-cheat, kernel work, or malware analysis. "
+        "Email is the fastest way to reach me; "
         "Discord works too."
     ),
     "channels": [
@@ -214,9 +205,6 @@ NOT_FOUND = {
     "root": True,
 }
 
-# ---------------------------------------------------------------------------
-# projects, long form (used by projects.html and homepage cards)
-# ---------------------------------------------------------------------------
 
 PROJECTS = {
     "nt-injector": {
@@ -320,9 +308,6 @@ PROJECTS = {
     },
 }
 
-# ---------------------------------------------------------------------------
-# articles, index metadata; bodies live in articles.py
-# ---------------------------------------------------------------------------
 
 def _art(slug, kind, category, title, dek, short_dek, meta_desc, tags,
          when, body):
@@ -343,7 +328,6 @@ def _art(slug, kind, category, title, dek, short_dek, meta_desc, tags,
         "body": body,
     }
 
-# Windows doesn't support %-d in strftime, swap for manual formatting.
 def _fmt(d):
     return d.strftime("%B ") + str(d.day) + d.strftime(", %Y")
 

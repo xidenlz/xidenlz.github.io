@@ -1,6 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 700" width="100%" height="100%">
   <defs>
-    <!-- Background Gradients -->
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#0c1017" />
       <stop offset="100%" stop-color="#121824" />
@@ -10,12 +9,10 @@
       <stop offset="100%" stop-color="#111622" />
     </linearGradient>
 
-    <!-- Arrow Marker -->
     <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
       <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#38bdf8" />
     </marker>
 
-    <!-- Drop Shadow Filter -->
     <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="125%">
       <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.5" />
     </filter>
@@ -28,10 +25,8 @@
     .step-badge { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; fill: #38bdf8; }
   </style>
 
-  <!-- Container Box -->
   <rect width="760" height="700" rx="12" fill="url(#bgGrad)" stroke="#1e293b" stroke-width="1.5" />
 
-  <!-- Step 1: Target Thread Lookup -->
   <g transform="translate(140, 30)">
     <rect width="480" height="68" rx="8" fill="url(#cardGrad)" stroke="#25334d" stroke-width="1.2" filter="url(#cardShadow)" />
     <rect x="0" y="0" width="4" height="68" rx="2" fill="#38bdf8" />
@@ -40,10 +35,8 @@
     <text x="440" y="38" class="step-badge">0x01</text>
   </g>
 
-  <!-- Connector Line 1 -->
   <line x1="380" y1="98" x2="380" y2="132" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)" />
 
-  <!-- Step 2: Kernel APC Queued -->
   <g transform="translate(140, 136)">
     <rect width="480" height="74" rx="8" fill="url(#cardGrad)" stroke="#25334d" stroke-width="1.2" filter="url(#cardShadow)" />
     <rect x="0" y="0" width="4" height="74" rx="2" fill="#38bdf8" />
@@ -53,10 +46,8 @@
     <text x="440" y="42" class="step-badge">0x02</text>
   </g>
 
-  <!-- Connector Line 2 -->
   <line x1="380" y1="210" x2="380" y2="244" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)" />
 
-  <!-- Step 3: Frame Chain Capture -->
   <g transform="translate(140, 248)">
     <rect width="480" height="74" rx="8" fill="url(#cardGrad)" stroke="#25334d" stroke-width="1.2" filter="url(#cardShadow)" />
     <rect x="0" y="0" width="4" height="74" rx="2" fill="#38bdf8" />
@@ -66,10 +57,8 @@
     <text x="440" y="42" class="step-badge">0x03</text>
   </g>
 
-  <!-- Connector Line 3 -->
   <line x1="380" y1="322" x2="380" y2="356" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)" />
 
-  <!-- Step 4: Known Image Boundary Validation -->
   <g transform="translate(140, 360)">
     <rect width="480" height="82" rx="8" fill="url(#cardGrad)" stroke="#25334d" stroke-width="1.2" filter="url(#cardShadow)" />
     <rect x="0" y="0" width="4" height="82" rx="2" fill="#38bdf8" />
@@ -79,10 +68,8 @@
     <text x="440" y="45" class="step-badge">0x04</text>
   </g>
 
-  <!-- Connector Line 4 -->
   <line x1="380" y1="442" x2="380" y2="476" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)" />
 
-  <!-- Step 5: Metadata Aggregation -->
   <g transform="translate(140, 480)">
     <rect width="480" height="74" rx="8" fill="url(#cardGrad)" stroke="#25334d" stroke-width="1.2" filter="url(#cardShadow)" />
     <rect x="0" y="0" width="4" height="74" rx="2" fill="#38bdf8" />
@@ -91,10 +78,8 @@
     <text x="440" y="42" class="step-badge">0x05</text>
   </g>
 
-  <!-- Connector Line 5 -->
   <line x1="380" y1="554" x2="380" y2="588" stroke="#34d399" stroke-width="2" />
 
-  <!-- Step 6: Telemetry Dispatch -->
   <g transform="translate(140, 592)">
     <rect width="480" height="68" rx="8" fill="#0f2027" stroke="#34d399" stroke-width="1.5" filter="url(#cardShadow)" />
     <rect x="0" y="0" width="4" height="68" rx="2" fill="#34d399" />

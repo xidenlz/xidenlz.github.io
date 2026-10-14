@@ -1,136 +1,1116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Musaed, reverse engineering and Windows internals</title>
-  <meta name="description" content="CS student at KFU. Reverse engineering, kernel internals, and anti-cheat research.">
-  <meta name="author" content="Musaed">
-  <meta name="theme-color" content="#0a0b0d">
-  <link rel="canonical" href="https://xidenlz.github.io/">
-  <meta property="og:site_name" content="Musaed">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://xidenlz.github.io/">
-  <meta property="og:title" content="Musaed, reverse engineering and Windows internals">
-  <meta property="og:description" content="CS student at KFU. Reverse engineering, kernel internals, and anti-cheat research.">
-  <meta property="og:image" content="https://xidenlz.github.io/assets/og/home.png">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Musaed, reverse engineering and Windows internals">
-  <meta name="twitter:description" content="CS student at KFU. Reverse engineering, kernel internals, and anti-cheat research.">
-  <meta name="twitter:image" content="https://xidenlz.github.io/assets/og/home.png">
-  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-  <link rel="alternate" type="application/rss+xml" title="Musaed research feed" href="https://xidenlz.github.io/feed.xml">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
-  <link rel="stylesheet" href="css/style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Musaed, reverse engineering and Windows internals</title>
+<meta name="description" content="CS student at KFU. Reverse engineering, kernel internals, and anti-cheat research.">
+<meta name="author" content="Musaed">
+<meta name="theme-color" content="#0a0b0d">
+<link rel="canonical" href="https://xidenlz.github.io/">
+<meta property="og:site_name" content="Musaed">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://xidenlz.github.io/">
+<meta property="og:title" content="Musaed, reverse engineering and Windows internals">
+<meta property="og:description" content="CS student at KFU. Reverse engineering, kernel internals, and anti-cheat research.">
+<meta property="og:image" content="https://xidenlz.github.io/assets/og/home.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Musaed, reverse engineering and Windows internals">
+<meta name="twitter:description" content="CS student at KFU. Reverse engineering, kernel internals, and anti-cheat research.">
+<meta name="twitter:image" content="https://xidenlz.github.io/assets/og/home.png">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="alternate" type="application/rss+xml" title="Musaed research feed" href="https://xidenlz.github.io/feed.xml">
+<noscript><style>.boot, .desktop, .taskbar, .bsod { display: none !important; } html, body { overflow: auto; }</style></noscript>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  :root {
+    --accent: #38bdf8;
+    --accent-hi: #7dd3fc;
+    --win: #1b1e24;
+    --win-2: #22262e;
+    --win-3: #15171c;
+    --line: #2d323c;
+    --ink: #e6e8ec;
+    --dim: #9aa1ad;
+    --faint: #646c79;
+    --task: rgba(16,18,22,.86);
+    --kw: #c792ea; --fn: #ffcb6b; --str: #a5e075; --num: #f78c6c; --cmt: #6a7280; --ty: #82aaff;
+    --sans: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', Consolas, monospace;
+    --tb-h: 48px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body { font: 13px/1.5 var(--sans); color: var(--ink); background: #05070a; user-select: none; -webkit-font-smoothing: antialiased; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: var(--accent-hi); text-decoration: underline; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  ::selection { background: #0b4f6e; color: #fff; }
+
+  .desktop {
+    position: fixed; inset: 0 0 var(--tb-h) 0; overflow: hidden;
+    background:
+      radial-gradient(900px 600px at 70% 30%, rgba(56,189,248,.16), transparent 60%),
+      radial-gradient(700px 500px at 15% 90%, rgba(99,102,241,.14), transparent 60%),
+      linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px) 0 0/40px 40px,
+      linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px) 0 0/40px 40px,
+      linear-gradient(160deg, #0a1220, #06080d 60%);
+  }
+  .mark {
+    position: absolute; right: 6vw; bottom: 6vh; text-align: right; pointer-events: none;
+    font-family: var(--mono); color: rgba(255,255,255,.06); line-height: 1;
+  }
+  .mark b { display: block; font-size: clamp(80px, 14vw, 200px); font-weight: 700; letter-spacing: -.06em; color: rgba(56,189,248,.09); }
+  .mark span { font-size: 14px; letter-spacing: .3em; text-transform: uppercase; }
+
+  .icons { position: absolute; top: 14px; left: 10px; display: grid; grid-auto-flow: column; grid-template-rows: repeat(auto-fill, 92px); gap: 4px; height: calc(100% - 20px); }
+  .icon { width: 84px; height: 88px; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 4px; border-radius: 6px; border: 1px solid transparent; text-align: center; font-size: 12px; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.9); }
+  .icon:hover { background: rgba(255,255,255,.07); }
+  .icon.sel, .icon:focus-visible { background: rgba(56,189,248,.18); border-color: rgba(56,189,248,.45); outline: 0; }
+  .icon svg { width: 40px; height: 40px; filter: drop-shadow(0 2px 4px rgba(0,0,0,.5)); }
+
+  .win {
+    position: absolute; display: flex; flex-direction: column; min-width: 320px; min-height: 200px;
+    background: var(--win); border: 1px solid var(--line); border-radius: 8px; overflow: hidden;
+    box-shadow: 0 24px 60px -10px rgba(0,0,0,.7), 0 0 0 1px rgba(0,0,0,.4);
+    resize: both; user-select: text;
+    animation: pop .16s ease-out;
+  }
+  @keyframes pop { from { opacity: 0; transform: scale(.97) translateY(6px); } }
+  .win.inactive .tb { color: var(--dim); }
+  .win.inactive { box-shadow: 0 12px 40px -10px rgba(0,0,0,.6); }
+  .win.max { left: 0 !important; top: 0 !important; width: 100% !important; height: 100% !important; border-radius: 0; resize: none; }
+  .win.min { display: none; }
+  .tb { height: 36px; flex: none; display: flex; align-items: center; gap: 8px; padding-left: 12px; background: var(--win-3); border-bottom: 1px solid var(--line); user-select: none; cursor: default; touch-action: none; }
+  .tb svg { width: 16px; height: 16px; flex: none; }
+  .tt { flex: 1; min-width: 0; font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ctl { display: flex; height: 100%; }
+  .ctl button { width: 44px; height: 100%; display: grid; place-items: center; color: var(--dim); }
+  .ctl button:hover { background: rgba(255,255,255,.08); color: var(--ink); }
+  .ctl button.x:hover { background: #c42b1c; color: #fff; }
+  .ctl svg { width: 10px; height: 10px; }
+  .wb { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+
+  .menu { display: flex; gap: 2px; padding: 3px 6px; background: var(--win-2); border-bottom: 1px solid var(--line); font-size: 12px; color: var(--dim); flex: none; overflow-x: auto; scrollbar-width: none; }
+  .menu span { padding: 2px 8px; border-radius: 4px; white-space: nowrap; }
+  .menu span:hover { background: rgba(255,255,255,.07); color: var(--ink); }
+  .status { flex: none; display: flex; gap: 16px; padding: 3px 10px; font: 11px var(--mono); color: var(--dim); background: var(--win-3); border-top: 1px solid var(--line); white-space: nowrap; overflow: hidden; }
+  .status .on { color: var(--str); }
+
+  .navband { height: 10px; flex: none; display: flex; border-bottom: 1px solid var(--line); }
+  .navband i { display: block; height: 100%; }
+  .ida { flex: 1; min-height: 0; display: grid; grid-template-columns: 250px minmax(0,1fr); }
+  .funcs { border-right: 1px solid var(--line); display: flex; flex-direction: column; min-height: 0; background: var(--win-3); }
+  .pane-h { flex: none; padding: 5px 10px; font-size: 11.5px; color: var(--dim); background: var(--win-2); border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; }
+  .flist { flex: 1; overflow: auto; list-style: none; font: 12px/1 var(--mono); padding: 4px 0; }
+  .flist .grp { padding: 10px 10px 4px; color: var(--faint); font-size: 10.5px; letter-spacing: .06em; }
+  .flist button { width: 100%; text-align: left; display: flex; gap: 8px; align-items: center; padding: 6px 10px; color: var(--ink); }
+  .flist button .f { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .flist button .s { color: var(--faint); font-size: 10.5px; }
+  .flist button:hover { background: rgba(255,255,255,.05); }
+  .flist button.cur { background: rgba(56,189,248,.16); color: #fff; }
+  .flist button.wip .f { color: var(--dim); font-style: italic; }
+  .fglyph { width: 14px; height: 14px; border-radius: 3px; background: var(--fn); color: #111; font: 700 9px/14px var(--mono); text-align: center; flex: none; }
+  .wip .fglyph { background: var(--faint); }
+  .view { display: flex; flex-direction: column; min-height: 0; }
+  .tabs { display: flex; flex: none; background: var(--win-2); border-bottom: 1px solid var(--line); }
+  .tabs button { padding: 6px 14px; font-size: 11.5px; color: var(--dim); border-right: 1px solid var(--line); }
+  .tabs button.on { background: var(--win); color: var(--ink); box-shadow: inset 0 2px var(--accent); }
+  .code { flex: 1; overflow: auto; padding: 14px 0; font: 13px/1.75 var(--mono); background: var(--win); }
+  .code .ln { display: flex; white-space: pre-wrap; }
+  .code .ln .n { flex: none; width: 52px; padding-right: 14px; text-align: right; color: #3d434e; user-select: none; }
+  .code .ln .c { flex: 1; min-width: 0; padding-right: 18px; }
+  .code .ln.hl { background: rgba(56,189,248,.07); }
+  .k { color: var(--kw); } .fn { color: var(--fn); } .s { color: var(--str); } .m { color: var(--num); } .cm { color: var(--cmt); font-style: italic; } .t { color: var(--ty); }
+  .code a.go { display: inline-block; color: var(--str); border-bottom: 1px dashed currentColor; }
+  .code a.go:hover { text-decoration: none; color: #c6f59a; }
+  .asm .addr { color: #5c6878; } .asm .mn { color: var(--ty); } .asm .lbl { color: var(--fn); }
+  .output { flex: none; height: 92px; overflow: auto; border-top: 1px solid var(--line); background: var(--win-3); font: 11.5px/1.6 var(--mono); color: var(--dim); padding: 6px 10px; }
+
+  .pe { flex: 1; min-height: 0; display: grid; grid-template-columns: 210px minmax(0,1fr); }
+  .tree { list-style: none; padding: 6px 0; overflow: auto; background: var(--win-3); border-right: 1px solid var(--line); font: 12px var(--mono); }
+  .tree button { width: 100%; text-align: left; padding: 5px 10px; color: var(--dim); white-space: nowrap; display: flex; gap: 6px; align-items: center; }
+  .tree button::before { content: ''; width: 8px; height: 8px; border-radius: 2px; background: var(--line); flex: none; }
+  .tree button.d1 { padding-left: 24px; } .tree button.d2 { padding-left: 38px; }
+  .tree button:hover { background: rgba(255,255,255,.05); color: var(--ink); }
+  .tree button.on { background: rgba(56,189,248,.16); color: #fff; }
+  .tree button.on::before { background: var(--accent); }
+  .tbl-wrap { overflow: auto; display: flex; flex-direction: column; min-height: 0; }
+  .tbl-h { flex: none; padding: 12px 14px 10px; border-bottom: 1px solid var(--line); }
+  .tbl-h b { font: 600 13px var(--mono); color: var(--ink); }
+  .tbl-h p { color: var(--dim); font-size: 12px; margin-top: 3px; }
+  table.fields { width: 100%; border-collapse: collapse; font: 12px/1.45 var(--mono); }
+  .fields th { position: sticky; top: 0; background: var(--win-2); color: var(--faint); font-weight: 500; text-align: left; padding: 6px 12px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  .fields td { padding: 7px 12px; border-bottom: 1px solid rgba(45,50,60,.6); vertical-align: top; }
+  .fields td.o { color: #5c6878; white-space: nowrap; }
+  .fields td.n { color: var(--ink); white-space: nowrap; }
+  .fields td.v { color: var(--fn); white-space: nowrap; }
+  .fields td.m { color: var(--dim); font-family: var(--sans); font-size: 12.5px; }
+  .fields tr:hover td { background: rgba(255,255,255,.03); }
+  .fields tr.click { cursor: pointer; }
+  .fields tr.click:hover td { background: rgba(56,189,248,.08); }
+  .fields tr.click td.n { color: var(--accent-hi); }
+  .hexd { padding: 14px; font: 12px/1.7 var(--mono); color: var(--dim); white-space: pre; }
+  .hexd .a { color: #5c6878; } .hexd .h { color: var(--ink); } .hexd .t { color: var(--str); }
+
+  .npad { flex: 1; overflow: auto; padding: 14px 18px; background: #1e1e1e; font: 13.5px/1.65 var(--mono); color: #e3e3e3; white-space: pre-wrap; outline: 0; }
+
+  .addr { flex: none; display: flex; gap: 8px; align-items: center; padding: 6px 10px; background: var(--win-2); border-bottom: 1px solid var(--line); }
+  .addr .path { flex: 1; min-width: 0; padding: 4px 10px; border: 1px solid var(--line); border-radius: 5px; background: var(--win-3); font-size: 12px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .addr .path b { color: var(--ink); font-weight: 500; }
+  .exp { flex: 1; min-height: 0; display: grid; grid-template-columns: 160px minmax(0,1fr) 270px; }
+  .side { border-right: 1px solid var(--line); padding: 8px 6px; background: var(--win-3); overflow: auto; }
+  .side button { width: 100%; display: flex; gap: 8px; align-items: center; padding: 6px 8px; border-radius: 5px; font-size: 12.5px; color: var(--dim); text-align: left; }
+  .side button svg { width: 16px; height: 16px; flex: none; }
+  .side button:hover { background: rgba(255,255,255,.05); color: var(--ink); }
+  .side button.on { background: rgba(56,189,248,.14); color: #fff; }
+  .files { overflow: auto; padding: 6px; }
+  .frow { width: 100%; display: grid; grid-template-columns: 22px minmax(0,1fr) 110px; gap: 10px; align-items: center; padding: 7px 8px; border-radius: 5px; text-align: left; font-size: 12.5px; }
+  .frow svg { width: 20px; height: 20px; }
+  .frow .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .frow .meta { color: var(--faint); font-size: 11.5px; text-align: right; white-space: nowrap; }
+  .frow:hover { background: rgba(255,255,255,.05); }
+  .frow.on { background: rgba(56,189,248,.16); }
+  .fhead { display: grid; grid-template-columns: 22px minmax(0,1fr) 110px; gap: 10px; padding: 4px 8px 6px; font-size: 11px; color: var(--faint); border-bottom: 1px solid var(--line); margin-bottom: 4px; }
+  .fhead span:last-child { text-align: right; }
+  .detail { border-left: 1px solid var(--line); padding: 16px; overflow: auto; background: var(--win-3); }
+  .detail .kick { font: 11px var(--mono); color: var(--accent); }
+  .detail h3 { font-size: 16px; line-height: 1.3; margin: 6px 0 4px; }
+  .detail .when { font-size: 11.5px; color: var(--faint); }
+  .detail p { color: var(--dim); margin-top: 10px; font-size: 12.5px; line-height: 1.6; }
+  .detail ul.hl { margin-top: 12px; list-style: none; display: grid; gap: 8px; }
+  .detail ul.hl li { font-size: 12px; color: var(--dim); padding-left: 10px; border-left: 2px solid var(--line); }
+  .detail ul.hl b { color: var(--ink); font-weight: 600; display: block; }
+  .tagz { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 12px; list-style: none; }
+  .tagz li { font: 10.5px var(--mono); color: var(--dim); border: 1px solid var(--line); padding: 2px 7px; border-radius: 4px; }
+  .open { display: inline-block; margin-top: 16px; padding: 7px 14px; border-radius: 5px; background: var(--accent); color: #04202e !important; font-weight: 600; font-size: 12.5px; }
+  .open:hover { background: var(--accent-hi); text-decoration: none; }
+  .empty { color: var(--faint); padding: 24px; text-align: center; font-size: 12.5px; }
+  code { font: 11.5px var(--mono); color: var(--accent-hi); }
+
+  .mail { flex: 1; overflow: auto; background: var(--win); }
+  .mrow { display: flex; gap: 10px; padding: 9px 16px; border-bottom: 1px solid var(--line); font-size: 12.5px; }
+  .mrow span:first-child { width: 60px; color: var(--faint); flex: none; }
+  .mbody { padding: 18px 16px; color: var(--dim); font-size: 13px; line-height: 1.7; }
+  .mbody p + p { margin-top: 10px; }
+  .cards { display: grid; gap: 8px; margin-top: 16px; }
+  .card { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 7px; background: var(--win-3); color: var(--ink); }
+  .card:hover { border-color: var(--accent); text-decoration: none; }
+  .card .l { width: 64px; font: 11px var(--mono); color: var(--faint); flex: none; }
+  .card .v { flex: 1; min-width: 0; font-weight: 500; overflow: hidden; text-overflow: ellipsis; }
+  .card .h { font-size: 11.5px; color: var(--faint); }
+
+  .rbar { flex: none; display: flex; align-items: center; gap: 4px; padding: 6px 10px; background: var(--win-2); border-bottom: 1px solid var(--line); font-size: 12px; }
+  .rbar button, .rbar a { padding: 5px 10px; border-radius: 5px; color: var(--dim); white-space: nowrap; }
+  .rbar button:hover:not(:disabled), .rbar a:hover { background: rgba(255,255,255,.07); color: var(--ink); text-decoration: none; }
+  .rbar button:disabled { opacity: .35; cursor: default; }
+  .rbar .sp { flex: 1; }
+  .rbar .sep { width: 1px; height: 18px; background: var(--line); margin: 0 4px; }
+  .rprog { flex: none; height: 2px; background: transparent; }
+  .rprog i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .1s linear; }
+  .rmain { flex: 1; min-height: 0; display: grid; grid-template-columns: 220px minmax(0,1fr); }
+  .rtoc { overflow: auto; padding: 22px 14px; border-right: 1px solid var(--line); background: var(--win-3); }
+  .rtoc h4 { font: 600 10.5px var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--faint); margin-bottom: 10px; }
+  .rtoc a { display: block; padding: 5px 8px; border-left: 2px solid transparent; color: var(--dim); font-size: 12.5px; line-height: 1.4; }
+  .rtoc a:hover { color: var(--ink); text-decoration: none; }
+  .rtoc a.on { color: var(--ink); border-left-color: var(--accent); background: rgba(56,189,248,.07); }
+  .rscroll { overflow: auto; background: #14161b; scroll-behavior: smooth; }
+  .rdoc { max-width: 70ch; margin: 0 auto; padding: 40px 32px 80px; font-size: var(--rfs, 16px); line-height: 1.75; color: #c9ced6; }
+  .rdoc .kick { font: 12px var(--mono); color: var(--accent); }
+  .rdoc h1 { font-size: 1.95em; line-height: 1.2; letter-spacing: -.02em; color: #fff; margin-top: 8px; }
+  .rdoc .by { font-size: .82em; color: var(--faint); margin-top: 10px; padding-bottom: 22px; border-bottom: 1px solid var(--line); }
+  .rdoc .body { margin-top: 26px; }
+  .rdoc .body > * + * { margin-top: 1.05em; }
+  .rdoc h2 { font-size: 1.3em; color: #fff; margin-top: 2em !important; letter-spacing: -.01em; scroll-margin-top: 16px; }
+  .rdoc h3 { font-size: 1.08em; color: #fff; margin-top: 1.6em !important; }
+  .rdoc p, .rdoc li { color: #c9ced6; }
+  .rdoc strong { color: #fff; }
+  .rdoc em { color: #e6e8ec; }
+  .rdoc ul, .rdoc ol { padding-left: 1.3em; }
+  .rdoc li + li { margin-top: .4em; }
+  .rdoc a { text-decoration: underline; text-decoration-color: rgba(56,189,248,.4); text-underline-offset: 3px; }
+  .rdoc code { font-size: .86em; background: #1d2027; border: 1px solid var(--line); padding: .08em .35em; border-radius: 4px; color: var(--accent-hi); }
+  .rdoc pre { background: #0d0f13; border: 1px solid var(--line); border-radius: 7px; padding: 14px 16px; overflow-x: auto; font: 13px/1.6 var(--mono); }
+  .rdoc pre code { background: none; border: 0; padding: 0; color: #d6dae1; font-size: inherit; }
+  .rdoc table { width: 100%; border-collapse: collapse; font-size: .88em; display: block; overflow-x: auto; }
+  .rdoc th, .rdoc td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .rdoc th { color: #fff; font-weight: 600; background: var(--win-2); }
+  .rdoc figure img { display: block; max-width: 100%; height: auto; margin: 0 auto; border-radius: 6px; background: #0d0f13; }
+  .rdoc figcaption { font-size: .82em; color: var(--faint); text-align: center; margin-top: 8px; }
+  .rdoc .note { border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 6px; background: rgba(56,189,248,.05); padding: 14px 16px; }
+  .rdoc .note-warn { border-left-color: #fbbf24; background: rgba(251,191,36,.05); }
+  .rdoc .note-label { display: block; font: 600 11px var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--accent); margin-bottom: 6px; }
+  .rdoc .note-warn .note-label { color: #fbbf24; }
+  .rdoc .note > * + * { margin-top: .6em; }
+  .rdoc ul.tags { list-style: none; padding: 22px 0 0; display: flex; flex-wrap: wrap; gap: 6px; border-top: 1px solid var(--line); margin-top: 2.4em; }
+  .rdoc ul.tags li { margin: 0; font: 11.5px var(--mono); color: var(--dim); border: 1px solid var(--line); padding: 3px 9px; border-radius: 5px; }
+  .rdoc .next { margin-top: 2.4em; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .rdoc .next button { text-align: left; padding: 14px 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--win-3); font-size: .86em; color: var(--ink); line-height: 1.4; }
+  .rdoc .next button:hover { border-color: var(--accent); }
+  .rdoc .next button span { display: block; font: 11px var(--mono); color: var(--faint); margin-bottom: 4px; }
+  .rdoc .next button:last-child { text-align: right; }
+  .syn-kwd { color: #c084fc; } .syn-type { color: #60a5fa; } .syn-fn { color: #fbbf24; } .syn-var { color: #38bdf8; }
+  .syn-num { color: #fb7185; } .syn-str { color: #34d399; } .syn-com { color: #5c6673; font-style: italic; } .syn-op { color: #8b94a3; }
+  .rmsg { padding: 60px 24px; text-align: center; color: var(--dim); }
+  .rmsg a { display: inline-block; margin-top: 14px; }
+
+  .widget { position: absolute; top: 18px; right: 18px; width: 330px; z-index: 1; background: rgba(16,19,25,.72); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,.08); border-radius: 12px; overflow: hidden; box-shadow: 0 20px 50px -20px rgba(0,0,0,.7); }
+  .widget-h { display: flex; justify-content: space-between; align-items: baseline; padding: 14px 16px 10px; }
+  .widget-h b { font-size: 13px; }
+  .widget-h button { font-size: 11.5px; color: var(--accent); }
+  .widget-h button:hover { color: var(--accent-hi); }
+  .widget ol { list-style: none; padding: 0 6px 8px; }
+  .widget a { display: block; padding: 9px 10px; border-radius: 7px; color: var(--ink); }
+  .widget a:hover { background: rgba(255,255,255,.06); text-decoration: none; }
+  .widget a .w-k { display: flex; justify-content: space-between; font: 10.5px var(--mono); color: var(--faint); }
+  .widget a .w-k b { color: var(--accent); font-weight: 500; }
+  .widget a .w-t { display: block; font-size: 13px; font-weight: 500; line-height: 1.35; margin-top: 3px; }
+
+  .taskbar { position: fixed; left: 0; right: 0; bottom: 0; height: var(--tb-h); z-index: 9000; display: flex; align-items: center; gap: 4px; padding: 0 8px; background: var(--task); backdrop-filter: blur(20px) saturate(1.4); border-top: 1px solid rgba(255,255,255,.07); }
+  .start { height: 38px; padding: 0 12px; display: flex; align-items: center; gap: 8px; border-radius: 6px; font: 700 14px var(--mono); color: var(--accent); }
+  .start:hover, .start.on { background: rgba(255,255,255,.08); }
+  .tasks { display: flex; gap: 2px; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+  .task { position: relative; height: 38px; display: flex; align-items: center; gap: 8px; padding: 0 12px; border-radius: 6px; font-size: 12px; color: var(--dim); white-space: nowrap; max-width: 190px; }
+  .task svg { width: 18px; height: 18px; flex: none; }
+  .task span { overflow: hidden; text-overflow: ellipsis; }
+  .task:hover { background: rgba(255,255,255,.07); }
+  .task::after { content: ''; position: absolute; left: 50%; bottom: 3px; width: 6px; height: 3px; margin-left: -3px; border-radius: 2px; background: var(--faint); transition: width .15s, margin .15s; }
+  .task.front { background: rgba(255,255,255,.07); color: var(--ink); }
+  .task.front::after { width: 18px; margin-left: -9px; background: var(--accent); }
+  .tray { display: flex; align-items: center; gap: 14px; padding: 0 6px 0 10px; font-size: 11.5px; color: var(--dim); }
+  .tray .ring { font: 11px var(--mono); color: var(--str); padding: 2px 7px; border: 1px solid rgba(165,224,117,.3); border-radius: 4px; }
+  .clock { text-align: right; line-height: 1.3; color: var(--ink); }
+
+  .smenu { position: fixed; left: 8px; bottom: calc(var(--tb-h) + 8px); z-index: 9500; width: 340px; max-width: calc(100vw - 16px); background: rgba(24,27,33,.96); backdrop-filter: blur(24px); border: 1px solid var(--line); border-radius: 10px; box-shadow: 0 30px 60px rgba(0,0,0,.6); overflow: hidden; display: none; }
+  .smenu.on { display: block; animation: pop .14s ease-out; }
+  .who { display: flex; gap: 12px; align-items: center; padding: 18px; border-bottom: 1px solid var(--line); }
+  .ava { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg, #0b4f6e, #38bdf8); font: 700 15px var(--mono); color: #fff; }
+  .who b { display: block; font-size: 14px; }
+  .who span { font-size: 12px; color: var(--dim); }
+  .slist { padding: 8px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .slist button { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 6px; font-size: 12.5px; text-align: left; }
+  .slist button:hover { background: rgba(255,255,255,.07); }
+  .slist svg { width: 22px; height: 22px; flex: none; }
+  .sfoot { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-top: 1px solid var(--line); background: rgba(0,0,0,.2); font-size: 12px; color: var(--dim); }
+  .sfoot button { padding: 6px 10px; border-radius: 5px; }
+  .sfoot button:hover { background: rgba(255,255,255,.07); color: var(--ink); }
+
+  .nojs { max-width: 640px; margin: 0 auto; padding: 64px 20px; font-size: 16px; line-height: 1.7; }
+  .nojs h1 { font-size: 32px; }
+  .nojs p { color: var(--dim); margin-top: 6px; }
+  .nojs ul { margin-top: 24px; padding-left: 20px; }
+  .boot { position: fixed; inset: 0; z-index: 99999; background: #000; display: grid; place-items: center; transition: opacity .4s; cursor: pointer; }
+  .boot.gone { opacity: 0; pointer-events: none; }
+  .boot-in { text-align: center; font-family: var(--mono); }
+  .boot-in .lg { font-size: 54px; font-weight: 700; color: var(--accent); letter-spacing: -.04em; }
+  .boot-in .nm { margin-top: 10px; color: #cfd5de; font-size: 14px; letter-spacing: .25em; }
+  .dots { display: flex; gap: 8px; justify-content: center; margin-top: 34px; }
+  .dots i { width: 7px; height: 7px; border-radius: 50%; background: #cfd5de; animation: dot 1.2s infinite ease-in-out; }
+  .dots i:nth-child(2) { animation-delay: .15s; } .dots i:nth-child(3) { animation-delay: .3s; } .dots i:nth-child(4) { animation-delay: .45s; } .dots i:nth-child(5) { animation-delay: .6s; }
+  @keyframes dot { 0%, 100% { opacity: .15; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-4px); } }
+  .boot-in .hint { margin-top: 26px; font-size: 11px; color: #555; }
+  .bsod { position: fixed; inset: 0; z-index: 99998; background: #000; color: #f39c12; display: none; place-items: center; font: 18px var(--mono); text-align: center; padding: 24px; cursor: pointer; }
+  .bsod.on { display: grid; }
+  .bsod small { display: block; color: #666; font-size: 12px; margin-top: 14px; }
+
+  @media (max-width: 760px) {
+    .icons { grid-auto-flow: row; grid-template-columns: repeat(4, 1fr); grid-template-rows: none; height: auto; right: 10px; }
+    .icon { width: auto; }
+    .win { left: 0 !important; top: 0 !important; width: 100% !important; height: 100% !important; border-radius: 0; resize: none; min-width: 0; }
+    .ctl .mx { display: none; }
+    .ida { grid-template-columns: minmax(0,1fr); grid-template-rows: 150px minmax(0,1fr); }
+    .pe { grid-template-columns: minmax(0,1fr); grid-template-rows: 130px minmax(0,1fr); }
+    .tree { border-right: 0; border-bottom: 1px solid var(--line); }
+    .fields thead { display: none; }
+    .fields tr { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+    .fields td { padding: 0; border: 0; }
+    .fields td.o { display: none; }
+    .fields td.v { text-align: right; white-space: normal; }
+    .fields td.m { grid-column: 1 / -1; }
+    .funcs { border-right: 0; border-bottom: 1px solid var(--line); }
+    .output { display: none; }
+    .exp { grid-template-columns: minmax(0,1fr); grid-template-rows: auto minmax(0,1fr) auto; }
+    .side { display: flex; gap: 4px; border-right: 0; border-bottom: 1px solid var(--line); padding: 6px; overflow-x: auto; }
+    .side button { width: auto; white-space: nowrap; }
+    .files { min-height: 130px; }
+    .detail { border-left: 0; border-top: 1px solid var(--line); max-height: 42vh; }
+    .tray .ring, .tray .net { display: none; }
+    .task span { display: none; }
+    .mark { display: none; }
+    .rmain { grid-template-columns: minmax(0,1fr); }
+    .rtoc { display: none; }
+    .rdoc { padding: 26px 18px 60px; }
+    .rdoc .next { grid-template-columns: 1fr; }
+    .rbar .hide-sm { display: none; }
+    .widget { top: 212px; left: 10px; right: 10px; width: auto; }
+    .slist { grid-template-columns: 1fr; }
+  }
+</style>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
 
-  <header class="masthead">
-    <div class="wrap masthead-inner">
-      <a class="wordmark" href="index.html" aria-label="Musaed home">
-        Musaed <span>&lt;/&gt;</span>
-      </a>
-      <button class="nav-toggle" type="button"
-              aria-label="Toggle navigation" aria-expanded="false"
-              aria-controls="nav-list">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
-      </button>
-      <nav aria-label="Primary">
-        <ul id="nav-list" class="nav-list">
-            <li><a href="index.html" aria-current="page">Home</a></li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="research.html">Research</a></li>
-            <li><a href="projects.html">Projects</a></li>
-            <li><a href="blog.html">Blog</a></li>
-            <li><a href="contact.html">Contact</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
-
-  <main id="main">
-    <div class="wrap">
-      <section class="hero">
-        <p class="hero-role">Reverse engineering &middot; Windows internals &middot; anti-cheat research</p>
-        <h1>Musaed</h1>
-        <p class="hero-lede">
-          Computer Science student at King Faisal University, graduating February 2027.
-          I read binaries for a living. Kernel drivers, PE internals, and the seams
-          where user mode meets the loader.
-        </p>
-        <div class="hero-actions"><a class="btn btn-primary" href="research.html">Read the research</a><a class="btn" href="https://github.com/xidenlz" rel="noopener">GitHub</a><a class="btn" href="contact.html">Contact</a></div>
-      </section>
-
-      <section>
-      <div class="section-head">
-        <h2>Featured research</h2>
-        <a href="research.html">All research &rarr;</a>
-      </div>
-      <div class="entry-body">
-      <p class="entry-note">Featured research &middot; June 12, 2026</p>
-      <h3 class="entry-title" style="font-size: var(--fs-2xl); margin-top: var(--sp-2)">
-        <a href="research/battleye-internals.html">BattlEye: kernel-side stack walking</a>
-      </h3>
-      <p class="entry-dek">How BattlEye walks a thread's call stack from kernel mode. Traces thread lookup with <code>PsLookupThreadByThreadId</code>, APC-driven collection with <code>RtlWalkFrameChain</code>, image-range validation, and how findings reach <code>BEDaisy::Report::ThreadStackReport</code>.</p>
-      <ul class="tags" aria-label="Tags"><li>Kernel</li><li>APC</li><li>RtlWalkFrameChain</li><li>Anti-cheat</li><li>Stack walking</li></ul>
-    </div>
-    </section>
-
-      <section>
-      <div class="section-head">
-        <h2>Selected projects</h2>
-        <a href="projects.html">All projects &rarr;</a>
-      </div>
-      <ol class="index">
-      <li class="entry">
-        <div class="entry-aside"><span class="kicker">Injection framework</span><span>C++17 · NT native API · driver</span></div>
-        <div class="entry-body"><h3 class="entry-title"><a href="projects.html#nt-injector">NtInjector (NtLoader)</a></h3><p class="entry-dek">Windows injection framework built on NT native APIs, no static IAT footprint, imports resolved by PEB walking. User-mode and driver dispatch modes.</p><ul class="tags" aria-label="Tags"><li>C++17</li><li>NT native API</li><li>Kernel driver</li><li>Manual map</li></ul></div>
-      </li><li class="entry">
-        <div class="entry-aside"><span class="kicker">Graphics hooking</span><span>C++ · MinHook · GDI</span></div>
-        <div class="entry-body"><h3 class="entry-title"><a href="projects.html#screenshot-bypass">Screenshot detection bypass</a></h3><p class="entry-dek">Hooks <code>gdi32!BitBlt</code> to return a clean framebuffer to screenshot-based scanners while overlays keep rendering.</p><ul class="tags" aria-label="Tags"><li>C++</li><li>MinHook</li><li>GDI32</li><li>BitBlt</li></ul></div>
-      </li><li class="entry">
-        <div class="entry-aside"><span class="kicker">Binary analysis</span><span>Python · C++ · Zydis</span></div>
-        <div class="entry-body"><h3 class="entry-title"><a href="projects.html#pe-analyzer">PE Analyzer Suite</a></h3><p class="entry-dek">Sample-inspection tooling. Python for PE/ELF parsing and payload extraction, C++/Zydis for instruction-level tracing.</p><ul class="tags" aria-label="Tags"><li>Python</li><li>C++</li><li>Zydis</li><li>PE/ELF</li></ul></div>
-      </li>
-    </ol>
-    </section>
-
-      <section>
-      <div class="section-head">
-        <h2>Recent notes</h2>
-        <a href="blog.html">All notes &rarr;</a>
-      </div>
-      <ol class="index">
-      <li class="entry">
-        <div class="entry-aside"><span class="kicker">Malware analysis</span><span>August 28, 2026</span></div>
-        <div class="entry-body"><h3 class="entry-title"><a href="blog/three-pe-flags-before-ida.html">Three PE flags I check before opening IDA</a></h3><p class="entry-dek">Three questions I answer from the PE first: does it talk to the network, does it have real imports, and does it drop another binary.</p><ul class="tags" aria-label="Tags"><li>Malware analysis</li><li>PE format</li><li>Static analysis</li><li>Zydis</li></ul></div>
-      </li><li class="entry">
-        <div class="entry-aside"><span class="kicker">PE format</span><span>March 1, 2026</span></div>
-        <div class="entry-body"><h3 class="entry-title"><a href="blog/pe-headers-deep-dive.html">PE optional headers and data directories</a></h3><p class="entry-dek"><code>IMAGE_OPTIONAL_HEADER64</code>, section alignment, RVA-to-file-offset math, and the 16 data directories.</p><ul class="tags" aria-label="Tags"><li>PE32+</li><li>Windows loader</li><li>Virtual memory</li><li>C/C++</li></ul></div>
-      </li>
-    </ol>
-    </section>
-    </div>
+<noscript>
+  <main class="nojs">
+    <h1>Musaed</h1>
+    <p>Reverse engineering, Windows internals, and anti-cheat research.</p>
+    <ul>
+      <li><a href="research/battleye-internals.html">BattlEye: kernel-side stack walking</a></li>
+      <li><a href="research.html">Research</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="projects.html">Projects</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
   </main>
+</noscript>
 
-  <footer class="site-footer">
-    <div class="wrap footer-inner">
-      <div>&copy; 2026 Musaed &middot; xidenlz</div>
-      <ul class="footer-nav">
-        <li><a href="https://github.com/xidenlz" rel="me noopener">GitHub</a></li>
-        <li><a href="feed.xml">RSS</a></li>
-        <li><a href="contact.html">Contact</a></li>
-      </ul>
+<div class="boot" id="boot" title="Click to skip">
+  <div class="boot-in">
+    <div class="lg">&lt;/&gt;</div>
+    <div class="nm">MUSAED</div>
+    <div class="dots"><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="hint">click to skip</div>
+  </div>
+</div>
+<div class="bsod" id="bsod">It's now safe to turn off your computer.<small>(or click anywhere to boot again)</small></div>
+
+<div class="desktop" id="desktop">
+  <div class="mark"><b>&lt;/&gt;</b><span>musaed · xidenlz</span></div>
+  <section class="widget" aria-label="Latest writing">
+    <div class="widget-h"><b>Latest writing</b><button type="button" id="w-all">View all</button></div>
+    <ol id="w-list"></ol>
+  </section>
+  <div class="icons" id="icons"></div>
+</div>
+
+<div class="smenu" id="smenu">
+  <div class="who"><div class="ava">M</div><div><b>Musaed</b><span>Reverse engineering · Windows internals</span></div></div>
+  <div class="slist" id="slist"></div>
+  <div class="sfoot"><span>KFU · class of 2027</span><button id="shutdown" type="button">⏻ Shut down</button></div>
+</div>
+
+<nav class="taskbar" aria-label="Taskbar">
+  <button class="start" id="startbtn" type="button" aria-label="Start">&lt;/&gt;</button>
+  <div class="tasks" id="tasks"></div>
+  <div class="tray">
+    <div class="clock" id="clock"></div>
+  </div>
+</nav>
+
+<script>
+const ROOT = '';
+const RESEARCH = [
+  { fn: 'BattlEye::StackWalk', ea: '140001000', title: 'BattlEye: kernel-side stack walking', date: 'June 12, 2026', cat: 'Anti-cheat · Kernel', href: 'research/battleye-internals.html',
+    dek: "How BattlEye walks a thread's call stack from kernel mode. Traces thread lookup with PsLookupThreadByThreadId, APC-driven collection with RtlWalkFrameChain, image-range validation, and how findings reach BEDaisy::Report::ThreadStackReport.",
+    tags: ['Kernel', 'APC', 'RtlWalkFrameChain', 'Anti-cheat', 'Stack walking'] },
+  { fn: 'ACE::KernelSide', ea: '140002400', title: 'Anti-Cheat Expert (ACE), kernel side', date: 'In progress', cat: 'Reverse engineering', href: null, wip: true,
+    dek: "Ongoing look at Tencent's Anti-Cheat Expert: driver callbacks, memory-protection primitives, integrity heartbeats, and how the client authenticates its kernel component.",
+    tags: ['ACE', 'Kernel', 'Integrity'] },
+];
+const BLOG = [
+  { fn: 'ThreePeFlagsBeforeIda', ea: '140010000', title: 'Three PE flags I check before opening IDA', date: 'August 28, 2026', cat: 'Malware analysis', href: 'blog/three-pe-flags-before-ida.html',
+    dek: 'Three questions I answer from the PE first: does it talk to the network, does it have real imports, and does it drop another binary.', tags: ['Malware analysis', 'PE format', 'Static analysis', 'Zydis', 'FLOSS'] },
+  { fn: 'PeOptionalHeaders', ea: '140010A40', title: 'PE optional headers and data directories', date: 'March 1, 2026', cat: 'PE format', href: 'blog/pe-headers-deep-dive.html',
+    dek: 'IMAGE_OPTIONAL_HEADER64, section alignment, RVA-to-file-offset math, and the 16 data directories.', tags: ['PE32+', 'Windows loader', 'Virtual memory', 'C/C++'] },
+  { fn: 'KernelProcessCallbacks', ea: '140011380', title: 'Windows kernel process and thread callbacks', date: 'February 18, 2026', cat: 'Kernel', href: 'blog/windows-kernel-callbacks.html',
+    dek: 'How drivers watch process lifecycles and strip handle access using PsSetCreateProcessNotifyRoutineEx and ObRegisterCallbacks.', tags: ['Windows kernel', 'Callbacks', 'Security drivers', 'x64'] },
+  { fn: 'OverlaysVsMalware', ea: '140011E00', title: 'Overlays and malware share the same primitives', date: 'November 6, 2025', cat: 'Windows internals', href: 'blog/overlays-and-malware-injection-mechanisms.html',
+    dek: 'Steam, Discord, EDRs, and injectors all use the same handful of Windows primitives. Notes on the shared surface.', tags: ['Process injection', 'Thread hijacking', 'DirectX', 'LdrLoadDll'] },
+  { fn: 'XorStringDeobf', ea: '140012760', title: 'XOR string de-obfuscation, in practice', date: 'September 14, 2025', cat: 'Reverse engineering', href: 'blog/defeating-malware-obfuscation-xor.html',
+    dek: 'Recognizing _mm_xor_ps in IDA, working out the key, and a small Python helper for doing it in bulk.', tags: ['XOR', 'IDA Pro', 'Python'] },
+  { fn: 'QuasarRatCaseStudy', ea: '1400131C0', title: 'Quasar RAT dressed as a game cheat', date: 'May 22, 2025', cat: 'Malware analysis', href: 'blog/quasar-rat-case-study.html',
+    dek: 'A hollow VB DLL, a Go dropper, and a Quasar RAT reaching a Portmap tunnel, a submission I flagged during a review.', tags: ['Quasar RAT', 'Any.Run', 'Threat intel'] },
+];
+const PROJECTS = [
+  { file: 'NtInjector.exe', title: 'NtInjector (NtLoader)', kind: 'Injection framework', stack: 'C++17 · NT native API · driver',
+    dek: 'A Windows injection framework that avoids the Win32 wrapper layer entirely: no static IAT entries, every function pointer resolved at runtime by walking the PEB and parsing exports. JSON-driven config; the same binary drives user-mode and driver-backed injection.',
+    hl: [['Manual map', 'In-memory PE mapping with relocations, imports, TLS callbacks and SEH, without registering in the PEB loader lists.'], ['LdrLoadDll stub', 'Writes a stub plus LDR_DATA into the target and runs it via NtCreateThreadEx.'], ['User-mode APC', 'Queues LdrLoadDll with NtQueueApcThread for the next alertable wait.'], ['Kernel driver', 'Dispatches through a custom driver and unloads once done.']],
+    tags: ['C++17', 'NT native API', 'Kernel driver', 'Manual map', 'PEB walk'], link: ['Thread on UnknownCheats', 'https://www.unknowncheats.me/forum/general-programming-and-reversing/735809-ntldr-windowsnt-injector.html'] },
+  { file: 'ScreenshotBypass.dll', title: 'Screenshot detection bypass', kind: 'Graphics hooking', stack: 'C++ · MinHook · GDI',
+    dek: 'A hook on gdi32!BitBlt that returns a clean copy of the framebuffer to screenshot-based scanners while overlays keep rendering in test builds. A research toy; the interesting part is how many capture paths still rely on GDI.',
+    hl: [['BitBlt hook', 'Filters overlay layers out of screen-capture buffers.'], ['Test target', 'Ships with a dummy overlay process to reproduce the capture path.']],
+    tags: ['C++', 'MinHook', 'GDI32', 'BitBlt', 'Anti-cheat'], link: ['Source on GitHub', 'https://github.com/xidenlz/Screenshot-Detection-Bypass'] },
+  { file: 'PEAnalyzer.py', title: 'PE Analyzer Suite', kind: 'Binary analysis · private', stack: 'Python · C++ · Zydis',
+    dek: 'Tooling for incoming samples. Python parses PE/ELF headers, dumps embedded binaries by exact offset and size, and runs heuristic scans over strings and section entropy. A C++/Zydis tool traces dynamic import resolution.',
+    hl: [['Embedded extraction', 'Dumps nested executables by exact raw offset and size.'], ['Heuristics', 'Entropy anomalies, C2 patterns, Discord webhooks, tunnels, loader markers.'], ['Disassembly', 'Zydis x86/x64 pass following calls to GetProcAddress.']],
+    tags: ['Python', 'C++', 'Zydis', 'PE/ELF'], link: null },
+];
+const ABOUT_TXT = `about.txt
+=========
+
+Musaed (xidenlz)
+Reverse engineering, Windows internals, anti-cheat research.
+
+I'm a Computer Science and Data Analysis student at King Faisal
+University, graduating February 2027.
+
+Most of my time goes into reading disassembly: Windows binaries,
+kernel drivers, and the code that runs between user mode and the
+loader. I write up what I find, including the parts I got wrong.
+
+NOW
+  Reversing the kernel side of Tencent's Anti-Cheat Expert (ACE)
+  for my next write-up.
+  COOP training at the Ministry of Justice: endpoint and systems
+  support across internal infrastructure.
+
+WORK
+  BattlEye: kernel-side stack walking, reversed and documented
+  NtInjector: NT-native injection framework, user mode and driver
+  VirusTotal community contributor for 6+ years, analyzing
+  suspicious files and writing verdicts for other analysts
+  Staff and contributor at UnknownCheats
+
+ANALYSIS
+  static and dynamic binary analysis, x86/x64 disassembly,
+  PE/ELF internals, memory analysis, malware analysis
+
+SYSTEMS
+  kernel callbacks, anti-cheat drivers, hooking and detection,
+  process injection, Authenticode and code signing
+
+TOOLS
+  IDA Pro, Ghidra, x64dbg, WinDbg (kernel and user), Zydis,
+  Sysinternals, Any.Run
+
+LANGUAGES
+  C / C++, x86/x64 assembly, Python, Win32 and NT native API, SQL
+
+CONTACT
+  uint64_t@hotmail.com
+  github.com/xidenlz
+  discord: xdenlz`;
+
+const IC = {
+  book: `<svg viewBox="0 0 40 40"><path d="M5 8c5-2 10-2 15 1v25c-5-3-10-3-15-1z" fill="#e6e8ec"/><path d="M35 8c-5-2-10-2-15 1v25c5-3 10-3 15-1z" fill="#cfd5de"/><path d="M9 14c3-1 5-1 8 .5M9 19c3-1 5-1 8 .5M9 24c3-1 5-1 8 .5" stroke="#38bdf8" stroke-width="1.4" fill="none" stroke-linecap="round"/></svg>`,
+  pe: `<svg viewBox="0 0 40 40"><rect x="5" y="3" width="30" height="34" rx="3" fill="#0d0f13" stroke="#38bdf8" stroke-width="1.5"/><rect x="9" y="8" width="22" height="5" rx="1" fill="#38bdf8"/><rect x="9" y="16" width="22" height="4" rx="1" fill="#2d323c"/><rect x="9" y="22" width="22" height="4" rx="1" fill="#ffcb6b"/><rect x="9" y="28" width="14" height="4" rx="1" fill="#2d323c"/></svg>`,
+  ida: `<svg viewBox="0 0 40 40"><rect x="3" y="3" width="34" height="34" rx="7" fill="#12324a"/><path d="M11 12v16M17 12h5a8 8 0 010 16h-5z" fill="none" stroke="#7dd3fc" stroke-width="2.6" stroke-linejoin="round"/><circle cx="30" cy="12" r="3" fill="#ffcb6b"/></svg>`,
+  note: `<svg viewBox="0 0 40 40"><path d="M9 4h16l7 7v25H9z" fill="#e6e8ec"/><path d="M25 4v7h7" fill="#b8bec8"/><path d="M13 17h14M13 22h14M13 27h10" stroke="#646c79" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+  folder: `<svg viewBox="0 0 40 40"><path d="M3 10a3 3 0 013-3h9l4 4h15a3 3 0 013 3v17a3 3 0 01-3 3H6a3 3 0 01-3-3z" fill="#e0a43a"/><path d="M3 15h34v16a3 3 0 01-3 3H6a3 3 0 01-3-3z" fill="#f5c060"/></svg>`,
+  folderB: `<svg viewBox="0 0 40 40"><path d="M3 10a3 3 0 013-3h9l4 4h15a3 3 0 013 3v17a3 3 0 01-3 3H6a3 3 0 01-3-3z" fill="#1f7fae"/><path d="M3 15h34v16a3 3 0 01-3 3H6a3 3 0 01-3-3z" fill="#38bdf8"/><path d="M15 21l-3 3 3 3M25 21l3 3-3 3" fill="none" stroke="#04202e" stroke-width="2" stroke-linecap="round"/></svg>`,
+  mail: `<svg viewBox="0 0 40 40"><rect x="4" y="9" width="32" height="23" rx="3" fill="#e6e8ec"/><path d="M5 11l15 11 15-11" fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linejoin="round"/></svg>`,
+  bin: `<svg viewBox="0 0 40 40"><path d="M10 12h20l-2 23H12z" fill="rgba(200,215,230,.25)" stroke="#cfd5de" stroke-width="1.5"/><path d="M8 12h24M16 12V8h8v4" fill="none" stroke="#cfd5de" stroke-width="1.5"/><path d="M16 17v13M20 17v13M24 17v13" stroke="#cfd5de" stroke-width="1.2"/></svg>`,
+  gh: `<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="#e6e8ec"/><path d="M20 9a11 11 0 00-3.5 21.4c.6.1.8-.2.8-.5v-2c-3 .7-3.7-1.4-3.7-1.4-.5-1.3-1.2-1.6-1.2-1.6-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 1.7 2.6 1.2 3.2.9.1-.7.4-1.2.7-1.5-2.4-.3-5-1.2-5-5.4 0-1.2.4-2.2 1.1-2.9-.1-.3-.5-1.4.1-2.9 0 0 .9-.3 3 1.1a10.4 10.4 0 015.5 0c2.1-1.4 3-1.1 3-1.1.6 1.5.2 2.6.1 2.9.7.8 1.1 1.7 1.1 2.9 0 4.2-2.6 5.1-5 5.4.4.3.7 1 .7 2v3c0 .3.2.6.8.5A11 11 0 0020 9z" fill="#0d0f13"/></svg>`,
+  file: `<svg viewBox="0 0 40 40"><path d="M9 4h16l7 7v25H9z" fill="#2d323c" stroke="#646c79"/><path d="M25 4v7h7" fill="#3d434e"/><text x="20" y="29" text-anchor="middle" font-family="monospace" font-size="8" font-weight="700" fill="#7dd3fc">EXE</text></svg>`,
+  html: `<svg viewBox="0 0 40 40"><path d="M9 4h16l7 7v25H9z" fill="#2d323c" stroke="#646c79"/><path d="M25 4v7h7" fill="#3d434e"/><path d="M16 21l-3 3 3 3M24 21l3 3-3 3" fill="none" stroke="#ffcb6b" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+};
+const CTL = {
+  min: '<svg viewBox="0 0 10 10"><path d="M0 5h10" stroke="currentColor"/></svg>',
+  max: '<svg viewBox="0 0 10 10"><rect x=".5" y=".5" width="9" height="9" fill="none" stroke="currentColor"/></svg>',
+  x:   '<svg viewBox="0 0 10 10"><path d="M0 0l10 10M10 0L0 10" stroke="currentColor"/></svg>',
+};
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const $ = s => document.querySelector(s);
+const mobile = () => matchMedia('(max-width: 760px)').matches;
+
+const wins = new Map();
+let zTop = 10;
+
+function focusWin(id) {
+  for (const [k, w] of wins) {
+    const on = k === id;
+    w.el.classList.toggle('inactive', !on);
+    w.task.classList.toggle('front', on && !w.el.classList.contains('min'));
+  }
+  const w = wins.get(id);
+  if (w) w.el.style.zIndex = ++zTop;
+}
+
+function topVisible() {
+  let best = null, bz = -1;
+  for (const [k, w] of wins) {
+    if (w.el.classList.contains('min')) continue;
+    const z = +w.el.style.zIndex;
+    if (z > bz) { bz = z; best = k; }
+  }
+  return best;
+}
+
+function openApp(id, arg) {
+  closeStart();
+  const app = APPS[id];
+  if (wins.has(id)) {
+    const w = wins.get(id);
+    w.el.classList.remove('min');
+    focusWin(id);
+    if (arg !== undefined && w.api && w.api.go) w.api.go(arg);
+    return w;
+  }
+  const d = $('#desktop').getBoundingClientRect();
+  const n = wins.size;
+  const W = Math.min(app.w, d.width - 40), H = Math.min(app.h, d.height - 30);
+  const x = app.x != null ? app.x : Math.max(10, (d.width - W) / 2 + n * 26 - 40);
+  const y = app.y != null ? app.y : Math.max(10, (d.height - H) / 2 + n * 22 - 30);
+
+  const el = document.createElement('section');
+  el.className = 'win';
+  el.setAttribute('aria-label', app.title);
+  el.style.cssText = `left:${Math.min(x, d.width - W - 10)}px;top:${Math.min(y, d.height - H - 10)}px;width:${W}px;height:${H}px`;
+  el.innerHTML = `<div class="tb">${app.icon}<span class="tt">${esc(app.title)}</span><div class="ctl">
+      <button type="button" class="mn" aria-label="Minimize">${CTL.min}</button>
+      <button type="button" class="mx" aria-label="Maximize">${CTL.max}</button>
+      <button type="button" class="x" aria-label="Close">${CTL.x}</button></div></div><div class="wb"></div>`;
+  $('#desktop').appendChild(el);
+
+  const task = document.createElement('button');
+  task.type = 'button'; task.className = 'task'; task.title = app.title;
+  task.innerHTML = `${app.icon}<span>${esc(app.short || app.title)}</span>`;
+  $('#tasks').appendChild(task);
+
+  const w = { el, task, api: null };
+  wins.set(id, w);
+  w.api = app.render(el.querySelector('.wb'), arg) || null;
+
+  el.addEventListener('pointerdown', () => focusWin(id));
+  el.querySelector('.mn').onclick = e => { e.stopPropagation(); minimize(id); };
+  el.querySelector('.mx').onclick = () => el.classList.toggle('max');
+  el.querySelector('.x').onclick = e => { e.stopPropagation(); closeWin(id); };
+  task.onclick = () => {
+    if (el.classList.contains('min')) { el.classList.remove('min'); focusWin(id); }
+    else if (topVisible() === id) minimize(id);
+    else focusWin(id);
+  };
+  drag(el, id);
+  focusWin(id);
+  return w;
+}
+
+function minimize(id) {
+  const w = wins.get(id);
+  w.el.classList.add('min');
+  w.task.classList.remove('front');
+  const t = topVisible();
+  if (t) focusWin(t);
+}
+function closeWin(id) {
+  const w = wins.get(id);
+  if (!w) return;
+  w.el.remove(); w.task.remove(); wins.delete(id);
+  const t = topVisible();
+  if (t) focusWin(t);
+}
+
+function drag(el, id) {
+  const bar = el.querySelector('.tb');
+  bar.addEventListener('dblclick', e => { if (!e.target.closest('.ctl') && !mobile()) el.classList.toggle('max'); });
+  bar.addEventListener('pointerdown', e => {
+    if (e.target.closest('.ctl') || el.classList.contains('max') || mobile()) return;
+    const sx = e.clientX, sy = e.clientY, ox = el.offsetLeft, oy = el.offsetTop;
+    const d = $('#desktop').getBoundingClientRect();
+    bar.setPointerCapture(e.pointerId);
+    const mv = ev => {
+      const nx = Math.min(Math.max(ox + ev.clientX - sx, 80 - el.offsetWidth), d.width - 80);
+      const ny = Math.min(Math.max(oy + ev.clientY - sy, 0), d.height - 36);
+      el.style.left = nx + 'px'; el.style.top = ny + 'px';
+    };
+    const up = () => { bar.removeEventListener('pointermove', mv); bar.removeEventListener('pointerup', up); };
+    bar.addEventListener('pointermove', mv);
+    bar.addEventListener('pointerup', up);
+  });
+}
+
+const APPS = {
+  ida: { title: 'Research.idb · IDA', short: 'Research.idb', icon: IC.ida, w: 980, h: 600, x: 120, y: 30, render: renderIDA },
+  pe: { title: 'musaed.exe · PE Viewer', short: 'musaed.exe', icon: IC.pe, w: 760, h: 480, render: renderPE },
+  about: { title: 'about.txt · Notepad', short: 'about.txt', icon: IC.note, w: 620, h: 520, render: renderAbout },
+  explorer: { title: 'File Explorer', short: 'Explorer', icon: IC.folder, w: 900, h: 540, render: renderExplorer },
+  mail: { title: 'contact.eml · Mail', short: 'contact.eml', icon: IC.mail, w: 560, h: 500, render: renderMail },
+  reader: { title: 'Reader', short: 'Reader', icon: IC.book, w: 1060, h: 760, render: renderReader },
+  bin: { title: 'Recycle Bin', short: 'Recycle Bin', icon: IC.bin, w: 440, h: 240, render: b => { b.innerHTML = `<div class="empty" style="margin:auto">This folder is empty.</div>`; } },
+};
+
+function renderIDA(body, arg) {
+  const all = [...RESEARCH.map(r => ({ ...r, seg: '.research' })), ...BLOG.map(b => ({ ...b, seg: '.blog' }))];
+  body.innerHTML = `
+    <div class="menu"><span>File</span><span>Edit</span><span>Jump</span><span>Search</span><span>View</span><span>Debugger</span><span>Options</span><span>Windows</span><span>Help</span></div>
+    <div class="navband" aria-hidden="true">
+      <i style="width:6%;background:#7a7a7a"></i><i style="width:22%;background:#3d7fb8"></i><i style="width:3%;background:#c77dbb"></i><i style="width:31%;background:#3d7fb8"></i><i style="width:8%;background:#a3c46a"></i><i style="width:5%;background:#ff6b8b"></i><i style="width:18%;background:#3d7fb8"></i><i style="width:7%;background:#7a7a7a"></i>
     </div>
-  </footer>
+    <div class="ida">
+      <div class="funcs">
+        <div class="pane-h"><span>Functions</span><span>${all.length}</span></div>
+        <ul class="flist" role="listbox" aria-label="Articles">
+          <li class="grp">SEGMENT .research</li>
+          ${RESEARCH.map((r, i) => fbtn(r, i)).join('')}
+          <li class="grp">SEGMENT .blog</li>
+          ${BLOG.map((r, i) => fbtn(r, i + RESEARCH.length)).join('')}
+        </ul>
+      </div>
+      <div class="view">
+        <div class="tabs" role="tablist"><button type="button" class="on" data-v="pc">Pseudocode-A</button><button type="button" data-v="asm">IDA View-A</button></div>
+        <div class="code" tabindex="0"></div>
+      </div>
+    </div>
+    <div class="output">
+      <div>Loading file 'musaed.exe' into database...</div>
+      <div>Detected file format: Portable executable for AMD64 (PE)</div>
+      <div>Loading symbols... ${all.length} functions recognized (${RESEARCH.length} .research, ${BLOG.length} .blog)</div>
+      <div style="color:var(--str)">The initial autoanalysis has been finished. Double-click a function or press Enter to open it.</div>
+    </div>
+    <div class="status"><span class="on">AU: idle</span><span>Down</span><span>Disk: 6GB</span><span id="ida-ea"></span></div>`;
+  function fbtn(r, i) {
+    return `<li><button type="button" data-i="${i}" class="${r.wip ? 'wip' : ''}"><span class="fglyph">f</span><span class="f">${esc(r.fn)}</span><span class="s">${r.wip ? 'wip' : r.ea.slice(-5)}</span></button></li>`;
+  }
+  const code = body.querySelector('.code');
+  let cur = 0, mode = 'pc';
 
-  <script src="js/main.js" defer></script>
+  function pseudo(r) {
+    const id = r.fn.replace('::', '_');
+    const L = [
+      `<span class="cm">// ${esc(r.seg)}:${r.ea}  ·  ${esc(r.cat)}</span>`,
+      `<span class="cm">// ${esc(r.date)}</span>`,
+      ``,
+      `<span class="t">article_t</span> <span class="k">__fastcall</span> <span class="fn">${esc(id)}</span>()`,
+      `{`,
+      `  <span class="t">const char</span> *title = <span class="s">"${esc(r.title)}"</span>;`,
+      ``,
+      `  <span class="cm">/*</span>`,
+      ...wrap(r.dek, 62).map(l => `<span class="cm">   * ${esc(l)}</span>`),
+      `<span class="cm">   */</span>`,
+      ``,
+      `  <span class="t">tag_t</span> tags[<span class="m">${r.tags.length}</span>] = { ${r.tags.map(t => `<span class="s">"${esc(t)}"</span>`).join(', ')} };`,
+      ``,
+      r.wip
+        ? `  <span class="k">return</span> STATUS_PENDING; <span class="cm">// still reversing, check back soon</span>`
+        : `  <span class="k">return</span> <span class="fn">open</span>(<a class="go" href="${ROOT + r.href}" data-read="${r.href}">"${esc(r.href)}"</a>);  <span class="cm">// click to read</span>`,
+      `}`,
+    ];
+    return L;
+  }
+  function asm(r) {
+    const base = parseInt(r.ea, 16);
+    const a = o => (base + o).toString(16).toUpperCase().padStart(9, '0');
+    return [
+      `<span class="asm"><span class="addr">${r.seg}:${a(0)}</span> <span class="lbl">${esc(r.fn.replace('::', '_'))}</span> <span class="k">proc near</span></span>`,
+      `<span class="asm"><span class="addr">${r.seg}:${a(0)}</span>   <span class="mn">sub</span>     rsp, <span class="m">28h</span></span>`,
+      `<span class="asm"><span class="addr">${r.seg}:${a(4)}</span>   <span class="mn">lea</span>     rcx, aTitle     <span class="cm">; "${esc(r.title)}"</span></span>`,
+      `<span class="asm"><span class="addr">${r.seg}:${a(11)}</span>   <span class="mn">lea</span>     rdx, aDate      <span class="cm">; "${esc(r.date)}"</span></span>`,
+      `<span class="asm"><span class="addr">${r.seg}:${a(18)}</span>   <span class="mn">mov</span>     r8d, <span class="m">${r.tags.length}</span>          <span class="cm">; tag count</span></span>`,
+      `<span class="asm"><span class="addr">${r.seg}:${a(24)}</span>   <span class="mn">call</span>    <span class="fn">${r.wip ? 'KeWaitForSingleObject' : 'open_article'}</span></span>`,
+      `<span class="asm"><span class="addr">${r.seg}:${a(29)}</span>   <span class="mn">add</span>     rsp, <span class="m">28h</span></span>`,
+      `<span class="asm"><span class="addr">${r.seg}:${a(33)}</span>   <span class="mn">retn</span></span>`,
+      `<span class="asm"><span class="addr">${r.seg}:${a(33)}</span> <span class="lbl">${esc(r.fn.replace('::', '_'))}</span> <span class="k">endp</span></span>`,
+      ``,
+      r.wip ? `<span class="cm">; work in progress</span>` : `<span class="cm">; xref → </span><a class="go" href="${ROOT + r.href}" data-read="${r.href}">${esc(r.href)}</a>`,
+    ];
+  }
+  function show(i) {
+    cur = i;
+    const r = all[i];
+    body.querySelectorAll('.flist button').forEach(b => b.classList.toggle('cur', +b.dataset.i === i));
+    const L = mode === 'pc' ? pseudo(r) : asm(r);
+    code.innerHTML = L.map((l, n) => `<div class="ln${l.includes('class="go"') ? ' hl' : ''}"><span class="n">${n + 1}</span><span class="c">${l || ' '}</span></div>`).join('');
+    code.scrollTop = 0;
+    body.querySelector('#ida-ea').textContent = `${r.seg}:${r.ea}  ${r.fn}`;
+  }
+  body.querySelector('.flist').addEventListener('click', e => {
+    const b = e.target.closest('button[data-i]'); if (b) show(+b.dataset.i);
+  });
+  body.querySelector('.flist').addEventListener('dblclick', e => {
+    const b = e.target.closest('button[data-i]'); if (!b) return;
+    const r = all[+b.dataset.i]; if (r.href) openReader(r.href);
+  });
+  body.querySelector('.flist').addEventListener('keydown', e => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      const n = Math.max(0, Math.min(all.length - 1, cur + (e.key === 'ArrowDown' ? 1 : -1)));
+      show(n); body.querySelector(`.flist button[data-i="${n}"]`).focus();
+    } else if (e.key === "Enter" && all[cur].href) openReader(all[cur].href);
+  });
+  body.querySelector('.tabs').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    mode = b.dataset.v;
+    body.querySelectorAll('.tabs button').forEach(x => x.classList.toggle('on', x === b));
+    show(cur);
+  });
+  show(typeof arg === 'number' ? arg : 0);
+  return { go: i => show(i) };
+}
+function wrap(t, n) {
+  const out = []; let line = '';
+  for (const w of t.split(' ')) {
+    if ((line + ' ' + w).trim().length > n) { out.push(line.trim()); line = w; } else line += ' ' + w;
+  }
+  if (line.trim()) out.push(line.trim());
+  return out;
+}
+
+function renderPE(body) {
+  const hex = (n, w) => n.toString(16).toUpperCase().padStart(w, '0');
+  const grad = hex(Date.UTC(2027, 1, 1) / 1000, 8);
+  const NODES = [
+    { id: 'file', label: 'File Header', d: 1, head: 'IMAGE_FILE_HEADER', sub: 'Who this is, in one table.',
+      rows: [
+        ['0104', 'Machine', '8664', 'AMD64. Windows x64, user mode and kernel mode.'],
+        ['0106', 'NumberOfSections', '0005', '.about .research .blog .projects .contact'],
+        ['0108', 'TimeDateStamp', grad, 'February 2027, graduating from King Faisal University (CS and Data Analysis).'],
+        ['0116', 'Characteristics', '0022', 'EXECUTABLE_IMAGE | LARGE_ADDRESS_AWARE'],
+      ] },
+    { id: 'opt', label: 'Optional Header', d: 1, head: 'IMAGE_OPTIONAL_HEADER64', sub: 'Where to start and what this image is built for.',
+      rows: [
+        ['0118', 'Magic', '020B', 'PE32+'],
+        ['0128', 'AddressOfEntryPoint', '00001000', 'BattlEye: kernel-side stack walking. Start here.', () => openReader(RESEARCH[0].href)],
+        ['0130', 'ImageBase', '0000000140000000', 'Musaed (xidenlz). Reverse engineering, Windows internals, anti-cheat research.'],
+        ['0158', 'CheckSum', '00000006', 'VirusTotal community contributor for 6+ years.'],
+        ['015C', 'Subsystem', '0001', 'NATIVE. Most of my time goes into the parts that touch the kernel.'],
+        ['015E', 'DllCharacteristics', '0160', 'COOP training at the Ministry of Justice: endpoint and systems support.'],
+      ] },
+    { id: 'sec', label: 'Section Headers', d: 0, head: 'IMAGE_SECTION_HEADER[5]', sub: 'Click a section to open it.',
+      rows: [
+        ['.about', '00001000', hex(ABOUT_TXT.length, 8), 'Background, skills, record', () => openApp('about')],
+        ['.research', '00002000', hex(RESEARCH.length, 8), `${RESEARCH.length} long-form write-ups, one in progress`, () => openApp('ida', 0)],
+        ['.blog', '00003000', hex(BLOG.length, 8), `${BLOG.length} short notes`, () => openApp('explorer', 'blog')],
+        ['.projects', '00004000', hex(PROJECTS.length, 8), `${PROJECTS.length} projects: injection, hooking, analysis`, () => openApp('explorer', 'projects')],
+        ['.contact', '00005000', '00000003', 'Email, GitHub, Discord', () => openApp('mail')],
+      ] },
+    { id: 'imp', label: 'Import Directory', d: 0, head: 'IMAGE_IMPORT_DESCRIPTOR', sub: 'APIs I work with and the tools I use.',
+      rows: [
+        ['ntoskrnl.exe', 'PsLookupThreadByThreadId, RtlWalkFrameChain, ObRegisterCallbacks', 'Kernel callbacks, anti-cheat drivers'],
+        ['ntdll.dll', 'NtQueueApcThread, NtCreateThreadEx, LdrLoadDll', 'NT native API, process injection'],
+        ['gdi32.dll', 'BitBlt', 'Hooking and detection'],
+        ['ida64.dll', 'IDA Pro, Ghidra', 'Static analysis, x86/x64 disassembly'],
+        ['dbgeng.dll', 'WinDbg, x64dbg', 'Dynamic analysis, kernel and user'],
+        ['zydis.dll', 'Zydis', 'Instruction-level tooling'],
+        ['tools.dll', 'Sysinternals, Any.Run, FLOSS', 'Malware triage'],
+        ['lang.dll', 'C / C++, Python, x86/x64 assembly, SQL', 'Languages'],
+      ] },
+    { id: 'hex', label: 'Hex View', d: 0 },
+  ];
+  body.innerHTML = `
+    <div class="menu"><span>File</span><span>View</span><span>Tools</span><span>Help</span></div>
+    <div class="pe">
+      <ul class="tree">
+        <li><button type="button" data-n="file">musaed.exe</button></li>
+        <li><button type="button" data-n="file" class="nt">NT Headers</button></li>
+        ${NODES.map(n => `<li><button type="button" data-n="${n.id}" class="d${n.d}">${n.label}</button></li>`).join('')}
+      </ul>
+      <div class="tbl-wrap"></div>
+    </div>
+    <div class="status"><span>musaed.exe</span><span>PE32+</span><span>x64</span><span>5 sections</span></div>`;
+  const wrapEl = body.querySelector('.tbl-wrap');
+  let handlers = [];
+  function show(id) {
+    body.querySelectorAll('.tree button').forEach(b => b.classList.toggle('on', b.dataset.n === id && !b.classList.contains('nt') && b.textContent !== 'musaed.exe'));
+    if (id === 'hex') {
+      const s = 'MZ\x90\x00 Musaed (xidenlz). Reverse engineering, Windows internals and anti-cheat research. KFU, class of 2027. uint64_t@hotmail.com  github.com/xidenlz';
+      const lines = [];
+      for (let i = 0; i < s.length; i += 16) {
+        const ch = s.slice(i, i + 16);
+        const h = [...ch].map(c => hex(c.charCodeAt(0) & 255, 2)).join(' ').padEnd(47, ' ');
+        const t = [...ch].map(c => (c.charCodeAt(0) >= 32 && c.charCodeAt(0) < 127) ? c : '.').join('');
+        lines.push(`<span class="a">${hex(i, 8)}</span>  <span class="h">${h}</span>  <span class="t">${esc(t)}</span>`);
+      }
+      wrapEl.innerHTML = `<div class="tbl-h"><b>Hex View</b><p>Raw bytes at offset 0.</p></div><div class="hexd">${lines.join('\n')}</div>`;
+      return;
+    }
+    const n = NODES.find(x => x.id === id);
+    handlers = n.rows.map(r => r[4] || null);
+    let head, rows;
+    if (id === 'imp') {
+      head = '<th>Module</th><th>Imports</th><th>Used for</th>';
+      rows = n.rows.map(r => `<tr><td class="n">${esc(r[0])}</td><td class="v" style="white-space:normal">${esc(r[1])}</td><td class="m">${esc(r[2])}</td></tr>`);
+    } else if (id === 'sec') {
+      head = '<th>Name</th><th>VirtualAddress</th><th>Size</th><th>Contents</th>';
+      rows = n.rows.map((r, i) => `<tr class="click" data-i="${i}" tabindex="0"><td class="n">${esc(r[0])}</td><td class="o">${r[1]}</td><td class="v">${r[2]}</td><td class="m">${esc(r[3])} →</td></tr>`);
+    } else {
+      head = '<th>Offset</th><th>Member</th><th>Value</th><th>Meaning</th>';
+      rows = n.rows.map((r, i) => `<tr${r[4] ? ` class="click" data-i="${i}" tabindex="0"` : ''}><td class="o">${r[0]}</td><td class="n">${esc(r[1])}</td><td class="v">${r[2]}</td><td class="m">${esc(r[3])}${r[4] ? ' →' : ''}</td></tr>`);
+    }
+    wrapEl.innerHTML = `<div class="tbl-h"><b>${esc(n.head)}</b><p>${esc(n.sub)}</p></div><table class="fields"><thead><tr>${head}</tr></thead><tbody>${rows.join('')}</tbody></table>`;
+  }
+  body.querySelector('.tree').addEventListener('click', e => { const b = e.target.closest('button[data-n]'); if (b) show(b.dataset.n); });
+  const act = tr => { if (tr && handlers[+tr.dataset.i]) handlers[+tr.dataset.i](); };
+  wrapEl.addEventListener('click', e => act(e.target.closest('tr.click')));
+  wrapEl.addEventListener('keydown', e => { if (e.key === 'Enter') act(e.target.closest('tr.click')); });
+  show('file');
+}
+
+const READABLE = [...RESEARCH.filter(r => r.href), ...BLOG];
+function openReader(href) { openApp('reader', href); }
+
+function renderReader(body, first) {
+  body.innerHTML = `
+    <div class="rbar">
+      <button type="button" data-a="prev">← Previous</button>
+      <button type="button" data-a="next">Next →</button>
+      <span class="sep hide-sm"></span>
+      <button type="button" data-a="smaller" class="hide-sm" aria-label="Smaller text">A−</button>
+      <button type="button" data-a="bigger" class="hide-sm" aria-label="Larger text">A+</button>
+      <span class="sp"></span>
+      <a class="full" href="#" target="_blank" rel="noopener">Full page ↗</a>
+    </div>
+    <div class="rprog"><i></i></div>
+    <div class="rmain">
+      <nav class="rtoc" aria-label="On this page"></nav>
+      <div class="rscroll"><div class="rdoc"></div></div>
+    </div>`;
+  const win = body.closest('.win');
+  const sc = body.querySelector('.rscroll'), doc = body.querySelector('.rdoc'), toc = body.querySelector('.rtoc'), bar = body.querySelector('.rprog i');
+  let idx = 0, fs = 16;
+  try { fs = +localStorage.getItem('reader-fs') || 16; } catch {}
+  doc.style.setProperty('--rfs', fs + 'px');
+
+  function setTitle(t) {
+    win.querySelector('.tt').textContent = `${t} · Reader`;
+    const w = wins.get('reader');
+    if (w) w.task.title = t;
+  }
+
+  async function load(href) {
+    idx = Math.max(0, READABLE.findIndex(r => r.href === href));
+    const meta = READABLE[idx];
+    const url = new URL(ROOT + href, location.href);
+    body.querySelector('.full').href = url.href;
+    body.querySelector('[data-a=prev]').disabled = idx === 0;
+    body.querySelector('[data-a=next]').disabled = idx === READABLE.length - 1;
+    setTitle(meta.title);
+    toc.innerHTML = '';
+    doc.innerHTML = `<div class="rmsg">Loading…</div>`;
+    sc.scrollTop = 0; bar.style.width = '0';
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(res.status);
+      const page = new DOMParser().parseFromString(await res.text(), 'text/html');
+      const art = page.querySelector('article.prose');
+      if (!art) throw new Error('no article');
+      art.querySelectorAll('[src]').forEach(el => el.setAttribute('src', new URL(el.getAttribute('src'), url).href));
+      art.querySelectorAll('a[href]').forEach(a => {
+        const h = a.getAttribute('href');
+        if (h.startsWith('#')) return;
+        const abs = new URL(h, url);
+        const rel = READABLE.find(r => new URL(ROOT + r.href, location.href).pathname === abs.pathname);
+        a.href = abs.href;
+        if (rel) a.dataset.read = rel.href; else { a.target = '_blank'; a.rel = 'noopener'; }
+      });
+      const by = page.querySelector('.byline');
+      const mins = by && (by.textContent.match(/~?\d+\s*min/) || [])[0];
+      const prev = READABLE[idx - 1], next = READABLE[idx + 1];
+      doc.innerHTML = `<div class="kick">${esc(meta.cat)}</div><h1>${esc(meta.title)}</h1>
+        <div class="by">Musaed · ${esc(meta.date)}${mins ? ` · ${esc(mins)} read` : ''}</div>
+        <div class="body"></div>
+        <div class="next">${prev ? `<button type="button" data-go="${idx - 1}"><span>← Previous</span>${esc(prev.title)}</button>` : '<span></span>'}${next ? `<button type="button" data-go="${idx + 1}"><span>Next →</span>${esc(next.title)}</button>` : ''}</div>`;
+      doc.querySelector('.body').append(...art.childNodes);
+      const hs = [...doc.querySelectorAll('.body h2')];
+      hs.forEach((h, i) => { h.id = 'r-h' + i; });
+      toc.innerHTML = hs.length ? `<h4>On this page</h4>` + hs.map((h, i) => `<a href="#r-h${i}" data-h="${i}">${esc(h.textContent)}</a>`).join('') : '';
+      onScroll();
+    } catch (err) {
+      doc.innerHTML = `<div class="rmsg">Couldn't load this article inside the desktop.<br><a href="${url.href}">Open the full page →</a></div>`;
+    }
+  }
+
+  function onScroll() {
+    const max = sc.scrollHeight - sc.clientHeight;
+    bar.style.width = (max > 0 ? sc.scrollTop / max * 100 : 0) + '%';
+    let on = -1;
+    toc.querySelectorAll('a').forEach((a, i) => {
+      const h = doc.querySelector('#r-h' + i);
+      if (h && h.offsetTop - sc.scrollTop < 120) on = i;
+    });
+    toc.querySelectorAll('a').forEach((a, i) => a.classList.toggle('on', i === on));
+  }
+  sc.addEventListener('scroll', onScroll, { passive: true });
+  toc.addEventListener('click', e => {
+    const a = e.target.closest('a[data-h]'); if (!a) return;
+    e.preventDefault();
+    sc.scrollTop = doc.querySelector('#r-h' + a.dataset.h).offsetTop - 12;
+  });
+  doc.addEventListener('click', e => {
+    const b = e.target.closest('button[data-go]');
+    if (b) load(READABLE[+b.dataset.go].href);
+  });
+  body.querySelector('.rbar').addEventListener('click', e => {
+    const b = e.target.closest('button[data-a]'); if (!b) return;
+    const a = b.dataset.a;
+    if (a === 'prev' && idx > 0) load(READABLE[idx - 1].href);
+    if (a === 'next' && idx < READABLE.length - 1) load(READABLE[idx + 1].href);
+    if (a === 'smaller' || a === 'bigger') {
+      fs = Math.min(21, Math.max(13, fs + (a === 'bigger' ? 1 : -1)));
+      doc.style.setProperty('--rfs', fs + 'px');
+      try { localStorage.setItem('reader-fs', fs); } catch {}
+    }
+  });
+  load(first || READABLE[0].href);
+  return { go: load };
+}
+
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[data-read]');
+  if (!a || e.ctrlKey || e.metaKey || e.shiftKey || e.button) return;
+  e.preventDefault();
+  openReader(a.dataset.read);
+});
+
+function renderAbout(body) {
+  body.innerHTML = `<div class="menu"><span>File</span><span>Edit</span><span>Format</span><span>View</span><span>Help</span></div>
+    <div class="npad" contenteditable="true" spellcheck="false">${esc(ABOUT_TXT)}</div>
+    <div class="status"><span>Ln 1, Col 1</span><span>100%</span><span>Windows (CRLF)</span><span>UTF-8</span></div>`;
+}
+
+function renderExplorer(body, arg) {
+  const FOLDERS = {
+    projects: { name: 'Projects', icon: IC.folder, items: PROJECTS.map(p => ({ name: p.file, icon: IC.file, meta: p.kind.split(' · ')[0], p })) },
+    research: { name: 'Research', icon: IC.folderB, items: RESEARCH.map(r => ({ name: r.title, icon: IC.html, meta: r.wip ? 'in progress' : r.date.replace(/^(\w{3})\w*/, '$1'), r })) },
+    blog: { name: 'Blog', icon: IC.folderB, items: BLOG.map(r => ({ name: r.title, icon: IC.html, meta: r.date.replace(/^(\w{3})\w*/, '$1'), r })) },
+  };
+  body.innerHTML = `
+    <div class="addr"><span style="color:var(--faint)">←  →  ↑</span><div class="path"></div></div>
+    <div class="exp">
+      <div class="side">${Object.entries(FOLDERS).map(([k, f]) => `<button type="button" data-f="${k}">${f.icon}${f.name}</button>`).join('')}
+        <button type="button" data-ext="https://github.com/xidenlz">${IC.gh}GitHub ↗</button></div>
+      <div class="files"></div>
+      <aside class="detail"></aside>
+    </div>
+    <div class="status"><span class="cnt"></span><span class="sel"></span></div>`;
+  const files = body.querySelector('.files'), det = body.querySelector('.detail');
+  let folder = 'projects';
+
+  function detail(it) {
+    if (!it) { det.innerHTML = `<div class="empty">Select a file to see its details.</div>`; return; }
+    if (it.p) {
+      const p = it.p;
+      det.innerHTML = `<div class="kick">${esc(p.kind)}</div><h3>${esc(p.title)}</h3><div class="when">${esc(p.stack)}</div>
+        <p>${esc(p.dek)}</p>
+        <ul class="hl">${p.hl.map(([a, b]) => `<li><b>${esc(a)}</b>${esc(b)}</li>`).join('')}</ul>
+        <ul class="tagz">${p.tags.map(t => `<li>${esc(t)}</li>`).join('')}</ul>
+        ${p.link ? `<a class="open" href="${p.link[1]}" target="_blank" rel="noopener">${esc(p.link[0])} ↗</a>` : `<p style="font-family:var(--mono);font-size:11px">; private tooling, no public source</p>`}`;
+    } else {
+      const r = it.r;
+      det.innerHTML = `<div class="kick">${esc(r.cat)}</div><h3>${esc(r.title)}</h3><div class="when">${esc(r.date)}</div>
+        <p>${esc(r.dek)}</p>
+        <ul class="tagz">${r.tags.map(t => `<li>${esc(t)}</li>`).join('')}</ul>
+        ${r.href ? `<a class="open" href="${ROOT + r.href}" data-read="${r.href}">Read it →</a>` : `<p style="font-family:var(--mono);font-size:11px">; STATUS_PENDING, still reversing</p>`}`;
+    }
+  }
+  function go(k) {
+    folder = FOLDERS[k] ? k : 'projects';
+    const f = FOLDERS[folder];
+    body.querySelectorAll('.side button[data-f]').forEach(b => b.classList.toggle('on', b.dataset.f === folder));
+    body.querySelector('.path').innerHTML = `This PC › musaed › <b>${f.name}</b>`;
+    files.innerHTML = `<div class="fhead"><span></span><span>Name</span><span>${folder === 'projects' ? 'Type' : 'Date'}</span></div>` +
+      f.items.map((it, i) => `<button type="button" class="frow" data-i="${i}">${it.icon}<span class="nm">${esc(it.name)}</span><span class="meta">${esc(it.meta)}</span></button>`).join('');
+    body.querySelector('.cnt').textContent = `${f.items.length} items`;
+    pick(0);
+  }
+  function pick(i) {
+    files.querySelectorAll('.frow').forEach(b => b.classList.toggle('on', +b.dataset.i === i));
+    const it = FOLDERS[folder].items[i];
+    detail(it);
+    body.querySelector('.sel').textContent = it ? '1 item selected' : '';
+  }
+  body.querySelector('.side').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.ext) window.open(b.dataset.ext, '_blank', 'noopener'); else go(b.dataset.f);
+  });
+  files.addEventListener('click', e => { const b = e.target.closest('.frow'); if (b) pick(+b.dataset.i); });
+  files.addEventListener('dblclick', e => {
+    const b = e.target.closest('.frow'); if (!b) return;
+    const it = FOLDERS[folder].items[+b.dataset.i];
+    if (it.r && it.r.href) openReader(it.r.href);
+    else if (it.p && it.p.link) window.open(it.p.link[1], '_blank', 'noopener');
+  });
+  go(arg || 'projects');
+  return { go };
+}
+
+function renderMail(body) {
+  body.innerHTML = `<div class="menu"><span>Reply</span><span>Forward</span><span>Archive</span></div>
+    <div class="mail">
+      <div class="mrow"><span>From</span><span>Musaed &lt;uint64_t@hotmail.com&gt;</span></div>
+      <div class="mrow"><span>To</span><span>you</span></div>
+      <div class="mrow"><span>Subject</span><span style="font-weight:600">Research and collaboration</span></div>
+      <div class="mbody">
+        <p>Hi,</p>
+        <p>I'm happy to talk about anti-cheat, kernel work, or malware analysis.</p>
+        <p>Email is the fastest way to reach me; Discord works too.</p>
+        <div class="cards">
+          <a class="card" href="mailto:uint64_t@hotmail.com"><span class="l">EMAIL</span><span class="v">uint64_t@hotmail.com</span><span class="h">first choice</span></a>
+          <a class="card" href="https://github.com/xidenlz" target="_blank" rel="noopener"><span class="l">GITHUB</span><span class="v">github.com/xidenlz</span><span class="h">↗</span></a>
+          <button class="card" type="button" id="dc" style="text-align:left;width:100%"><span class="l">DISCORD</span><span class="v">xdenlz</span><span class="h">click to copy</span></button>
+        </div>
+      </div>
+    </div>`;
+  body.querySelector('#dc').onclick = async e => {
+    const h = e.currentTarget.querySelector('.h');
+    try { await navigator.clipboard.writeText('xdenlz'); h.textContent = 'copied ✓'; } catch { h.textContent = 'copy failed'; }
+  };
+}
+
+const DESK = [
+  ['ida', 'Research.idb', IC.ida], ['pe', 'musaed.exe', IC.pe], ['about', 'about.txt', IC.note],
+  ['explorer', 'Projects', IC.folder, 'projects'], ['explorer', 'Blog', IC.folderB, 'blog'],
+  ['mail', 'contact.eml', IC.mail], ['bin', 'Recycle Bin', IC.bin],
+];
+$('#icons').innerHTML = DESK.map(([a, l, ic, arg], i) => `<button type="button" class="icon" data-i="${i}">${ic}<span>${l}</span></button>`).join('');
+$('#icons').addEventListener('click', e => {
+  const b = e.target.closest('.icon'); if (!b) return;
+  document.querySelectorAll('.icon').forEach(x => x.classList.toggle('sel', x === b));
+  if (mobile() || e.detail === 0) launch(+b.dataset.i);
+});
+$('#icons').addEventListener('dblclick', e => { const b = e.target.closest('.icon'); if (b && !mobile()) launch(+b.dataset.i); });
+function launch(i) { const [a, , , arg] = DESK[i]; openApp(a, arg); }
+
+$('#w-list').innerHTML = READABLE.slice(0, 5).map(r => `<li><a href="${ROOT + r.href}" data-read="${r.href}">
+  <span class="w-k"><b>${RESEARCH.includes(r) ? 'research' : 'note'}</b><span>${esc(r.date)}</span></span>
+  <span class="w-t">${esc(r.title)}</span></a></li>`).join('');
+$('#w-all').onclick = () => openApp('ida');
+$('#desktop').addEventListener('pointerdown', e => {
+  if (e.target === $('#desktop') || e.target.classList.contains('icons')) document.querySelectorAll('.icon').forEach(x => x.classList.remove('sel'));
+  closeStart();
+});
+
+$('#slist').innerHTML = [
+  ['ida', 'Research.idb', IC.ida], ['pe', 'musaed.exe', IC.pe], ['explorer', 'Projects', IC.folder, 'projects'], ['explorer', 'Blog', IC.folderB, 'blog'],
+  ['about', 'about.txt', IC.note], ['mail', 'Contact', IC.mail],
+].map(([a, l, ic, arg]) => `<button type="button" data-a="${a}" data-arg="${arg || ''}">${ic}${l}</button>`).join('') +
+  `<button type="button" data-ext="https://github.com/xidenlz">${IC.gh}GitHub ↗</button><button type="button" data-ext="${ROOT}feed.xml">${IC.note}RSS feed</button>`;
+$('#slist').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.ext) { closeStart(); window.open(b.dataset.ext, '_blank', 'noopener'); return; }
+  openApp(b.dataset.a, b.dataset.arg || undefined);
+});
+function closeStart() { $('#smenu').classList.remove('on'); $('#startbtn').classList.remove('on'); }
+$('#startbtn').onclick = e => { e.stopPropagation(); const on = $('#smenu').classList.toggle('on'); $('#startbtn').classList.toggle('on', on); };
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeStart(); });
+
+$('#shutdown').onclick = () => { closeStart(); $('#bsod').classList.add('on'); };
+$('#bsod').onclick = () => { $('#bsod').classList.remove('on'); boot(); };
+
+function tick() {
+  const d = new Date();
+  $('#clock').innerHTML = `${d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}<br>${d.toLocaleDateString()}`;
+}
+tick(); setInterval(tick, 15000);
+
+let booted = false;
+function boot() {
+  const b = $('#boot');
+  b.classList.remove('gone');
+  booted = false;
+  let seen = false;
+  try { seen = sessionStorage.getItem('booted') === '1'; } catch {}
+  const done = () => {
+    if (booted) return; booted = true;
+    b.classList.add('gone');
+    try { sessionStorage.setItem('booted', '1'); } catch {}
+    if (!wins.size) {
+      if (!mobile()) {
+        openApp('ida');
+        const t = openApp('pe'), d = $('#desktop').getBoundingClientRect();
+        t.el.style.left = Math.max(20, d.width - t.el.offsetWidth - 30) + 'px';
+        t.el.style.top = Math.max(20, d.height - t.el.offsetHeight - 24) + 'px';
+      }
+    }
+  };
+  b.onclick = done;
+  setTimeout(done, seen ? 250 : 1700);
+}
+boot();
+</script>
 </body>
 </html>

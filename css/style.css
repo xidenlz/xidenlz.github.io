@@ -1,7 +1,3 @@
-/* --------------------------------------------------------------------------
-   xidenlz.github.io
-   -------------------------------------------------------------------------- */
-
 :root {
   --bg:          #0a0b0d;
   --bg-raised:   #101216;
@@ -117,10 +113,6 @@ strong { color: var(--ink); font-weight: 600; }
 hr { border: 0; border-top: 1px solid var(--line); margin: var(--sp-7) 0; }
 img, svg { max-width: 100%; height: auto; }
 
-/* --------------------------------------------------------------------------
-   layout
-   -------------------------------------------------------------------------- */
-
 .wrap {
   width: 100%;
   max-width: var(--w-page);
@@ -145,10 +137,6 @@ main { flex: 1; padding-block: var(--sp-7) var(--sp-9); }
   transition: top .16s var(--ease);
 }
 .skip-link:focus { top: var(--sp-3); color: #06222f; }
-
-/* --------------------------------------------------------------------------
-   masthead
-   -------------------------------------------------------------------------- */
 
 .masthead {
   position: sticky;
@@ -224,10 +212,6 @@ main { flex: 1; padding-block: var(--sp-7) var(--sp-9); }
 .nav-toggle[aria-expanded="true"] .icon-open  { display: none; }
 .nav-toggle[aria-expanded="true"] .icon-close { display: block; }
 
-/* --------------------------------------------------------------------------
-   hero
-   -------------------------------------------------------------------------- */
-
 .hero { padding-block: var(--sp-7) var(--sp-8); }
 
 .hero h1 {
@@ -238,31 +222,12 @@ main { flex: 1; padding-block: var(--sp-7) var(--sp-9); }
   margin-bottom: var(--sp-4);
 }
 
-.hero-role {
-  font-family: var(--mono);
-  font-size: var(--fs-md);
-  color: var(--accent);
-  letter-spacing: -0.01em;
-  margin-bottom: var(--sp-5);
-}
-
-.hero-lede {
-  font-size: var(--fs-lg);
-  line-height: 1.7;
-  color: var(--ink-dim);
-  max-width: 38rem;
-}
-
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
   gap: var(--sp-3);
   margin-top: var(--sp-6);
 }
-
-/* --------------------------------------------------------------------------
-   buttons
-   -------------------------------------------------------------------------- */
 
 .btn {
   display: inline-flex;
@@ -290,10 +255,6 @@ main { flex: 1; padding-block: var(--sp-7) var(--sp-9); }
   font-weight: 600;
 }
 .btn-primary:hover { background: var(--accent-hi); border-color: var(--accent-hi); color: #06222f; }
-
-/* --------------------------------------------------------------------------
-   section headings
-   -------------------------------------------------------------------------- */
 
 .section-head {
   display: flex;
@@ -323,10 +284,6 @@ main { flex: 1; padding-block: var(--sp-7) var(--sp-9); }
 .section-head a:hover { color: var(--accent); }
 
 section + section { margin-top: var(--sp-8); }
-
-/* --------------------------------------------------------------------------
-   index rows — listing primitive for research / blog / projects
-   -------------------------------------------------------------------------- */
 
 .index { list-style: none; }
 
@@ -370,16 +327,6 @@ section + section { margin-top: var(--sp-8); }
 
 .entry-body > * + * { margin-top: var(--sp-3); }
 
-.entry-note {
-  font-family: var(--mono);
-  font-size: var(--fs-xs);
-  color: var(--ink-faint);
-}
-
-/* --------------------------------------------------------------------------
-   tags
-   -------------------------------------------------------------------------- */
-
 .tags {
   display: flex;
   flex-wrap: wrap;
@@ -403,10 +350,6 @@ section + section { margin-top: var(--sp-8); }
   white-space: nowrap;
 }
 
-/* --------------------------------------------------------------------------
-   spec list — used inside project entries
-   -------------------------------------------------------------------------- */
-
 .spec {
   border: 1px solid var(--line);
   border-radius: var(--r-md);
@@ -428,10 +371,6 @@ section + section { margin-top: var(--sp-8); }
   line-height: 1.6;
 }
 .spec dd + dt { margin-top: var(--sp-4); }
-
-/* --------------------------------------------------------------------------
-   page header (non-home pages)
-   -------------------------------------------------------------------------- */
 
 .page-head {
   padding-bottom: var(--sp-5);
@@ -461,10 +400,6 @@ section + section { margin-top: var(--sp-8); }
   max-width: 40rem;
   line-height: 1.6;
 }
-
-/* --------------------------------------------------------------------------
-   article
-   -------------------------------------------------------------------------- */
 
 .article {
   display: flex;
@@ -540,10 +475,6 @@ section + section { margin-top: var(--sp-8); }
   background: var(--bg-raised);
 }
 
-/* --------------------------------------------------------------------------
-   table of contents
-   -------------------------------------------------------------------------- */
-
 .toc {
   order: -1;
   border: 1px solid var(--line);
@@ -580,10 +511,6 @@ section + section { margin-top: var(--sp-8); }
 .toc a.is-current { color: var(--accent); border-left-color: var(--accent); }
 .toc .lvl-3 a { padding-left: var(--sp-5); font-size: var(--fs-xs); }
 
-/* --------------------------------------------------------------------------
-   callouts
-   -------------------------------------------------------------------------- */
-
 .note {
   border: 1px solid var(--line);
   border-left: 2px solid var(--accent);
@@ -610,10 +537,6 @@ section + section { margin-top: var(--sp-8); }
 
 .note-warn { border-left-color: var(--warn); }
 .note-warn .note-label { color: var(--warn); }
-
-/* --------------------------------------------------------------------------
-   code
-   -------------------------------------------------------------------------- */
 
 pre {
   background: var(--bg-inset);
@@ -697,10 +620,6 @@ pre code {
 .syn-com  { color: #5c6673; font-style: italic; }
 .syn-op   { color: #8b94a3; }
 
-/* --------------------------------------------------------------------------
-   tables
-   -------------------------------------------------------------------------- */
-
 .table-scroll {
   overflow-x: auto;
   border: 1px solid var(--line);
@@ -736,10 +655,6 @@ td {
 }
 
 tbody tr:last-child td { border-bottom: 0; }
-
-/* --------------------------------------------------------------------------
-   about page
-   -------------------------------------------------------------------------- */
 
 .cols {
   display: grid;
@@ -799,10 +714,6 @@ tbody tr:last-child td { border-bottom: 0; }
 
 .record-what p { font-size: var(--fs-md); }
 
-/* --------------------------------------------------------------------------
-   contact
-   -------------------------------------------------------------------------- */
-
 .channels {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
@@ -843,10 +754,6 @@ tbody tr:last-child td { border-bottom: 0; }
   margin-top: var(--sp-2);
 }
 
-/* --------------------------------------------------------------------------
-   reading progress
-   -------------------------------------------------------------------------- */
-
 .progress {
   position: fixed;
   top: 0;
@@ -859,10 +766,6 @@ tbody tr:last-child td { border-bottom: 0; }
   z-index: 150;
   pointer-events: none;
 }
-
-/* --------------------------------------------------------------------------
-   footer
-   -------------------------------------------------------------------------- */
 
 .site-footer {
   border-top: 1px solid var(--line);
@@ -884,10 +787,6 @@ tbody tr:last-child td { border-bottom: 0; }
 .footer-nav a { color: var(--ink-faint); }
 .footer-nav a:hover { color: var(--ink); }
 
-/* --------------------------------------------------------------------------
-   404
-   -------------------------------------------------------------------------- */
-
 .notfound { padding-block: var(--sp-9); max-width: 34rem; }
 
 .notfound-code {
@@ -898,10 +797,6 @@ tbody tr:last-child td { border-bottom: 0; }
   color: var(--accent);
   margin-bottom: var(--sp-4);
 }
-
-/* --------------------------------------------------------------------------
-   responsive
-   -------------------------------------------------------------------------- */
 
 @media (min-width: 1080px) {
   .article {
@@ -976,10 +871,6 @@ tbody tr:last-child td { border-bottom: 0; }
     scroll-behavior: auto !important;
   }
 }
-
-/* --------------------------------------------------------------------------
-   print — these write-ups get saved as PDFs often enough to matter
-   -------------------------------------------------------------------------- */
 
 @media print {
   :root { --ink: #000; --ink-dim: #1a1a1a; --ink-faint: #555; --line: #ccc; }

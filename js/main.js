@@ -3,8 +3,6 @@
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ---- mobile nav ---- */
-
   function initNav() {
     var toggle = document.querySelector('.nav-toggle');
     var list = document.getElementById('nav-list');
@@ -31,14 +29,10 @@
       if (!toggle.contains(e.target) && !list.contains(e.target)) setOpen(false);
     });
 
-    // the menu is only a menu below the breakpoint; leaving it "open" past that
-    // point strands aria-expanded in the wrong state
     window.matchMedia('(min-width: 761px)').addEventListener('change', function (e) {
       if (e.matches) setOpen(false);
     });
   }
-
-  /* ---- copy buttons on code snippets ---- */
 
   function initCopyButtons() {
     if (!navigator.clipboard) return;
@@ -74,8 +68,6 @@
       bar.appendChild(btn);
     });
   }
-
-  /* ---- table of contents, built from the article's own headings ---- */
 
   function slugify(text) {
     return text.toLowerCase().trim()
@@ -117,7 +109,6 @@
 
     toc.appendChild(list);
 
-    // highlight whichever heading the reader is currently under
     var links = {};
     list.querySelectorAll('a').forEach(function (a) {
       links[a.getAttribute('href').slice(1)] = a;
@@ -146,8 +137,6 @@
     headings.forEach(function (h) { observer.observe(h); });
   }
 
-  /* ---- reading progress ---- */
-
   function initProgress() {
     var prose = document.querySelector('.prose');
     if (!prose || reduceMotion) return;
@@ -163,8 +152,6 @@
     function measure() {
       var box = prose.getBoundingClientRect();
       start = box.top + window.scrollY;
-      // the last viewport of the article is visible without scrolling past it,
-      // so the scrollable distance is the article height minus one screen
       span = Math.max(1, box.height - window.innerHeight);
     }
 
@@ -186,7 +173,6 @@
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', function () { measure(); onScroll(); }, { passive: true });
 
-    // late-loading webfonts reflow the article and invalidate the measurement
     if (document.fonts && document.fonts.ready) {
       document.fonts.ready.then(function () { measure(); draw(); });
     }

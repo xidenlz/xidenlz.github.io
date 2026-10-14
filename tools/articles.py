@@ -1,12 +1,3 @@
-"""
-Article body HTML for the site.
-
-Each entry is the inner HTML that goes inside `<article class="prose">…</article>`.
-Do not add opening/closing prose tags here, build.py wraps them.
-Every technical claim (function name, hex value, struct field, path)
-mirrors the original write-ups.
-"""
-
 BATTLEYE = r"""
 <p>
   BattlEye keeps a running check on <em>where</em> code is executing from,
@@ -533,7 +524,7 @@ OVERLAYS = r"""
   handle rights on the target.
 </p>
 
-<h2>The rest of the landscape</h2>
+<h2>Other common primitives</h2>
 <p>
   Beyond <code>CreateRemoteThread</code> and thread hijacking, the mainline
   Windows primitives that show up over and over:
