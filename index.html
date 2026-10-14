@@ -974,7 +974,7 @@ function renderBin(body) {
 
 function renderAbout(body) {
   body.innerHTML = `<div class="menu"><span>File</span><span>Edit</span><span>Format</span><span>View</span><span>Help</span></div>
-    <div class="npad" contenteditable="true" spellcheck="false">${esc(ABOUT_TXT)}</div>
+    <div class="npad" tabindex="0">${esc(ABOUT_TXT)}</div>
     <div class="status"><span>Ln 1, Col 1</span><span>100%</span><span>Windows (CRLF)</span><span>UTF-8</span></div>`;
 }
 
